@@ -26,14 +26,32 @@
 <!-- Salida final -->
     <filled>
         <prompt>
-             La clase de <value expr="Asignatura"> son los #Dias de la semana# en la clase #Clase(s)  
+             La clase de <value expr="Asignatura"> son los Dias de la semana miercoles en la clase 2 
+             <!-- Una vez que le hemos dado la clase le preguntamos si quiere saber otra o no-->
+             <goto nexitem="volver_preguntar"/> 
         </prompt>
     </filled>
 
 
+<!-- Pregunta de nuevo por si quiere seguir consultado -->
+    <field name="volver_preguntar" type="boolean">
+        <prompt> Quiere saber alguna otra asignatura </prompt>
+        <filled> 
+            <if cond="volver_preguntar">
+                De acuerdo pues que tenga un buen dia entonces
+                <exit/>
+            <else/>
+                <clear namelist="volver_preguntar"/>
+            </if>
+        </filled>
+    </field>    
+
+
+
+
 <!-- Formulario para finaliza la conversacion-->
     <field name="confirmar_salida" type="boolean">
-        <prompt> Esta seguro que acabar la conversacion? <prompt>
+        <prompt> Esta seguro que quiere acabar la conversacion? <prompt>
         <filled>
             <if cond="confirmar_salida">
                 De acuerdo, adios tenga un buen dia
