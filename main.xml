@@ -1,0 +1,49 @@
+<vxml version = "2.1" xmlns="http://www.w3.org/2001/06/vxml">
+
+<link event="exit"> <grammar> adios|hasta luego|terminar|finalizar|eso es todo, gracias </grammar> </link>
+<link event="help"> <grammar> ayuda|no se|necesito ayuda|puedo tener ayuda|explicamelo otra vez </grammar> </link>
+
+
+<!-- Evento para confirmar la salida-->
+<form id="prueba">
+    <catch event="exit">
+        <goto nexitem="confirmar_salida"/>
+    </catch>    
+
+<!--Inicio de la conversacion-->
+    <field name="Asignatura">
+        <prompt>
+            Buenas y bienvenenido al sistema de ayuda de horarios. Digame, sobre que asignatura de la carrera de informatica quiere obtener informacion?
+        </prompt>
+        <grammar src="asignaturas.jsgf"/>
+        <catch event="help">
+            Di el nombre de una asignatura o su abreviacion , por ejemplo, Calculo
+        </catch>    
+    </field>
+
+
+
+<!-- Salida final -->
+    <filled>
+        <prompt>
+             La clase de <value expr="Asignatura"> son los #Dias de la semana# en la clase #Clase(s)  
+        </prompt>
+    </filled>
+
+
+<!-- Formulario para finaliza la conversacion-->
+    <field name="confirmar_salida" type="boolean">
+        <prompt> Esta seguro que acabar la conversacion? <prompt>
+        <filled>
+            <if cond="confirmar_salida">
+                De acuerdo, adios tenga un buen dia
+                <exit/>
+            <else/>
+                <clear namelist="confirmar_salida"/>
+            </if>
+        </filled>               
+    </field>
+  </form>
+
+ 
+</vxml>             
