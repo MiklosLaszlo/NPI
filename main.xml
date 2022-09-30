@@ -6,6 +6,7 @@
 
 <!-- Evento para confirmar la salida-->
 <form id="prueba">
+<property name="bargein" value="false"> 
     <catch event="exit">
         <goto nexitem="confirmar_salida"/>
     </catch>    
