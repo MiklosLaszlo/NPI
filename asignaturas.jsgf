@@ -4,12 +4,12 @@ grammar asignaturas;
 
 public <asignaturas> = 						
 						Calculo | CA |
-						Fundamentos Físicos y Tecnologicos | FFT |
+						Fundamentos Fisicos y Tecnologicos | FFT |
 						Fundamentos de Programacion | FP |
 						Fundamentos del Software | FS |
-						Álgebra Lineal y Estructuras Matemáticas | ALEM |
+						algebra Lineal y Estructuras Matematicas | ALEM |
 						Estadistica | ES |
-						Ingeniería, Empresa y Sociedad | IES |
-						Lógica y Métodos Discretos | LMD |
-						Metodología de la Programación | MP |
-						Tecnología y Organización de Computadores | TOC;
+						Ingenieria Empresa y Sociedad | IES |
+						Logica y Metodos Discretos | LMD |
+						Metodologia de la Programacion | MP |
+						Tecnologia y Organizacion de Computadores | TOC;
