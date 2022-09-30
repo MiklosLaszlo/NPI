@@ -2,4 +2,14 @@
 
 grammar asignaturas;
 
-public <asignaturas> = ;
+public <asignaturas> = 						
+						Calculo | CA |
+						Fundamentos Físicos y Tecnologicos | FFT |
+						Fundamentos de Programacion | FP |
+						Fundamentos del Software | FS |
+						Álgebra Lineal y Estructuras Matemáticas | ALEM |
+						Estadistica | ES |
+						Ingeniería, Empresa y Sociedad | IES |
+						Lógica y Métodos Discretos | LMD |
+						Metodología de la Programación | MP |
+						Tecnología y Organización de Computadores | TOC;
