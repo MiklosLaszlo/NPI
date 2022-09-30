@@ -12,25 +12,27 @@
 
 <!--Inicio de la conversacion-->
     <field name="Asignatura">
+        <grammar src="asignaturas.jsgf"/>
         <prompt>
             Buenas y bienvenenido al sistema de ayuda de horarios. Digame, sobre que asignatura de la carrera de informatica quiere obtener informacion?
         </prompt>
-        <grammar src="asignaturas.jsgf"/>
         <catch event="help">
-            Di el nombre de una asignatura o su abreviacion , por ejemplo, Calculo
+            Diga el nombre de una asignatura o su abreviacion , por ejemplo, Calculo
         </catch>    
     </field>
 
 
 
 <!-- Salida final -->
-    <filled>
-        <prompt>
-             La clase de <value expr="Asignatura"/> son los Dias de la semana miercoles en la clase 2 
-             <!-- Una vez que le hemos dado la clase le preguntamos si quiere saber otra o no-->
-             <goto nexitem="volver_preguntar"/> 
-        </prompt>
-    </filled>
+    <field name="Respuesta">
+        <filled>
+            <prompt>
+                 La clase de <value expr="Asignatura"/> son los Dias de la semana miercoles en la clase 2 
+                <!-- Una vez que le hemos dado la clase le preguntamos si quiere saber otra o no-->
+                <goto nexitem="volver_preguntar"/> 
+            </prompt>
+        </filled>
+    </field>
 
 
 <!-- Pregunta de nuevo por si quiere seguir consultado -->
@@ -45,8 +47,6 @@
             </if>
         </filled>
     </field>    
-
-
 
 
 <!-- Formulario para finaliza la conversacion-->
