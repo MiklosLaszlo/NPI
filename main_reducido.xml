@@ -1,15 +1,20 @@
+<!DOCTYPE vxml PUBLIC "-//W3C//DTD VOICEXML 2.1//EN" "http://www.w3.org/TR/voicexml21/vxml.dtd">
 <vxml version = "2.1" xml:lang="es-ES">
 
-<property name="bargein" value="false"/> 
+<property name="bargein" value="true"/> 
 
 <form id="prueba">
-	<block><prompt>Buenas y bienvenenido al sistema bla bla bla</prompt></block>
+	<block><prompt>53 Buenas y al sistema bla bla bla</prompt></block>
    <field name="Asignatura">
-		<prompt timeout="60s">di calculo</prompt>  
-		<grammar type="application/x-jsgf"> calculo | c a </grammar>
-		<filled>
-			<prompt>La clase de  son los Dias de la semana miercoles en la clase</prompt>
-		</filled>
+		<prompt timeout="80s">53 di calculo</prompt>  
+		<grammar src="asignaturas.jsg"/>
+		<catch event="nomatch noinput">
+			<prompt>Di algo con sentido</prompt>
+			<reprompt/>
+		</catch>
    </field>
+	<filled>
+		<prompt>La clase de <value expr="Asignatura"/> son los dias de la semana miercoles en la clase</prompt>
+	</filled>
   </form> 
 </vxml>
