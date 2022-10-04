@@ -7,7 +7,7 @@
         <prompt>
             Buenas y bienvenenido al sistema de ayuda de horarios. Digame, sobre que asignatura de la carrera de informatica quiere obtener informacion?
         </prompt>  
-        <grammar src="asignaturas.jsgf"/>
+        <grammar type="application/x-jsgf"> calculo </grammar>>
     </field>
 	<filled>
             <prompt>
