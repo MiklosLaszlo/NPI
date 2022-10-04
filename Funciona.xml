@@ -1,15 +1,16 @@
 <vxml version = "2.1" xml:lang="es-ES" >
-
+  
   <form id="asignatura">
 
   <field name="inicio">
     <prompt>Buenas y bienvenido al sistema de Informatica ,Que asignatura quieres saber? </prompt>
     <prompt count="2"> dime la asignatura otra vez </prompt> 
     <prompt count="3"> repite la asignatura </prompt> 
-          
-    <noinput>Perdona, no te he escuchado<reprompt/></noinput>        
+    <nomatch> Creo que la asignatura que has dicho no esta entre las disponibles <reprompt/></nomatch>      
+    <noinput>Perdona, no te he escuchado<reprompt/></noinput>   
     <grammar src="ciudades.jsgf"/>
   </field>
+
 
   <filled>
     <prompt>
@@ -20,4 +21,5 @@
   </form>
 
 </vxml>
+
 
