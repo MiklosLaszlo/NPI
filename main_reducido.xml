@@ -2,19 +2,15 @@
 
 
 <form id="prueba">
-<property name="bargein" value="false"> 
-    <field name="Asignatura">
-        <prompt>
-            Buenas y bienvenenido al sistema de ayuda de horarios. Digame, sobre que asignatura de la carrera de informatica quiere obtener informacion?
-        </prompt>  
-        <grammar> calculo </grammar>
-    </field>
-	<filled>
-            <prompt>
-                 La clase de  son los Dias de la semana miercoles en la clase 
-	</prompt>
-
-        </filled>
-
+<property name="bargein" value="false"/> 
+   <field name="Asignatura">
+	<grammar> calculo </grammar>
+		<prompt>
+			Buenas y bienvenenido al sistema de ayuda de horarios. Digame, sobre que asignatura de la carrera de informatica quiere obtener informacion?
+		</prompt>  
+		<filled>
+			<prompt>La clase de  son los Dias de la semana miercoles en la clase</prompt>
+		</filled>
+   </field>
   </form> 
-</vxml>             
+</vxml>
