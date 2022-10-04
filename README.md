@@ -1,3 +1,3 @@
 # Practica1NPI
 
-# Vamos a ir avanzado con GANAS
+# ~~Vamos a ir avanzado con GANAS~~
