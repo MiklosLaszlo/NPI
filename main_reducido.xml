@@ -1,0 +1,20 @@
+<vxml version = "2.1" xml:lang="es-ES">
+
+
+<form id="prueba">
+<property name="bargein" value="false"> 
+    <field name="Asignatura">
+        <prompt>
+            Buenas y bienvenenido al sistema de ayuda de horarios. Digame, sobre que asignatura de la carrera de informatica quiere obtener informacion?
+        </prompt>  
+        <grammar src="asignaturas.jsgf"/>
+    </field>
+	<filled>
+            <prompt>
+                 La clase de  son los Dias de la semana miercoles en la clase 
+	</prompt>
+
+        </filled>
+
+  </form> 
+</vxml>             
