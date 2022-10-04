@@ -1,0 +1,20 @@
+<vxml version = "2.1" xml:lang="es-ES" >
+
+  <form id="viaje">
+
+  <field name="destino">
+    <prompt>
+        Buenas y bienvenido al sistema de Informatica ,Que asignatura quieres saber? .
+    </prompt>
+        <grammar src="ciudades.jsgf"/>
+  </field>
+
+  <filled>
+    <prompt>
+        La asignatura de  <value expr="destino"/> son los lunes por la tarde y los miercoles por la mañana 
+    </prompt>
+  </filled>
+
+  </form>
+
+</vxml>
