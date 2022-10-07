@@ -10,7 +10,7 @@
     <prompt bargein="false" count="3"> please repeat the subject </prompt> 
     <nomatch>  The subject you said is not in our system <reprompt/></nomatch>      
     <noinput>Sorry, i did not understand you<reprompt/></noinput>   
-    <grammar src="asignaturas.jsgf"/>
+    <grammar xml:lang="es-ES" src="asignaturas.jsgf"/>
   </field>
 
 
