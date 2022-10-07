@@ -1,49 +1,12 @@
-<vxml version = "2.1" xml:lang="es-ES">
-    <form>
-        <block>
-            <script>
-                var f = new Date();
-                horas = f.getHours();
-		manana = 0;
-		tarde = 0;
-		noche = 1;
-		
-		if (horas > 6 ){
-            		noche = 0;
-            		manana = 1;
-			if(horas > 13){
-              			manana = 0;
-                		tarde = 1;
-				if(horas > 19){
-                 		   tarde = 0;
-                    		   noche = 1;
-                		}    
-            		}
-		}
-            </script>
-        </block>
+<vxml version = "2.1" xml:lang="es-ES" >
 
-	<block>
-            <prompt> Hora actual <value expr="horas"/> horas
-            </prompt>
-        </block>
 
-        <block>
-            <prompt cond="manana > 0 "> Buenos dias
-            </prompt>
-        </block>
-	<block>
-            <prompt cond="noche > 0"> Buenas noches
-            </prompt>
-        </block>
-	<block>
-            <prompt cond="tarde > 0"> Buenas tardes
-            </prompt>
-        </block>
-        <block>
-            <prompt> Soy lista,no lo se
-            </prompt>
-        </block>
-    </form>
-
+  <form id="asignatura">
+    <var name="Coso" expr="greetings(0).greetings"/>
+    <block>
+        <prompt>
+            Hola, estoy <value expr="greetings(0).greetings"/>
+        </prompt>
+    </block>
+  </form>
 </vxml>
