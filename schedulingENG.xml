@@ -1,0 +1,27 @@
+<vxml version = "2.1" xml:lang="en-US" >
+
+
+  
+  <form id="asignatura">
+
+  <field name="inicio">
+    <prompt bargein="false">Welcome to the university of granada scheduling system  ,Which subject would you like to known? </prompt>
+    <prompt bargein="false" count="2"> Tell me the subject again </prompt> 
+    <prompt bargein="false" count="3"> please repeat the subject </prompt> 
+    <nomatch>  The subject you said is not in our system <reprompt/></nomatch>      
+    <noinput>Sorry, i did not understand you<reprompt/></noinput>   
+    <grammar src="asignaturas.jsgf"/>
+  </field>
+
+
+
+  <filled>
+    <prompt bargein="false">
+         <value expr="inicio"/> is on mondays from seven to nine am
+    </prompt>
+  </filled>
+
+
+
+  </form>
+</vxml>

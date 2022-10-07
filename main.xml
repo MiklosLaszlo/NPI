@@ -1,0 +1,22 @@
+<vxml version="2.1" xml:lang="es-ES">
+    <script src="saludos.js"/>
+    <menu>
+        <property name="bargein" value="false"/>
+        <prompt><audio src="Buleria.wav"/></prompt>
+        <prompt xml:lang="es-ES">
+            <value expr="greetings(0)"/>
+        Bienvenido al sistema de horarios de asignaturas de la UGR. Para continuar en Español pulse 1 o diga Español
+        </prompt>
+        <prompt xml:lang="en-US">
+            <value expr="greetings(1)"/>
+        Welcome to the subject shedule system of the University of Granada. In order to continue in English press number 2 or say English
+        </prompt>
+            <choice dtmf="1" next="horariosESP.xml">
+            Español
+            </choice>
+            <choice xml:lang="en-US" dtmf="2" next="schedulingENG.xml">
+            English
+            </choice>
+    </menu>
+</vxml>
+        
