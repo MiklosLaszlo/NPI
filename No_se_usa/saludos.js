@@ -1,12 +1,11 @@
-<![CDATA[
-	function greetings(idioma) {
+function greetings(idioma) {
     var f = new Date();
     var horas = f.getHours();
     var manana = 0;
     var tarde = 0;
     var noche = 1;
     
-    if (horas > 6 ){
+    if (horas > 6){
                 noche = 0;
                 manana = 1;
         if(horas > 13){
@@ -46,4 +45,3 @@
     }
     return  salida;
 }
-]]>
