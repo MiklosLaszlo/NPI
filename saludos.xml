@@ -23,11 +23,6 @@
             </script>
         </block>
 
-	<block>
-            <prompt> Hora actual <value expr="horas"/> horas
-            </prompt>
-        </block>
-
         <block>
             <prompt cond="manana > 0 "> Buenos dias
             </prompt>
@@ -38,10 +33,6 @@
         </block>
 	<block>
             <prompt cond="tarde > 0"> Buenas tardes
-            </prompt>
-        </block>
-        <block>
-            <prompt> Soy lista,no lo se
             </prompt>
         </block>
     </form>
