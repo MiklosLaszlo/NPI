@@ -1,5 +1,5 @@
 function busca_horario(asignatura) {
-	var horario = [{
+	/*var horario = [{
 		nombre: ["calculo", "cea"],
 		dias: ["martes"],
 		horario: "de nueve a once"
@@ -26,5 +26,6 @@ function busca_horario(asignatura) {
 		salida_dias = horario[index].dias[0];
 
 	var salida_horas = horario[index].horario;
-	return { dias: salida_dias, horas: salida_horas };
+	return { dias: salida_dias, horas: salida_horas };*/
+	return { dias: "lunes y martes", horas: "de doce a una" };
 }
