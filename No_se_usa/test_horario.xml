@@ -5,6 +5,7 @@
   <form id="asignatura">
   <property name="bargein" value="false"/> 
   <var name="test" expr="0"/>
+  <script src="horarios_ES.js"/>
   <script src="script_horario.js"/>
 
   <field name="inicio">
