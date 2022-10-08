@@ -1,12 +1,29 @@
 <vxml version = "2.1" xml:lang="en-US" >
+	<script src="script/horarios_EN.js"/>
+	<script src="script/script_horario.js"/>
+	<var name="aux"/>
+	<link event="help">
+		<grammar src="gram/help.jsgf"/>
+	</link>
+	<link event="exit">
+		<grammar src="gram/exit.jsgf"/>
+	</link>
+
+	<form id="wellcome">
+		<block>
+			<prompt bargein="false">Welcome to the university of granada scheduling system</prompt>
+			<goto next="#asignatura"/>
+		</block>
+
+	</form>
+
 	<form id="asignatura">
-		<script src="script/horarios_EN.js"/>
-		<script src="script/script_horario.js"/>
+		
 
 		<field name="inicio">
-			<prompt bargein="false">Welcome to the university of granada scheduling system  ,Which subject would you like to known? </prompt>
-			<prompt bargein="false" count="2"> Tell me the subject again </prompt> 
-			<prompt bargein="false" count="3"> please repeat the subject </prompt> 
+			<prompt bargein="false">Which subject would you like to known? </prompt>
+			<prompt count="2"> Tell me the subject again </prompt> 
+			<prompt count="3"> please repeat the subject </prompt> 
 			
 			<nomatch> The subject you said is not in our system <reprompt/></nomatch>
 			<noinput> Sorry, i did not understand you <reprompt/> </noinput>
@@ -15,13 +32,40 @@
 		</field>
 		<filled>
 			<if cond="inicio$.confidence &lt; 0.6">
-				<prompt bargein="false"> Sorry, I did not undertand the subject tu said</prompt>
+				<assign name="aux" expr="inicio"/>
 				<clear namelist="inicio"/>
+				<goto next="#confirmar_asignatura"/>
 			<else/>
 				<prompt bargein="false">
 					The subject <value expr="inicio"/> is on <value expr="busca_horario(inicio).dias"/>, <value expr="busca_horario(inicio).horas"/>
 				</prompt>
 			</if>
+		</filled>
+
+		<help>
+			<prompt bargein="false">Say a subject, if it is present in the system, it will tell you the time it is taught. Otherwise, you will be asked to say the subject again.</prompt>
+		</help>
+
+		<catch event="exit">
+			<prompt>
+				Farewell
+			</prompt>
+			<exit/>
+		</catch>
+	</form>
+
+	<form id="confirmar_asignatura">
+		<field name="confirmar">
+			<prompt bargein="false">Sorry, I did not heard ypu well. Did you said <value expr="aux"/>?</prompt>
+			<grammar src="gram/confirm.jsgf"/>
+
+			<nomatch><goto next="#asignatura"/></nomatch>
+		</field>
+		<filled>
+			<prompt bargein="false">
+					The subject <value expr="aux"/> is on <value expr="busca_horario(aux).dias"/>, <value expr="busca_horario(aux).horas"/>
+				</prompt>
+
 		</filled>
 	</form>
 </vxml>
