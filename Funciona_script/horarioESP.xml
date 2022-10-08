@@ -1,0 +1,27 @@
+<vxml version = "2.1" xml:lang="es-ES" >
+	<form id="asignatura">
+		<script src="script/horarios_ES.js"/>
+		<script src="script/script_horario.js"/>
+
+		<field name="inicio">
+			<prompt bargein="false">Buenas y bienvenido al sistema de Informatica  ,Que asignatura quieres saber? </prompt>
+			<prompt bargein="false" count="2"> dime la asignatura otra vez </prompt> 
+			<prompt bargein="false" count="3"> repite la asignatura </prompt> 
+
+			<nomatch> La asignatura especificada no esta entre las disponibles <reprompt/></nomatch>      
+			<noinput> Perdona, no te he escuchado <reprompt/> </noinput>   
+
+			<grammar src="gram/asignaturas.jsgf"/>
+		</field>
+		<filled>
+			<if cond="inicio$.confidence &lt; 0.6">
+				<prompt bargein="false"> Lo siento, no estoy segura de haber escuchado bien la asignatura.</prompt><!--Dicho con confianza <value expr="inicio$.confidence"/></prompt>-->
+				<clear namelist="inicio"/>
+			<else/>
+				<prompt bargein="false">
+					La asignatura de <value expr="inicio"/> son los <value expr="busca_horario(inicio).dias"/> <value expr="busca_horario(inicio).horas"/>. <!--Dicho con confianza <value expr="inicio$.confidence"/>-->
+				</prompt>
+			</if>
+		</filled>
+	</form>
+</vxml>

@@ -1,0 +1,5 @@
+#JSGF V1.0;
+
+grammar subjects;
+
+public <subjects> = calculus|programming fundamentals|algebra|linear algebra and mathematical structures|software fundamentals|physical and technological fundamentals ;
