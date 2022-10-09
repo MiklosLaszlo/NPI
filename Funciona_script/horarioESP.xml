@@ -1,7 +1,9 @@
+<!DOCTYPE vxml PUBLIC "-//W3C//DTD VOICEXML 2.1//EN" "http://www.w3.org/TR/voicexml21/vxml.dtd">
 <vxml version = "2.1" xml:lang="es-ES" >
 	<script src="script/horarios_ES.js"/>
 	<script src="script/script_horario.js"/>
 	<var name="aux"/>
+	<var name="asig"/>
 	<link event="help">
 		<grammar src="gram/ayuda.jsgf"/>
 	</link>
@@ -9,16 +11,15 @@
 		<grammar src="gram/salir.jsgf"/>
 	</link>
 
+
 	<form id="bienvenido">
 		<block>
 			<prompt bargein="false">Buenas y bienvenido al sistema de Informatica </prompt>
 			<goto next="#asignatura"/>
 		</block>
-
 	</form>
-	<form id="asignatura">
-		
 
+	<form id="asignatura">
 		<field name="inicio">
 			<prompt bargein="false">Que asignatura quieres saber? </prompt>
 			<prompt count="2"> dime la asignatura otra vez </prompt> 
@@ -31,7 +32,6 @@
 		</field>
 		
 		<filled>
-			
 			<if cond="inicio$.confidence &lt; 0.6">
 				<assign name="aux" expr="inicio"/>
 				<clear namelist="inicio"/>
@@ -48,9 +48,7 @@
 		</help>
 
 		<catch event="salir">
-			<prompt>
-				Hasta otra
-			</prompt>
+			<prompt> Hasta otra </prompt>
 			<exit/>
 		</catch>
 		
@@ -60,7 +58,6 @@
 		<field name="confirmar">
 			<prompt bargein="false">Lo siento no le he escuchado bien. Ha dicho <value expr="aux"/>?</prompt>
 			<grammar src="gram/confirmar.jsgf"/>
-
 			<nomatch><goto next="#asignatura"/></nomatch>
 		</field>
 		<filled>
@@ -71,8 +68,35 @@
 		</filled>
 	</form>
 
-	<form id="#confirmar_salida">
+	<form id="asignatura_suelta">
+		<block>
+			<clear namelist="asignatura"/>
+			<var name="asig" expr="application.lastresult$[application.lastresult$.length - 1]"/>
+			
+			<if cond="asig.confidence &lt; 0.6">
+				<assign name="aux" expr="asig.interpretation"/>
+				<clear namelist="inicio"/>
+				<goto next="#confirmar_asignatura"/>
+			<else/>
+				La asignatura de <value expr="asig.interpretation"/> son los <value expr="busca_horario(asig.interpretation).dias"/> <value expr="busca_horario(asig.interpretation).horas"/>.
+				<clear namelist="inicio"/>
+				<goto next="#confirmar_salida"/>
+			</if>
+		</block>
+	</form>
 
-
+	<form id="confirmar_salida">
+		<link event="asignatura">
+			<grammar src="gram/asignaturas.jsgf"/>
+		</link>
+		<field>
+			<prompt> Quiere saber informacion sobre otra asignatura? </prompt>
+			<grammar src="gram/confirmar.jsgf"/>
+			<catch event="asignatura"> <goto next="#asignatura_suelta"/> </catch>
+			<nomatch> <prompt>De acuerdo, hasta luego.</prompt> <exit/> </nomatch>
+		</field>
+		<filled> 
+			<prompt> De acuerdo, </prompt> <goto next="#asignatura"/>
+		</filled>
 	</form>
 </vxml>
