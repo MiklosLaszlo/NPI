@@ -38,6 +38,8 @@
 				<goto next="#confirmar_asignatura"/>
 			<else/>
 				La asignatura de <value expr="inicio"/> son los <value expr="busca_horario(inicio).dias"/> <value expr="busca_horario(inicio).horas"/>.
+				<clear namelist="inicio"/>
+				<goto next="#confirmar_salida"/>
 			</if>
 		</filled>
 
@@ -65,7 +67,12 @@
 			<prompt bargein="false">
 				La asignatura de <value expr="aux"/> son los <value expr="busca_horario(aux).dias"/> <value expr="busca_horario(aux).horas"/>.
 			</prompt>
-
+			<goto next="#confirmar_salida"/>
 		</filled>
+	</form>
+
+	<form id="#confirmar_salida">
+
+
 	</form>
 </vxml>
