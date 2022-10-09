@@ -47,6 +47,7 @@
 				<prompt bargein="false">
 					The subject <value expr="inicio"/> is on <value expr="busca_horario(inicio).dias"/>, <value expr="busca_horario(inicio).horas"/>
 				</prompt>
+				<goto next="#confirmar_salida"/>
 			</if>
 		</filled>
 
@@ -69,7 +70,7 @@
 			<prompt bargein="false">
 					The subject <value expr="aux"/> is on <value expr="busca_horario(aux).dias"/>, <value expr="busca_horario(aux).horas"/>
 				</prompt>
-
+				<goto next="#confirmar_salida"/>
 		</filled>
 		<help>
 			<prompt bargein="false">Say yes, if you said <value expr="aux"/></prompt>
@@ -98,7 +99,7 @@
 			<grammar src="gram/subjects.jsgf"/>
 		</link>
 		<field>
-			<prompt> Quiere saber informacion sobre otra asignatura? </prompt>
+			<prompt> do you want to ask about another subject? </prompt>
 			<grammar src="gram/confirm.jsgf"/>
 			<catch event="asignatura"> <goto next="#asignatura_suelta"/> </catch>
 			<help>
