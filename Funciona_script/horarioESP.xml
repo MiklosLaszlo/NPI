@@ -11,6 +11,10 @@
 		<grammar src="gram/salir.jsgf"/>
 	</link>
 
+	<catch event="salir">
+		<prompt> Hasta otra </prompt>
+		<exit/>
+	</catch>
 
 	<form id="bienvenido">
 		<block>
@@ -46,18 +50,17 @@
 		<help>
 			<prompt bargein="false">Diga una asignatura, si esta presente en sistema se le dirá en horario en el que se imparte. En caso contrario se le pedira que diga de nuevo la asignatura. </prompt>
 		</help>
-
-		<catch event="salir">
-			<prompt> Hasta otra </prompt>
-			<exit/>
-		</catch>
 		
 	</form>
 
 	<form id="confirmar_asignatura">
 		<field name="confirmar">
 			<prompt bargein="false">Lo siento no le he escuchado bien. Ha dicho <value expr="aux"/>?</prompt>
+			<prompt count="2"> me puede confirmar si ha dicho <value expr="aux"/>?</prompt> 
 			<grammar src="gram/confirmar.jsgf"/>
+			<help>
+				<prompt bargein="false">Diga si, si ha dicho <value expr="aux"/></prompt>
+			</help>
 			<nomatch><goto next="#asignatura"/></nomatch>
 		</field>
 		<filled>
@@ -93,6 +96,9 @@
 			<prompt> Quiere saber informacion sobre otra asignatura? </prompt>
 			<grammar src="gram/confirmar.jsgf"/>
 			<catch event="asignatura"> <goto next="#asignatura_suelta"/> </catch>
+			<help>
+				<prompt bargein="false">Diga si, si quiere preguntar por una asignatura. Si no le colgamos</prompt>
+			</help>
 			<nomatch> <prompt>De acuerdo, hasta luego.</prompt> <exit/> </nomatch>
 		</field>
 		<filled> 

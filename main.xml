@@ -1,27 +1,125 @@
-<vxml version="2.1" xml:lang="es-ES">
-    <script src="saludos.js"/>
+<vxml version = "2.1" xml:lang="es-ES" >
+	<script src="script/horarios_ES.js"/>
+	<script src="script/script_horario.js"/>
+	<var name="aux"/>
+	<link event="help">
+		<grammar src="gram/ayuda.jsgf"/>
+	</link>
+	<link event="salir">
+		<grammar src="gram/salir.jsgf"/>
+	</link>
 
+	<link event="asignatura_dicha">
+		<grammar src="gram/asignaturas.jsgf"/>
+	</link>
 
-    <menu>
-        <property name="bargein" value="false"/>
-        <prompt> Bienvenido al sistema de horarios. Espere por favor </prompt>
-        <prompt xml:lang="en-US"> Welcome to the scheduling system. Please wait </prompt>
-        <prompt><audio src="Buleria.wav"/></prompt>
-        <prompt xml:lang="es-ES">
-            <value expr="greetings(0)"/>
-                Para continuar en Español pulse 1 o diga Español
-        </prompt>
-        <prompt xml:lang="en-US">
-            <value expr="greetings(1)"/>
-                To continue in English press number 2 or say English
-        </prompt>
-            <choice dtmf="1" next="horarioESP.xml">
-                                   
-            Español
-            </choice>
-            <choice xml:lang="en-US" dtmf="2" next="schedulingENG.xml">
-            English
-            </choice>
-    </menu>
+	<form id="bienvenido">
+		<block>
+			<prompt bargein="false">Buenas y bienvenido al sistema de Informatica </prompt>
+			<goto next="#asignatura"/>
+		</block>
+
+	</form>
+	<form id="asignatura">
+		
+
+		<field name="inicio">
+			<prompt bargein="false">Que asignatura quieres saber? </prompt>
+			<prompt count="2"> dime la asignatura otra vez </prompt> 
+			<prompt count="3"> repite la asignatura </prompt> 
+
+			<nomatch> La asignatura especificada no esta entre las disponibles <reprompt/></nomatch>      
+			<noinput> Perdona, no te he escuchado <reprompt/> </noinput>   
+
+			<grammar src="gram/asignaturas.jsgf"/>
+		</field>
+		
+		<filled>
+			
+			<if cond="inicio$.confidence &lt; 0.6">
+				<assign name="aux" expr="inicio"/>
+				<clear namelist="inicio"/>
+				<goto next="#confirmar_asignatura"/>
+			<else/>
+				<prompt bargein="false">
+				La asignatura de <value expr="inicio"/> son los <value expr="busca_horario(inicio).dias"/> <value expr="busca_horario(inicio).horas"/>.
+				</prompt> 
+				<clear namelist="inicio"/>
+				<goto next="#confirmar_salida"/>
+			</if>
+		</filled>
+
+		<help>
+			<prompt bargein="false">Diga una asignatura, si esta presente en sistema se le dirá en horario en el que se imparte. En caso contrario se le pedira que diga de nuevo la asignatura. </prompt>
+		</help>
+
+		<catch event="salir">
+			<prompt>
+				Hasta otra
+			</prompt>
+			<exit/>
+		</catch>
+		
+	</form>
+
+	<form id="confirmar_asignatura">
+		<field name="confirmar">
+			<prompt bargein="false">Lo siento no le he escuchado bien. Ha dicho <value expr="aux"/>?</prompt>
+			<prompt count="2"> Me puede confirmar si ha dicho <value expr="aux"/></prompt> 
+			<grammar src="gram/confirmar.jsgf"/>
+
+		</field>
+		<filled>
+			<prompt bargein="false">
+				La asignatura de <value expr="aux"/> son los <value expr="busca_horario(aux).dias"/> <value expr="busca_horario(aux).horas"/>.
+				
+			</prompt>
+			<goto next="#confirmar_salida"/>
+		</filled>
+
+		<catch event="salir">
+			<prompt>
+				Hasta otra
+			</prompt>
+			<exit/>
+		</catch>
+
+		<help>
+			<prompt bargein="false">Confirme con si, si ha dicho la asignatura  <value expr="aux"/></prompt>
+		</help>
+
+		<nomatch><goto next="#asignatura"/></nomatch>
+	</form>
+
+	<form id="confirmar_salida">
+		<field name="confirmar">
+			<prompt bargein="false">Desea preguntar por el horario de otra asignatura?</prompt>
+			<grammar src="gram/confirmar.jsgf"/>
+
+		</field>
+		<filled>
+			<prompt>
+				Adios
+			</prompt>
+			<exit/>	
+		</filled>
+
+		<catch event="salir">
+			<prompt>
+				Hasta otra
+			</prompt>
+			<exit/>
+		</catch>
+
+		<help>
+			<prompt bargein="false">Confirme con si para preguntar por otra asignatrua</prompt>
+		</help>
+
+		<nomatch>
+			<prompt>
+				Hasta otra
+			</prompt>
+			<exit/>	
+		</nomatch>
+	</form>
 </vxml>
-        
