@@ -1,0 +1,15 @@
+#JSGF V1.0;
+
+grammar asignaturas;
+
+public <asignaturas> = 						
+						Calculo | CA |
+						Fundamentos Fisicos y Tecnologicos | FFT |
+						Fundamentos de Programacion | FP |
+						Fundamentos del Software | FS |
+						algebra Lineal y Estructuras Matematicas | ALEM |
+						Estadistica | ES |
+						Ingenieria Empresa y Sociedad | IES |
+						Logica y Metodos Discretos | LMD |
+						Metodologia de la Programacion | MP |
+						Tecnologia y Organizacion de Computadores | TOC;

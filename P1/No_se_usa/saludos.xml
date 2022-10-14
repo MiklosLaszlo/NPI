@@ -1,0 +1,17 @@
+<vxml version = "2.1" xml:lang="es-ES" >
+    <script src="saludos.js">
+  
+    </script>
+  
+    <form id="asignatura">
+      <var name="Coso" expr="greetings(0)"/>
+      <block>
+          <prompt xml:lang="es-ES">
+          Hola, estoy <value expr="greetings(0)"/>
+          </prompt>
+      <prompt xml:lang="en-GB">
+          Hello, I am <value expr="greetings(1)"/>
+      </prompt>
+      </block>
+    </form>
+  </vxml>

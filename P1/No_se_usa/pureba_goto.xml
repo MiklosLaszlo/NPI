@@ -1,0 +1,18 @@
+<vxml version = "2.1" xml:lang="es-ES" >
+    <form id="asignatura">
+      <block>
+          <prompt>
+              Soy el maestro de esta escuela probablemente
+          </prompt>
+	 <goto next="prueba_goto2.xml"/>
+      </block>
+    </form>
+
+       <form id="alien2">
+        <block>
+            <prompt>
+                Soy el algo extra
+            </prompt>
+        </block>
+      </form>
+</vxml>
