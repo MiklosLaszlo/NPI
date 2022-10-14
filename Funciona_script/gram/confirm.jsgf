@@ -1,5 +1,0 @@
-#JSGF V1.0;
-
-grammar confirm;
-
-public <confirm> = yes | i confirm | i agree | true | yes i said that ;

@@ -1,5 +1,0 @@
-#JSGF V1.0;
-
-grammar exit;
-
-public <exit> = exit | bye | see you later | good bye | farewell ;

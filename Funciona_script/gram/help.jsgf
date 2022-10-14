@@ -1,5 +1,0 @@
-#JSGF V1.0;
-
-grammar help;
-
-public <help> = i do not understand | help | can i get help | i need help | explain | i do not know what to say ;

@@ -1,5 +1,0 @@
-#JSGF V1.0;
-
-grammar confirmar;
-
-public <confirmar> = si | en efecto | confirmo | cierto | eso he dicho ;

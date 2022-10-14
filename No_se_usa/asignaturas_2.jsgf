@@ -1,5 +1,0 @@
-#JSGF V1.0;
-
-grammar ciudades;
-
-public <ciudades> = calculo|fundamentos de programacion|algebra lineal y estructuras matematicas|algebra|fundamentos de sofwtare|fundamentos fisicos y tencologicos|cea|alem|efe ese|efe efe te ;
