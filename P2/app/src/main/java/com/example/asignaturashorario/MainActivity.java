@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private TextToSpeech textToSpeechEngine;
     private TextToSpeech textToSpeechEngine2;
     private TextToSpeech textToSpeechEngine3;
+    private TextToSpeech textToSpeechEnginesalida;
 
     private EditText editText;
     private ImageView micButton;
@@ -45,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
     private ImageView micButton3;
     private Button ttsButton3;
     private SpeechRecognizer speechRecognizer3;
+
+    private Button ttsButtonSalida;
+    private TextView textoSalida;
 
 
     @Override
@@ -70,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
         ttsButton3 = findViewById(R.id.button_mic3);
         speechRecognizer3 = SpeechRecognizer.createSpeechRecognizer(this);
 
+        ttsButtonSalida = findViewById(R.id.button3);
+        textoSalida = findViewById(R.id.textosalida);
 
         textToSpeechEngine = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -90,6 +97,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         textToSpeechEngine3 = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.SUCCESS) {
+                    Log.e("TTS", "Inicio de la síntesis fallido");
+                }
+            }
+        });
+
+        textToSpeechEnginesalida = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
                 if (status != TextToSpeech.SUCCESS) {
@@ -340,6 +356,18 @@ public class MainActivity extends AppCompatActivity {
                 if (!text.isEmpty())
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         textToSpeechEngine3.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts1");
+                    }
+            }
+        });
+
+        ttsButtonSalida.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                textoSalida.setText("Insertar funcion horario aqui");
+                String text = String.valueOf(textoSalida.getText());
+                if (!text.isEmpty())
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        textToSpeechEnginesalida.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts1");
                     }
             }
         });
