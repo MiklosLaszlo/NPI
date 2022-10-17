@@ -24,10 +24,14 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+
+import database.*;
 
 public class MainActivity extends AppCompatActivity {
     public static final Integer RecordAudioRequestCode = 1;
+    private final String TAG = "DB";
     private TextToSpeech textToSpeechEngine;
     private TextToSpeech textToSpeechEngine2;
     private TextToSpeech textToSpeechEngine3;
@@ -51,9 +55,20 @@ public class MainActivity extends AppCompatActivity {
     private Button ttsButtonSalida;
     private TextView textoSalida;
 
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        db = AppDatabase.getInstance(getApplicationContext());
+        AsignaturaDAO asign = db.asignaturaDAO();
+        List<Asignatura> asignaturas = asign.getAll();
+        Log.i(TAG, asign.getAll().toString());
+        Log.i(TAG, "La longitud es " + asignaturas.size());
+
+        for(Asignatura a : asignaturas){
+            Log.i(TAG, a.nombre);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
