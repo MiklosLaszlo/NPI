@@ -163,6 +163,9 @@ public class MainActivity extends AppCompatActivity {
                 micButton.setImageResource(R.drawable.ic_mic_black_off);
                 ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 editText.setText(data.get(0));
+                String text = String.valueOf(editText.getText());
+                text = "Has dicho el grado: " + text;
+                textToSpeechEngine.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts1");
             }
 
             @Override
@@ -213,6 +216,9 @@ public class MainActivity extends AppCompatActivity {
                 micButton2.setImageResource(R.drawable.ic_mic_black_off);
                 ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 editText2.setText(data.get(0));
+                String text = String.valueOf(editText2.getText());
+                text = "Has dicho la asignatura: " + text;
+                textToSpeechEngine2.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts1");
             }
 
             @Override
@@ -263,6 +269,9 @@ public class MainActivity extends AppCompatActivity {
                 micButton3.setImageResource(R.drawable.ic_mic_black_off);
                 ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 editText3.setText(data.get(0));
+                String text = String.valueOf(editText3.getText());
+                text = "Has dicho el subgrupo: " + text;
+                textToSpeechEngine3.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts1");
             }
 
             @Override
@@ -284,8 +293,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     micButton.setImageResource(R.drawable.ic_mic_black_24dp);
-                    speechRecognizer2.stopListening();
-                    speechRecognizer3.stopListening();
+                    speechRecognizer2.cancel();
+                    speechRecognizer3.cancel();
                     micButton2.setImageResource(R.drawable.ic_mic_black_off);
                     micButton3.setImageResource(R.drawable.ic_mic_black_off);
                     speechRecognizer.startListening(speechRecognizerIntent);
@@ -312,8 +321,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     micButton2.setImageResource(R.drawable.ic_mic_black_24dp);
-                    speechRecognizer.stopListening();
-                    speechRecognizer3.stopListening();
+                    speechRecognizer.cancel();
+                    speechRecognizer3.cancel();
                     micButton.setImageResource(R.drawable.ic_mic_black_off);
                     micButton3.setImageResource(R.drawable.ic_mic_black_off);
                     speechRecognizer2.startListening(speechRecognizerIntent2);
@@ -340,8 +349,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     micButton3.setImageResource(R.drawable.ic_mic_black_24dp);
-                    speechRecognizer2.stopListening();
-                    speechRecognizer.stopListening();
+                    speechRecognizer2.cancel();
+                    speechRecognizer.cancel();
                     micButton2.setImageResource(R.drawable.ic_mic_black_off);
                     micButton.setImageResource(R.drawable.ic_mic_black_off);
                     speechRecognizer3.startListening(speechRecognizerIntent3);
@@ -371,6 +380,7 @@ public class MainActivity extends AppCompatActivity {
                     }
             }
         });
+
 
 
     }

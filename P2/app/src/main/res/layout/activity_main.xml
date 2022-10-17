@@ -8,120 +8,111 @@
 
     <LinearLayout
         android:id="@+id/linearLayout3"
-        android:layout_width="362dp"
-        android:layout_height="54dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="337dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textmic3">
+        app:layout_constraintTop_toBottomOf="@+id/textoplano3">
 
         <ImageView
             android:id="@+id/mic3"
-            android:layout_width="66dp"
-            android:layout_height="50dp"
+            android:layout_width="37dp"
+            android:layout_height="match_parent"
             android:backgroundTint="#F9F8FA"
             android:baselineAligned="false"
             android:paddingRight="1dp"
             android:src="@drawable/ic_mic_black_off" />
 
+        <EditText
+            android:id="@+id/textmic3"
+            android:layout_width="224dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint='Escriba o micro para hablar'
+            android:inputType="textPersonName" />
+
         <Button
             android:id="@+id/button_mic3"
-            android:layout_width="121dp"
-            android:layout_height="wrap_content"
-            android:text="Button" />
+            android:layout_width="62dp"
+            android:layout_height="35dp"
+            android:text="leer"
+            android:textSize="8sp" />
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="359dp"
-        android:layout_height="52dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="337dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textmic">
+        app:layout_constraintTop_toBottomOf="@+id/Textoplano">
 
         <ImageView
             android:id="@+id/mic"
-            android:layout_width="66dp"
-            android:layout_height="49dp"
+            android:layout_width="37dp"
+            android:layout_height="match_parent"
             android:backgroundTint="#F9F8FA"
             android:baselineAligned="false"
             android:paddingRight="1dp"
             android:src="@drawable/ic_mic_black_off" />
+
+        <EditText
+            android:id="@+id/textmic"
+            android:layout_width="224dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint='Escriba o micro para hablar'
+            android:inputType="textPersonName" />
 
         <Button
             android:id="@+id/button_mic"
-            android:layout_width="104dp"
-            android:layout_height="wrap_content"
-            android:text="Button" />
+            android:layout_width="62dp"
+            android:layout_height="35dp"
+            android:text="leer"
+            android:textSize="8sp" />
 
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/textmic"
-        android:layout_width="287dp"
-        android:layout_height="43dp"
-        android:layout_marginStart="24dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Textoplano" />
-
-    <EditText
-        android:id="@+id/textmic2"
-        android:layout_width="284dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="24dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textoplano2" />
-
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="368dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="4dp"
+        android:layout_width="337dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textmic2">
+        app:layout_constraintTop_toBottomOf="@+id/textoplano2">
 
         <ImageView
             android:id="@+id/mic2"
-            android:layout_width="67dp"
-            android:layout_height="47dp"
+            android:layout_width="37dp"
+            android:layout_height="match_parent"
             android:backgroundTint="#F9F8FA"
             android:baselineAligned="false"
             android:paddingRight="1dp"
             android:src="@drawable/ic_mic_black_off" />
 
+        <EditText
+            android:id="@+id/textmic2"
+            android:layout_width="224dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Escriba o micro para hablar"
+            android:inputType="textPersonName" />
+
         <Button
             android:id="@+id/button_mic2"
-            android:layout_width="104dp"
-            android:layout_height="wrap_content"
-            android:text="Button" />
+            android:layout_width="62dp"
+            android:layout_height="35dp"
+            android:text="leer"
+            android:textSize="8sp" />
 
     </LinearLayout>
-
-    <EditText
-        android:id="@+id/textmic3"
-        android:layout_width="280dp"
-        android:layout_height="49dp"
-        android:layout_marginStart="24dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textoplano3" />
 
     <TextView
         android:id="@+id/Textoplano"
         android:layout_width="325dp"
         android:layout_height="24dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="10dp"
         android:text="Grado"
         android:textAllCaps="false"
@@ -134,7 +125,7 @@
         android:id="@+id/textoplano2"
         android:layout_width="281dp"
         android:layout_height="31dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="10dp"
         android:text="Nombre de la asignatura"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -146,9 +137,9 @@
         android:id="@+id/textoplano3"
         android:layout_width="279dp"
         android:layout_height="28dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="10dp"
-        android:text="Teoría o práctica"
+        android:text="Seleccionar subgrupo"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -158,9 +149,9 @@
         android:id="@+id/textView4"
         android:layout_width="352dp"
         android:layout_height="50dp"
-        android:layout_marginStart="3dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="5dp"
-        android:text="   Sistema Horarios"
+        android:text="Sistema Horarios"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textDirection="inherit"
         android:textIsSelectable="false"
@@ -172,19 +163,19 @@
 
     <TextView
         android:id="@+id/textosalida"
-        android:layout_width="287dp"
-        android:layout_height="61dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="10dp"
+        android:layout_width="337dp"
+        android:layout_height="66dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:text="Rellene el resto de campos"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
     <Button
         android:id="@+id/button3"
-        android:layout_width="280dp"
-        android:layout_height="38dp"
-        android:layout_marginStart="24dp"
+        android:layout_width="337dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="16dp"
         android:text="Calcular horario"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textosalida" />
