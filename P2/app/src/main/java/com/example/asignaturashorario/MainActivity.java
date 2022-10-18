@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.util.DisplayMetrics;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -67,7 +69,12 @@ public class MainActivity extends AppCompatActivity {
 
         for(Asignatura a : asignaturas){
             Log.i(TAG, a.nombre);
+            Log.i(TAG, a.grado);
+            Log.i(TAG, String.valueOf(a.cuatri));
         }
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);

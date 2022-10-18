@@ -11,6 +11,8 @@
         android:layout_width="337dp"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textoplano3">
 
@@ -45,6 +47,8 @@
         android:layout_width="337dp"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Textoplano">
 
@@ -79,6 +83,8 @@
         android:layout_width="337dp"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textoplano2">
 
@@ -113,44 +119,51 @@
         android:layout_width="325dp"
         android:layout_height="24dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:text="Grado"
         android:textAllCaps="false"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <TextView
         android:id="@+id/textoplano2"
-        android:layout_width="281dp"
-        android:layout_height="31dp"
+        android:layout_width="325dp"
+        android:layout_height="24dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:text="Nombre de la asignatura"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <TextView
         android:id="@+id/textoplano3"
-        android:layout_width="279dp"
-        android:layout_height="28dp"
+        android:layout_width="325dp"
+        android:layout_height="24dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:text="Seleccionar subgrupo"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
     <TextView
         android:id="@+id/textView4"
-        android:layout_width="352dp"
-        android:layout_height="50dp"
+        android:layout_width="319dp"
+        android:layout_height="46dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="5dp"
+        android:layout_marginEnd="16dp"
         android:text="Sistema Horarios"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textDirection="inherit"
@@ -158,26 +171,37 @@
         android:textSize="34sp"
         android:textStyle="bold"
         android:verticalScrollbarPosition="defaultPosition"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textosalida"
-        android:layout_width="337dp"
-        android:layout_height="66dp"
+    <LinearLayout
+        android:layout_width="363dp"
+        android:layout_height="343dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="Rellene el resto de campos"
+        android:layout_marginEnd="16dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
 
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="337dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="16dp"
-        android:text="Calcular horario"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textosalida" />
+        <TextView
+            android:id="@+id/textosalida"
+            android:layout_width="match_parent"
+            android:layout_height="66dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="Rellene el resto de campos" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="Calcular horario"
+            app:layout_constraintTop_toBottomOf="@+id/textosalida" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
