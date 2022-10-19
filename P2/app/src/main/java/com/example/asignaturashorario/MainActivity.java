@@ -61,9 +61,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Pruebas con la base de datos
         db = AppDatabase.getInstance(getApplicationContext());
         AsignaturaDAO asign = db.asignaturaDAO();
+        SubgrupoDAO subg = db.subgrupoDAO();
         List<Asignatura> asignaturas = asign.getAll();
+        List<Subgrupo> subgrupos = subg.getAll();
         Log.i(TAG, asign.getAll().toString());
         Log.i(TAG, "La longitud es " + asignaturas.size());
 
@@ -71,6 +74,10 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, a.nombre);
             Log.i(TAG, a.grado);
             Log.i(TAG, String.valueOf(a.cuatri));
+        }
+
+        for(Subgrupo a : subgrupos){
+            Log.i(TAG, a.nombre);
         }
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
