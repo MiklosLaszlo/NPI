@@ -5,8 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import android.util.DisplayMetrics;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,9 +19,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+// Para visibilidad en texto cambiado
+import android.text.TextWatcher;
+import android.text.Editable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
     private Button ttsButtonSalida;
     private TextView textoSalida;
 
+    private LinearLayout resultLayout;
+
     private AppDatabase db;
 
     @Override
@@ -80,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, a.nombre);
         }
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+        // Fin pruebas
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -89,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
             checkPermission();
         }
 
+        // Unimos cada texto, boton... a su correspondente en el Layout
         editText = findViewById(R.id.textmic);
         micButton = findViewById(R.id.mic);
         ttsButton = findViewById(R.id.button_mic);
@@ -106,6 +112,8 @@ public class MainActivity extends AppCompatActivity {
 
         ttsButtonSalida = findViewById(R.id.button3);
         textoSalida = findViewById(R.id.textosalida);
+
+        resultLayout = findViewById(R.id.resultLayout);
 
         textToSpeechEngine = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -154,6 +162,8 @@ public class MainActivity extends AppCompatActivity {
         final Intent speechRecognizerIntent3 = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         speechRecognizerIntent3.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         speechRecognizerIntent3.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+
+        // Reconocedores del habla, cada uno esta relacionado con un editText distinto y un speechRecognizer distinto
 
         speechRecognizer.setRecognitionListener(new RecognitionListener() {
             @Override
@@ -314,6 +324,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Botones para escuchar al usuario, y repetir lo que ha dicho, cada uno por un texto
+
         micButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -398,6 +410,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        // Boton que sirve para llamar a la funcion de buscar horario, escribe en el texto de salida y lo dice.
         ttsButtonSalida.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -409,6 +423,27 @@ public class MainActivity extends AppCompatActivity {
                     }
             }
         });
+
+        // Cuando el texto de editText,editText2, editText3 cambie se aplica esta clase
+        TextWatcher textWatcher = new  TextWatcher (){
+            public void afterTextChanged(Editable s) {
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Funcion privada del main, si los tres editText no estan vacios, hace visible calcular horario
+                // Si habia algún horario calculado este se borra.
+                activateVisibility();
+                textoSalida.setText("",TextView.BufferType.EDITABLE);
+            }
+
+        };
+
+        editText.addTextChangedListener(textWatcher);
+        editText2.addTextChangedListener(textWatcher);
+        editText3.addTextChangedListener(textWatcher);
 
 
 
@@ -427,6 +462,13 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.RECORD_AUDIO}, RecordAudioRequestCode);
         }
     }
+
+    private void activateVisibility(){
+        if(String.valueOf(editText.getText()).isEmpty() || String.valueOf(editText2.getText()).isEmpty() || String.valueOf(editText3.getText()).isEmpty())
+            resultLayout.setVisibility(View.INVISIBLE);
+        else
+            resultLayout.setVisibility(View.VISIBLE);
+    };
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
