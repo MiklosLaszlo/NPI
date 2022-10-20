@@ -313,7 +313,7 @@ int main (int argc, char** argv) {
     // ejecución
 	while (an != 0) {
 
-		printf("__%d__ ", an);
+		printf(" --> %d   ", an);
         //printf("%s ", yytext());
 		an = yylex();
 
