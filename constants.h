@@ -33,5 +33,6 @@
 #define FINVARIABLES 286
 #define MENOS 287
 #define POR 288
+#define IGUAL 289
 
 #endif
