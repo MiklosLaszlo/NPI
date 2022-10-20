@@ -135,7 +135,7 @@ otros .
     ECHO;
     return (OPBIN);
 }
-.
+
 "--" {
     ECHO;
     return (OPBIN);
@@ -225,22 +225,12 @@ otros .
     ECHO;
     return (PRINCIPIOLISTA);
 }
-"open" {
-    ECHO;
-    return (OPEN);
-}
-"close" {
-    ECHO;
-    return (CLOSE);
-}
+
 "-" {
     ECHO;
     return (MENOS);
 }
-({letra}|_)({letra}|{numero}|_)* {
-     ECHO;
-     return(IDENTIFICADOR);
- }
+
 
 "<<" {
     ECHO;
@@ -251,10 +241,7 @@ otros .
     ECHO;
     return (MOVLISTA);
 }
-"$" {
-    ECHO;
-    return (PRINCIPIOLISTA);
-}
+
 "open" {
     ECHO;
     return (INIVARIABLES);
@@ -270,6 +257,14 @@ otros .
     ECHO;
     return (POR);
 }
+
+({letra}|_)({letra}|{numero}|_)* {
+     ECHO;
+     return(IDENTIFICADOR);
+ }
+
+
+
 {otros}	printf(" \nError lexico en linea: %d, No se reconoce la palabra '%s'. ",yylineno,yytext);
 
 %%
