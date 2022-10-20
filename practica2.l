@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <constants.h>
+#include "constants.h"
 
 %}
 
@@ -16,7 +16,8 @@
 letra [a-zA-Z]
 numero [0-9]
 tipo_basico int|double|char|bool
-lista {tipo_basico}|list of {tipo_basico}
+tipo_dato (int|double|char|bool)|list of (int|double|char|bool)
+blanco [ \t]
 otros .
 %%
 
@@ -73,6 +74,12 @@ otros .
     ECHO;
     return (OPUNI);
 }
+
+{tipo_dato} {
+   ECHO;
+   return (TYPE);
+}
+
 "?" {
     ECHO;
     return (OPUNI);
@@ -212,7 +219,7 @@ otros .
 }
 
 "@@" {
-    ECHO
+    ECHO;
     return (TER2);
 }
 
@@ -258,18 +265,56 @@ otros .
     return (POR);
 }
 
-({letra}|_)({letra}|{numero}|_)* {
+({letra})({letra}|{numero})* {
      ECHO;
      return(IDENTIFICADOR);
  }
 
+{blanco} ;
 
-
-{otros}	printf(" \nError lexico en linea: %d, No se reconoce la palabra '%s'. ",yylineno,yytext);
+{otros}	printf(" \nError lexico en linea: %d, No se reconoce la palabra '%s'. \n",yylineno,yytext);
 
 %%
 
-main(){
+/* Procedimientos de usuario */
 
-printf(yylex());
+int main (int argc, char** argv) {
+
+    // Se comprueba que se recibe 1 argumento (nombre del fichero fuente)
+	if (argc <= 1) {
+
+        printf("\nError al ejecutar la aplicación...\n");
+        printf("Uso: %s nombre_fichero_fuente\n", argv[0]);
+
+		exit(-1);
+
+	}
+
+    // Se abre el fichero recibido por parámetro
+    yyin = fopen(argv[1], "r");
+
+    // Si "yyin" es nulo no se ha podido abrir el fichero
+    if (yyin == NULL) {
+
+        printf ("\nError al abrir el fichero %s\n", argv[1]);
+
+        exit (-2);
+
+    }
+
+    // Invoca al analizador léxico para comenzar el análisis
+	int an = yylex();
+
+    // Hasta que no termine de analizar todo el fichero no finalizará la
+    // ejecución
+	while (an != 0) {
+
+		printf("__%d__ ", an);
+        //printf("%s ", yytext());
+		an = yylex();
+
+	}
+
+	exit(1);
+
 }
