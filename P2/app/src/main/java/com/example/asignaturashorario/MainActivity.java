@@ -62,30 +62,16 @@ public class MainActivity extends AppCompatActivity {
 
     private LinearLayout resultLayout;
 
-    private AppDatabase db;
+    private BasedatosHorarios db;
+
+    private String nombre_grado = "";
+    private String nombre_asignatura = "";
+    private String nombre_subgrupo = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Pruebas con la base de datos
-        db = AppDatabase.getInstance(getApplicationContext());
-        AsignaturaDAO asign = db.asignaturaDAO();
-        SubgrupoDAO subg = db.subgrupoDAO();
-        List<Asignatura> asignaturas = asign.getAll();
-        List<Subgrupo> subgrupos = subg.getAll();
-        Log.i(TAG, asign.getAll().toString());
-        Log.i(TAG, "La longitud es " + asignaturas.size());
-
-        for(Asignatura a : asignaturas){
-            Log.i(TAG, a.nombre);
-            Log.i(TAG, a.grado);
-            Log.i(TAG, String.valueOf(a.cuatri));
-        }
-
-        for(Subgrupo a : subgrupos){
-            Log.i(TAG, a.nombre);
-        }
-
-
+        db = new BasedatosHorarios(getApplicationContext());
         // Fin pruebas
 
         super.onCreate(savedInstanceState);
@@ -203,7 +189,18 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 editText.setText(data.get(0));
                 String text = String.valueOf(editText.getText());
-                text = "Has dicho el grado: " + text;
+
+                if(db.existeAsignaturaGrado(nombre_asignatura, text)) {
+                    nombre_grado = text;
+                    text = "Has dicho el grado: " + text;
+                    if(!nombre_asignatura.isEmpty()) db.setAsignatura(nombre_asignatura, nombre_subgrupo);
+                }
+                else{
+                    text = "No existe un grado " + text;
+                    if ( !nombre_asignatura.isEmpty() ) text+= " con la asignatura" + nombre_asignatura;
+                    textoSalida.setText(text);
+                }
+
                 textToSpeechEngine.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts1");
             }
 
@@ -256,7 +253,18 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 editText2.setText(data.get(0));
                 String text = String.valueOf(editText2.getText());
-                text = "Has dicho la asignatura: " + text;
+
+                if(db.existeAsignaturaGrado(text, nombre_grado)) {
+                    nombre_asignatura = text;
+                    text = "Has dicho la asignatura: " + text;
+                    if(!nombre_grado.isEmpty()) db.setAsignatura(nombre_asignatura, nombre_subgrupo);
+                }
+                else{
+                    text = "No existe la asignatura " + text;
+                    if ( !nombre_grado.isEmpty() ) text+= " en el grado " + nombre_grado;
+                    textoSalida.setText(text);
+                }
+
                 textToSpeechEngine2.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts1");
             }
 
@@ -309,7 +317,21 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 editText3.setText(data.get(0));
                 String text = String.valueOf(editText3.getText());
-                text = "Has dicho el subgrupo: " + text;
+
+                if(db.setAsignatura(editText2.getText().toString(), editText.getText().toString())){
+                    if ( db.setSubgrupo(text) ){
+                        nombre_subgrupo = text;
+                        text = "Has dicho el subgrupo: " + text;
+                    }
+                    else {
+                        text = "No existe el subgrupo " + text;
+                        textoSalida.setText(text);
+                    }
+                }
+                else{
+                    text = "No existe la combinación de grado y asignatura proporcionada";
+                }
+
                 textToSpeechEngine3.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts1");
             }
 
@@ -414,8 +436,9 @@ public class MainActivity extends AppCompatActivity {
         // Boton que sirve para llamar a la funcion de buscar horario, escribe en el texto de salida y lo dice.
         ttsButtonSalida.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                textoSalida.setText("Insertar funcion horario aqui");
+                db.setAsignatura(editText2.getText().toString(), editText.getText().toString());
+                db.setSubgrupo(editText3.getText().toString());
+                textoSalida.setText(db.getHorario());
                 String text = String.valueOf(textoSalida.getText());
                 if (!text.isEmpty())
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
