@@ -15,8 +15,6 @@
 
 letra [a-zA-Z]
 numero [0-9]
-tipo_basico int|double|char|bool
-tipo_dato (int|double|char|bool)|list[ ]of[ ](int|double|char|bool)
 blanco [ \t]
 otros .
 %%
@@ -78,8 +76,43 @@ otros .
     return (OPUNI);
 }
 
-{tipo_dato} {
+"int" {
    ECHO;
+   return (TYPE); 
+}
+
+"double" {
+    ECHO;
+   return (TYPE);
+}
+
+"char" {
+    ECHO;
+   return (TYPE);
+}
+
+"bool" {
+    ECHO;
+   return (TYPE);
+}
+
+"list"[ ]"of"[ ]"int" {
+    ECHO;
+   return (TYPE);
+}
+
+"list"[ ]"of"[ ]"double" {
+    ECHO;
+   return (TYPE);
+}
+
+"list"[ ]"of"[ ]"char" {
+    ECHO;
+   return (TYPE);
+}
+
+"list"[ ]"of"[ ]"bool" {
+    ECHO;
    return (TYPE);
 }
 
