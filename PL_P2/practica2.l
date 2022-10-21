@@ -5,13 +5,18 @@
 #include <string.h>
 #include "constants.h"
 
+#define RESET_COLOR    "\x1b[0m"
+#define BG_COLOR_RED     "\x1B[41m"
+
 int nlinea = 1;
+char atributo[100];
 %}
 
 
 
 %option yylineno
 %option noyywrap
+
 
 
 letra [a-zA-Z]
@@ -22,348 +27,314 @@ otros .
 
 
 "main" {
-    ECHO;
+    strcpy(atributo, "");
     return (MAIN);
 }
 
 "{" {
-    ECHO;
+    strcpy(atributo, "");
     return (LLAVEIZQ);
 }
 
 
 "}" {
-    ECHO;
+    strcpy(atributo, "");
     return (LLAVEDCH);
 }
 
 
 "[" {
-    ECHO;
+    strcpy(atributo, "");
     return (CORIZQ);
 }
 
 "]" {
-    ECHO;
+    strcpy(atributo, "");
     return (CORDCH);
 }
 
 "(" {
-    ECHO;
+    strcpy(atributo, "");
     return (PARIZQ);
 }
 
 ")" {
-    ECHO;
+    strcpy(atributo, "");
     return (PARDCH);
 }
 
 
 "not" {
-    ECHO;
-    printf("--> atributo: 0");
+    strcpy(atributo, "0");
     return (OPUNI);
 }
 
 "=" {
-    ECHO;
+    strcpy(atributo, "");
     return (IGUAL);
 }
 "&" {
-    ECHO;
-    printf("--> atributo: 1");
+    strcpy(atributo, "1");
     return (OPUNI);
 }
 "#" {
-    ECHO;
-    printf("--> atributo: 2");
+    strcpy(atributo, "2");
     return (OPUNI);
 }
 
 "int" {
-   ECHO;
-   printf("--> atributo: 0");
+   strcpy(atributo, "0");
    return (TYPE); 
 }
 
 "double" {
-    ECHO;
-    printf("--> atributo: 1");
+    strcpy(atributo, "1");
    return (TYPE);
 }
 
 "char" {
-    ECHO;
-    printf("--> atributo: 2");
+    strcpy(atributo, "2");
    return (TYPE);
 }
 
 "bool" {
-    ECHO;
-    printf("--> atributo: 3");
+    strcpy(atributo, "3");
    return (TYPE);
 }
 
 "list"[ ]"of"[ ]"int" {
-    ECHO;
-    printf("--> atributo: 4");
+    strcpy(atributo, "4");
    return (TYPE);
 }
 
 "list"[ ]"of"[ ]"double" {
-    ECHO;
-    printf("--> atributo: 5");
+    strcpy(atributo, "5");
    return (TYPE);
 }
 
 "list"[ ]"of"[ ]"char" {
-    ECHO;
-    printf("--> atributo: 6");
+    strcpy(atributo, "6");
    return (TYPE);
 }
 
 "list"[ ]"of"[ ]"bool" {
-    ECHO;
-    printf("--> atributo: 7");
+    strcpy(atributo, "7");
    return (TYPE);
 }
 
 "?" {
-    ECHO;
-    printf("--> atributo: 3");
+    strcpy(atributo, "3");
     return (OPUNI);
 }
 
 "equal" {
-    ECHO;
-    printf("--> atributo: 0");
+    strcpy(atributo, "0");
     return (OPBIN);
 }
 
 "not_equal" {
-    ECHO;
-    printf("--> atributo: 1");
+    strcpy(atributo, "1");
     return (OPBIN);
 }
 "and" {
-    ECHO;
-    printf("--> atributo: 2");
+    strcpy(atributo, "2");
     return (OPBIN);
 }
 
 "or" {
-    ECHO;
-    printf("--> atributo: 3");
+    strcpy(atributo, "3");
     return (OPBIN);
 }
 "xor" {
-    ECHO;
-    printf("--> atributo: 4");
+    strcpy(atributo, "4");
     return (OPBIN);
 }
 "+" {
-    ECHO;
-    printf("--> atributo: 5");
+    strcpy(atributo, "5");
     return (OPBIN);
 }
 
 
 "/" {
-    ECHO;
-    printf("--> atributo: 6");
+    strcpy(atributo, "6");
     return (OPBIN);
 }
 
 "less" {
-    ECHO;
-    printf("--> atributo: 7");
+    strcpy(atributo, "7");
     return (OPBIN);
 }
 
 "greater" {
-    ECHO;
-    printf("--> atributo: 8");
+    strcpy(atributo, "8");
     return (OPBIN);
 }
 
 "less_eq" {
-    ECHO;
-    printf("--> atributo: 9");
+    strcpy(atributo, "9");
     return (OPBIN);
 }
 
 "greater_eq" {
-    ECHO;
-    printf("--> atributo: 10");
+    strcpy(atributo, "10");
     return (OPBIN);
 }
 
 "@" {
-    ECHO;
-    printf("--> atributo: 11");
+    strcpy(atributo, "11");
     return (OPBIN);
 }
 
 "--" {
-    ECHO;
-    printf("--> atributo: 12");
+    strcpy(atributo, "12");
     return (OPBIN);
 }
 "%" {
-    ECHO;
-    printf("--> atributo: 13");
+    strcpy(atributo, "13");
     return (OPBIN);
 }
 
 "**" {
-    ECHO;
-    printf("--> atributo: 14");
+    strcpy(atributo, "14");
     return (OPBIN);
 }
 
 "if" {
-    ECHO;
+    strcpy(atributo, "");
     return (IF);
 }
 
 "then" {
-    ECHO;
+    strcpy(atributo, "");
     return (THEN);
 
 }
 
 "else" {
-    ECHO;
+    strcpy(atributo, "");
     return(ELSE);
 }
 
 "for" {
-    ECHO;
+    strcpy(atributo, "");
     return (FOR);
 }
 
 "to" {
-    ECHO;
+    strcpy(atributo, "");
     return (TO);
 }
 "do" {
-    ECHO;
+    strcpy(atributo, "");
     return (DO);
 }
 
 "write" {
-    ECHO;
+    strcpy(atributo, "");
     return (WRITE);
 }
 "read" {
-    ECHO;
+    strcpy(atributo, "");
     return (READ);
 }
 "," {
-    ECHO;
+    strcpy(atributo, "");
     return (COMA);
 }
 
 ";" {
-    ECHO;
+    strcpy(atributo, "");
     return (PYC);
 }
 "return" {
-    ECHO;
+    strcpy(atributo, "");
     return (RETURN);
 }
 "while" {
-    ECHO;
+    strcpy(atributo, "");
     return(WHILE);
 }
 
 "++" {
-    ECHO;
+    strcpy(atributo, "");
     return (TER1);
 }
 
 "@@" {
-    ECHO;
+    strcpy(atributo, "");
     return (TER2);
 }
 
 
 "$" {
-    ECHO;
+    strcpy(atributo, "");
     return (PRINCIPIOLISTA);
 }
 
 "-" {
-    ECHO;
-    return (MENOS);
+    strcpy(atributo, "0");
+    return (MENOSPOR);
 }
 
 
 "<<" {
-    ECHO;
-    printf("--> atributo: 0");
+    strcpy(atributo, "0");
     return (MOVLISTA);
  }
 
 ">>" {
-    ECHO;
-    printf("--> atributo: 1");
+    strcpy(atributo, "1");
     return (MOVLISTA);
 }
 
 "open" {
-    ECHO;
+    strcpy(atributo, "");
     return (INIVARIABLES);
 }
 
 "close" {
-    ECHO;
+    strcpy(atributo, "");
     return (FINVARIABLES);
 }
 
 
 "*" {
-    ECHO;
-    return (POR);
+    strcpy(atributo, "1");
+    return (MENOSPOR);
 }
 
 ("'"({letra}|{numero})"'") {
-    ECHO;
-    printf("--> atributo: 0");
+    strcpy(atributo, "0");
     return (LITERAL);
 }
 
 ({numero}+) {
-    ECHO;
-    printf("--> atributo: 1");
+    strcpy(atributo, "1");
     return (LITERAL);
 }
 
 ({numero}+.{numero}+) {
-    ECHO;
-    printf("--> atributo: 2");
+    strcpy(atributo, "2");
     return (LITERAL);
 }
 
 ("True"|"False") {
-    ECHO;
-    printf("--> atributo: 3");
+    strcpy(atributo, "3");
     return (LITERAL);
 }
 
 ({letra})({letra}|{numero})* {
-     ECHO;
+     strcpy(atributo, yytext);
      return(IDENTIFICADOR);
  }
 
 {blanco} ;
 
 [\n] {
-    printf("\n");
     nlinea = nlinea + 1;
 }
 
-{otros}	printf(" \nError lexico en linea: %d, No se reconoce la palabra '%s'. \n",nlinea,yytext);
+{otros}	printf(BG_COLOR_RED "Error lexico"  RESET_COLOR " linea: %d, No se reconoce la palabra '%s'.\n",nlinea,yytext);
 
 %%
 
@@ -400,13 +371,11 @@ int main (int argc, char** argv) {
     // ejecución
 	while (an != 0) {
 
-		printf(" -->Token: %d   ", an);
-        //printf("%s ", yytext());
+		printf("codigo: %d\tatributo:%s\tlexema:%s\tlinea:%d\n", an,atributo,yytext,nlinea);
 		an = yylex();
 
 	}
 
-    printf("\n");
-	exit(1);
+	exit(0);
 
 }

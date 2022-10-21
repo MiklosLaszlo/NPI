@@ -39,7 +39,7 @@ while i less 50
 
 i xor a;
 i or a;
-
+prueba = True;
 
 write(i)
 
