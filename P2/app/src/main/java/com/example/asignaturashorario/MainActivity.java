@@ -394,12 +394,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ttsButton2.setOnClickListener(new View.OnClickListener() {
+        // Boton que sirve para llamar a la funcion de buscar horario, escribe en el texto de salida y lo dice.
+        ttsButtonSalida.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String text = String.valueOf(editText2.getText());
+                db.setAsignatura(editText2.getText().toString(), editText.getText().toString());
+                db.setSubgrupo(editText3.getText().toString());
+                textoSalida.setText(db.getHorario());
+                String text = String.valueOf(textoSalida.getText());
+                String voz= db.getHorarioTTS();
                 if (!text.isEmpty())
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        textToSpeechEngine2.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts1");
+                        textToSpeechEnginesalida.speak(voz, TextToSpeech.QUEUE_FLUSH, null, "tts1");
                     }
             }
         });
