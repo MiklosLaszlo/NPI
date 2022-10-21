@@ -193,7 +193,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="213dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:orientation="vertical"
                 android:visibility="invisible"
@@ -211,8 +211,9 @@
                 <TextView
                     android:id="@+id/textosalida"
                     android:layout_width="match_parent"
-                    android:layout_height="148dp"
-                    android:text="Rellene el resto de campos" />
+                    android:layout_height="match_parent"
+                    android:text="Rellene el resto de campos"
+                    android:textSize="16sp" />
 
             </LinearLayout>
         </LinearLayout>
