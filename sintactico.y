@@ -1,8 +1,20 @@
 %{
     #include <stdlib.h>
     #include <stdio.h>
-    #include <string.h>    
+    #include <string.h>   
+    
+    // #include "y.tab.h" // Creo que esto habria que añadirlo al lex
+
+    // La siguiente declaracion permite que ’yyerror’ se pueda invocar desde el
+    // fuente de lex
+    void yyerror( char * msg ) ;
+
+    // Contamos las lineas, lo cuenta lex pero yacc lo tendra en cuenta
+    int linea_actual = 1 ; 
 %}
+
+
+// TOKENS
 
 //********************
 //REVISAR
@@ -43,6 +55,10 @@
 
 %%
 
+// Producciones
+
+// ######################
+
 programa : MAIN bloque PYC ;
 bloque : LLAVEIZQ
         declar_de_variables_locales
@@ -81,16 +97,19 @@ tipo_basico : TYPE ;
 //numero : digitos "." digitos | digitos
 //digitos : digitos LITERAL | LITERAL
 
+// He comentado numero, boolean y simbolos porque al hacer yacc error
+
 //OPCION 2 sustituir numero por literal y borrar numero
-numero : LITERAL ; // Nico: creo que esto no hace falta o se deberia de poner al reves
+//numero : LITERAL ; // Nico: creo que esto no hace falta o se deberia de poner al reves
 
 //BORRAR bolean y sustituir por literal?
-boolean : LITERAL ; // Nico: lo mismo que con numero
+//boolean : LITERAL ; // Nico: lo mismo que con numero
 
 //??
-simbolos : simbolos TYPE ;
+//simbolos : simbolos TYPE ;
 
-sentencias : sentencias sentencia ;
+sentencias : sentencias sentencia 
+        | sentencia ;
 
 sentencia : sentencia_asignacion
         | sentencia_if 		
@@ -149,8 +168,7 @@ agregado : CORIZQ lista_expresiones CORDCH ;
 lista_expresiones : lista_expresiones COMA expresion
         | expresion ;
 
-
-    
+%%
 
 
 

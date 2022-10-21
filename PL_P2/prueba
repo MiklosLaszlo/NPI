@@ -7,7 +7,7 @@ main{
         bool prueba;
     close
 
-!
+
 int Funcion(){
     open 
         int a;
@@ -17,7 +17,7 @@ int Funcion(){
     c=3
      a=7;
      b=6;
- !    d=a-b;   
+     d=a-b;   
 
   return d;  
 }
@@ -27,7 +27,7 @@ e=Funcion();
 if (e equals 1 ) 
     then write (d);
 else
-    write (hola)!;
+    write (hola);
 
 
 for i=3 to i less 20 do 
