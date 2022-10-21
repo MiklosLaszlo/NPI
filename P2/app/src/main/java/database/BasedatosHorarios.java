@@ -123,4 +123,13 @@ public class BasedatosHorarios {
         }
         return salida;
     }
+    public String getHorarioTTS() {
+        if(lista_horas.isEmpty()) return "La combinación que ha elegido no es posible por favor revísela";
+        //String salida = "La asignatura " + asignatura.nombre + " del grado " + asignatura.grado + " (subgrupo " + subrupo.nombre + ") son los:\n" ;
+        String salida= "El subgrupo "  + subrupo.nombre + " de  " + asignatura.nombre + " son los: \n";
+        for (Hora h : lista_horas){
+            salida+= "     " + BasedatosHorarios.dias.get(h.dia) + ": de " + h.horaInicio + " a " + h.horaFin + " en el aula: " + h.clase + "\n";
+        }
+        return salida;
+    }
 }
