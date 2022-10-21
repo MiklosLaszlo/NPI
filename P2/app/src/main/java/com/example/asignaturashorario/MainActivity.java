@@ -436,7 +436,7 @@ public class MainActivity extends AppCompatActivity {
         // Boton que sirve para llamar a la funcion de buscar horario, escribe en el texto de salida y lo dice.
         ttsButtonSalida.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                db.setAsignatura(editText2.getText().toString(), editText.getText().toString());
+                db.setAsignatura(editText2.getText().toString().trim(), editText.getText().toString().trim());
                 db.setSubgrupo(editText3.getText().toString());
                 textoSalida.setText(db.getHorario());
                 String text = String.valueOf(textoSalida.getText());

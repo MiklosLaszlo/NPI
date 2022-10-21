@@ -71,6 +71,7 @@ public class BasedatosHorarios {
     }
 
     public boolean setAsignatura(String asignatura_p, String grado){
+        Log.i("a", "asignatura: " + asignatura_p + " grado " + grado);
         List<Asignatura> asignaturas = asignaturaDAO.getAsignaturaId(grado, asignatura_p);
         if(asignaturas.size() != 1) {
             asignatura.id = -1; subrupo.id = -1;
@@ -91,24 +92,20 @@ public class BasedatosHorarios {
             salida = lista_subgrupos.get(i).nombre.toUpperCase().equals(nombre.toUpperCase());
             if(numeros.get(nombre) != null){
                 salida = lista_subgrupos.get(i).nombre.toUpperCase().equals( numeros.get(nombre));
-                //Log.e("",lista_subgrupos.get(i).nombre.toUpperCase() + " Nuestro en mapa " + numeros.get(nombre));
             }
 
             if(salida){
                 sb = lista_subgrupos.get(i);
             }
-            //Log.e("",lista_subgrupos.get(i).nombre.toUpperCase() + " Nuestro " + nombre);
         }
         return sb;
     }
 
     public boolean setSubgrupo(String nombre) {
+        //Log.i("a", "subgrupo: " + nombre);
+
         subrupo = existeSubgrupo(nombre);
-        //Log.e("a", "id:"+subrupo.id);
-        //Log.e("a", "asg: " + asignatura.id);
-        //Log.e("a", "Lista 0"+lista_subgrupos.get(0).nombre);
         boolean existe = subrupo.id != -1 && asignatura.id != -1 && lista_subgrupos.size() > 0;
-        //Log.e("a", "existe: " +existe);
         if ( existe ){
             lista_horas = horaDAO.getHorasSubgrupo(subrupo.id);
         }
