@@ -376,7 +376,6 @@ int main (int argc, char** argv) {
 
 	}
 
-    printf("\n");
-	exit(1);
+	exit(0);
 
 }
