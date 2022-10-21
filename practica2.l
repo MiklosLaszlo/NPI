@@ -5,6 +5,7 @@
 #include <string.h>
 #include "constants.h"
 
+int nlinea = 1;
 %}
 
 
@@ -357,7 +358,12 @@ otros .
 
 {blanco} ;
 
-{otros}	printf(" \nError lexico en linea: %d, No se reconoce la palabra '%s'. \n",yylineno,yytext);
+[\n] {
+    printf("\n");
+    nlinea = nlinea + 1;
+}
+
+{otros}	printf(" \nError lexico en linea: %d, No se reconoce la palabra '%s'. \n",nlinea,yytext);
 
 %%
 
@@ -394,7 +400,7 @@ int main (int argc, char** argv) {
     // ejecución
 	while (an != 0) {
 
-		printf(" --> %d   ", an);
+		printf(" -->Token: %d   ", an);
         //printf("%s ", yytext());
 		an = yylex();
 
