@@ -365,14 +365,14 @@ int main (int argc, char** argv) {
     }
 
     // Invoca al analizador léxico para comenzar el análisis
-	int an = yylex();
+	int codigo = yylex();
 
     // Hasta que no termine de analizar todo el fichero no finalizará la
     // ejecución
-	while (an != 0) {
+	while (codigo != 0) {
 
-		printf("codigo: %d\tatributo:%s\tlexema:%s\tlinea:%d\n", an,atributo,yytext,nlinea);
-		an = yylex();
+		printf("codigo: %d\tatributo:%s\tlexema:%s\tlinea:%d\n", codigo,atributo,yytext,nlinea);
+		codigo = yylex();
 
 	}
 
