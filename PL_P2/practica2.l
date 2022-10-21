@@ -9,7 +9,7 @@
 #define BG_COLOR_RED     "\x1B[41m"
 
 int nlinea = 1;
-char atributo[];
+char atributo[100];
 %}
 
 
