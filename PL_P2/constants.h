@@ -31,8 +31,7 @@
 #define PRINCIPIOLISTA 284
 #define INIVARIABLES 285
 #define FINVARIABLES 286
-#define MENOS 287
-#define POR 288
-#define IGUAL 289
+#define MENOSPOR 287
+#define IGUAL 288
 
 #endif
