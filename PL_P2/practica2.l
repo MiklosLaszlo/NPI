@@ -73,10 +73,6 @@ otros .
     strcpy(atributo, "");
     return (IGUAL);
 }
-"&" {
-    strcpy(atributo, "1");
-    return (OPUNI);
-}
 "#" {
     strcpy(atributo, "2");
     return (OPUNI);
