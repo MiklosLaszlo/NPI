@@ -28,6 +28,9 @@ import android.widget.Toast;
 import android.text.TextWatcher;
 import android.text.Editable;
 
+// Tener scroll view metido
+import android.widget.ScrollView;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -63,6 +66,15 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout resultLayout;
 
     private BasedatosHorarios db;
+
+    private Button irHorarios;
+    private Button irComedores;
+    private Button volverMenuHorarios;
+    private Button volverMenuComedores;
+
+    private ScrollView horarios;
+    private ScrollView comedores;
+    private LinearLayout menu;
 
     private String nombre_grado = "";
     private String nombre_asignatura = "";
@@ -100,6 +112,16 @@ public class MainActivity extends AppCompatActivity {
         textoSalida = findViewById(R.id.textosalida);
 
         resultLayout = findViewById(R.id.resultLayout);
+
+        // Gestion de menus
+        irComedores = findViewById(R.id.Ir_comedores);
+        irHorarios = findViewById(R.id.Ir_horarios);
+        volverMenuComedores = findViewById(R.id.Volver_menu_comedores);
+        volverMenuHorarios = findViewById(R.id.volver_menu_horarios);
+
+        horarios = findViewById(R.id.Horarios);
+        comedores = findViewById(R.id.Comedores);
+        menu = findViewById(R.id.Menu);
 
         textToSpeechEngine = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -473,7 +495,33 @@ public class MainActivity extends AppCompatActivity {
         editText2.addTextChangedListener(textWatcher);
         editText3.addTextChangedListener(textWatcher);
 
+        irComedores.setOnClickListener(new View.OnClickListener() {
+           public void onClick(View v) {
+                menu.setVisibility(View.GONE);
+                comedores.setVisibility(View.VISIBLE);
+           }
+        });
 
+        irHorarios.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                menu.setVisibility(View.GONE);
+                horarios.setVisibility(View.VISIBLE);
+            }
+        });
+
+        volverMenuHorarios.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                horarios.setVisibility(View.GONE);
+                menu.setVisibility(View.VISIBLE);
+            }
+        });
+
+        volverMenuComedores.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                comedores.setVisibility(View.GONE);
+                menu.setVisibility(View.VISIBLE);
+            }
+        });
 
     }
 
