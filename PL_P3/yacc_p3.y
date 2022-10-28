@@ -18,12 +18,30 @@
 
 //********************
 //REVISAR
-%left OPUNI
 %right IGUAL
-%left OPBIN
 %left TER1
 %left TER2
-%left MENOSPOR
+%left MENOS
+%left POR
+%left NOT
+%left SOSTENIDO
+%left INTERROGACION
+%left EQUAL
+%left NOTEQUAL
+%left AND
+%left OR
+%left XOR
+%left MAS
+%left DIV
+%left LESS
+%left GREATER
+%left LESSEQ
+%left GREATEREQ
+%left ARROBA
+%left MENOSMENOS
+%left PORCENTAJE
+%left DOBLEPOR ;
+
 //*******************
 
 %token MAIN
@@ -84,29 +102,7 @@ parametros : PARIZQ PARDCH
 lista_parametros : tipo_basico IDENTIFICADOR 
         | lista_parametros COMA tipo_basico IDENTIFICADOR ;
 
-// sustituir tipo basico por type y borrar tipo basico? o declarar list of como token
-// NICO: creo que no hace falta porque lex deberia de identificar que es TYPE
 tipo_basico : TYPE ;
-// LIST OF??
-
-//falta token "."
-// NOTA DE NICO: creo que no hace falta declarar el punto, supongo que lex + yacc funciona asi, lex identifica el token
-// (el token puede ser como sea, pero tendra el punto en este caso) y yacc se encarga de mirar si sintacticamente tiene sentido
-
-//OPCION 1 DECLARAR TOKEN PUNTO
-//numero : digitos "." digitos | digitos
-//digitos : digitos LITERAL | LITERAL
-
-// He comentado numero, boolean y simbolos porque al hacer yacc error
-
-//OPCION 2 sustituir numero por literal y borrar numero
-//numero : LITERAL ; // Nico: creo que esto no hace falta o se deberia de poner al reves
-
-//BORRAR bolean y sustituir por literal?
-//boolean : LITERAL ; // Nico: lo mismo que con numero
-
-//??
-//simbolos : simbolos TYPE ;
 
 sentencias : sentencias sentencia 
         | sentencia ;
@@ -129,13 +125,8 @@ sentencia_if : IF PARIZQ expresion PARDCH THEN bloque
 sentencia_while : WHILE PARIZQ expresion PARDCH bloque ;
 
 sentencia_entrada : READ lista_identificadores PYC ;
-//lista variables no definida en practica 1 
-// NICO: como no esta la lista de variables pero si tenemos lista de identificadores, dira de usar eso
-//lista_variables : PARIZQ lista_identificadores PARDCH ;
 
-//En pl 1 <sentencia_salida> ::= write <lista_expresiones>”;”
-//corregido : 
-sentencia_salida : WRITE lista_identificadores PYC ; // NICO: no estoy de acuerdo, puedo querer imprimir 1, en vez de a con a=1
+sentencia_salida : WRITE lista_expresiones PYC ; 
 
 sentencia_return : RETURN expresion PYC ;
 
@@ -151,12 +142,11 @@ expresion : PARIZQ expresion PARDCH
         | IDENTIFICADOR
         | llamar_funcion
         | agregado
-        | LITERAL ; // BOOLEAN, NUM, CHAR
+        | LITERAL ;
 
 llamar_funcion : IDENTIFICADOR argumentos
         | IDENTIFICADOR argumentos PYC ;
-        //llamar funcion sin PYC??? nse si esta bien
-
+        
 argumentos : PARIZQ lista_argumentos PARDCH ;
 
 lista_argumentos : IDENTIFICADOR
@@ -168,7 +158,29 @@ agregado : CORIZQ lista_expresiones CORDCH ;
 lista_expresiones : lista_expresiones COMA expresion
         | expresion ;
 
-%%
+MENOSPOR : MENOS 
+        | POR ;
+OPUNI : NOT
+        | SOSTENIDO
+        | INTERROGACION 
+        | MENOSPOR ;
+OPBIN : EQUAL
+        | MENOSPOR
+        | NOTEQUAL
+        | AND
+        | OR
+        | XOR
+        | MAS
+        | DIV
+        | LESS
+        | GREATER
+        | LESSEQ
+        | GREATEREQ
+        | ARROBA
+        | MENOSMENOS
+        | PORCENTAJE
+        | DOBLEPOR ;
+%%      
 
 
 
