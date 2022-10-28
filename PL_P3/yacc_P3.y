@@ -139,8 +139,6 @@ lista_argumentos : IDENTIFICADOR
 agregado : CORIZQ lista_expresiones CORDCH ;
 lista_expresiones : lista_expresiones COMA expresion
         | expresion ;
-MENOSPOR : MENOS 
-        | POR ;
 OPUNI : NOT
         | SOSTENIDO
         | INTERROGACION 
