@@ -17,29 +17,34 @@ export default (request, response) => {
         // Miramos cuantos menus en ese dia
         let n_menus = subtabla.match(/Menú [0-9]+/g);
         let devolver = new Array();
-        for(i=0; i < n_menus.length; i++){
-            let diseccion;
-            let menu_completo = n_menus[i] + ": "
-            if (i < n_menus.length-1)
-                diseccion = subtabla.substring(subtabla.indexOf(n_menus[i]), subtabla.indexOf(n_menus[i+1]) ) 
-            else
-                diseccion = subtabla.substring(subtabla.indexOf(n_menus[i]) )
-            // Obtenemos numero de platos de un menu (primero, segundo, tercero...)
-           let n_comidas = diseccion.match(/leftalign\">[a-zA-Zá-źÁ-Ź ]* </g);
-            // Obtenemos la descripcion de cada plato
-            let n_descripcion_comida = diseccion.match(/<strong>[a-zA-Zá-źÁ-Ź0-9,ñ\(\)\{\}\[\]\-\_ ]*<\/strong>/g);
-            
-            // Unimos todo
-            for(let j in n_comidas){
-                menu_completo += n_comidas[j].substring(n_comidas[j].indexOf('>')+1,n_comidas[j].indexOf('<')) + " " +  n_descripcion_comida[j].substring(n_descripcion_comida[j].indexOf('>')+1,n_descripcion_comida[j].indexOf('</'))
-                if ( j < n_comidas.length-2)
-                    menu_completo += ", "
-                if ( j == n_comidas.length-2)
-                    menu_completo += " y de "
-            }
+		  // Si no hay menús es que está cerrado
+		if(n_menus.lenght > 0){
+            for(i=0; i < n_menus.length; i++){
+                let diseccion;
+                let menu_completo = n_menus[i] + ": "
+                if (i < n_menus.length-1)
+                    diseccion = subtabla.substring(subtabla.indexOf(n_menus[i]), subtabla.indexOf(n_menus[i+1]) ) 
+                else
+                    diseccion = subtabla.substring(subtabla.indexOf(n_menus[i]) )
+                // Obtenemos numero de platos de un menu (primero, segundo, tercero...)
+            let n_comidas = diseccion.match(/leftalign\">[a-zA-Zá-źÁ-Ź ]* </g);
+                // Obtenemos la descripcion de cada plato
+                let n_descripcion_comida = diseccion.match(/<strong>[a-zA-Zá-źÁ-Ź0-9,ñ\(\)\{\}\[\]\-\_ ]*<\/strong>/g);
+                
+                // Unimos todo
+                for(let j in n_comidas){
+                    menu_completo += n_comidas[j].substring(n_comidas[j].indexOf('>')+1,n_comidas[j].indexOf('<')) + " " +  n_descripcion_comida[j].substring(n_descripcion_comida[j].indexOf('>')+1,n_descripcion_comida[j].indexOf('</'))
+                    if ( j < n_comidas.length-2)
+                        menu_completo += ", "
+                    if ( j == n_comidas.length-2)
+                        menu_completo += " y de "
+                }
 
-            // Metemos uno de los menus
-            devolver.push(menu_completo)
+                // Metemos uno de los menus
+                devolver.push(menu_completo)
+            }
+        } else {
+            devolver = 'CERRADO';
         }
         return devolver;
     }
