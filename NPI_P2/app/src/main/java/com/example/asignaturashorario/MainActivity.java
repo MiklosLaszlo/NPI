@@ -31,6 +31,9 @@ import android.text.Editable;
 // Tener scroll view metido
 import android.widget.ScrollView;
 
+// Meter el iframe de DialogFlow
+import android.webkit.WebView;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -38,6 +41,7 @@ import java.util.Locale;
 import database.*;
 
 public class MainActivity extends AppCompatActivity {
+    // Sistema Horarios
     public static final Integer RecordAudioRequestCode = 1;
     private final String TAG = "DB";
     private TextToSpeech textToSpeechEngine;
@@ -67,6 +71,11 @@ public class MainActivity extends AppCompatActivity {
 
     private BasedatosHorarios db;
 
+    private String nombre_grado = "";
+    private String nombre_asignatura = "";
+    private String nombre_subgrupo = "";
+
+    // Para gestionar menus
     private Button irHorarios;
     private Button irComedores;
     private Button volverMenuHorarios;
@@ -76,9 +85,8 @@ public class MainActivity extends AppCompatActivity {
     private ScrollView comedores;
     private LinearLayout menu;
 
-    private String nombre_grado = "";
-    private String nombre_asignatura = "";
-    private String nombre_subgrupo = "";
+    // Comedores
+    private WebView dialogFlow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +130,9 @@ public class MainActivity extends AppCompatActivity {
         horarios = findViewById(R.id.Horarios);
         comedores = findViewById(R.id.Comedores);
         menu = findViewById(R.id.Menu);
+
+        // Comedores
+        dialogFlow = findViewById(R.id.DialogFlow);
 
         textToSpeechEngine = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -522,6 +533,8 @@ public class MainActivity extends AppCompatActivity {
                 menu.setVisibility(View.VISIBLE);
             }
         });
+
+        dialogFlow.loadUrl("https://console.dialogflow.com/api-client/demo/embedded/0929993a-8fb2-477d-bdd6-2cdeba41c710");
 
     }
 
