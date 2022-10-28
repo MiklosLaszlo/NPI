@@ -42,8 +42,8 @@
 %left MENOSMENOS
 
 // Terciario de lista
-%token TER1
-%token TER2
+%nonassoc TER1
+%nonassoc TER2
 
 //*******************
 %token MAIN
