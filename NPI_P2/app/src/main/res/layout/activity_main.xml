@@ -38,6 +38,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <Button
+                android:id="@+id/volver_menu_horarios"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Volver menú" />
+
             <TextView
                 android:id="@+id/Textoplano"
                 android:layout_width="match_parent"
@@ -223,12 +230,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/volver_menu_horarios"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="Volver menú" />
             </LinearLayout>
         </LinearLayout>
 
@@ -236,11 +237,11 @@
     </ScrollView>
 
     <LinearLayout
-        android:id="@+id/Menú"
+        android:id="@+id/Menu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:visibility="gone"
+        android:visibility="visible"
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="1dp">
 
@@ -263,7 +264,7 @@
         android:id="@+id/Comedores"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
+        android:visibility="gone"
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="1dp">
 

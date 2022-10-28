@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
         horarios = findViewById(R.id.Horarios);
         comedores = findViewById(R.id.Comedores);
-        menu = findViewById(R.id.menu)
+        menu = findViewById(R.id.Menu);
 
         textToSpeechEngine = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -495,11 +495,32 @@ public class MainActivity extends AppCompatActivity {
         editText2.addTextChangedListener(textWatcher);
         editText3.addTextChangedListener(textWatcher);
 
-        irComedores.setOnTouchListener(new View.OnClickListener() {
+        irComedores.setOnClickListener(new View.OnClickListener() {
            public void onClick(View v) {
-
+                menu.setVisibility(View.GONE);
+                comedores.setVisibility(View.VISIBLE);
            }
+        });
 
+        irHorarios.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                menu.setVisibility(View.GONE);
+                horarios.setVisibility(View.VISIBLE);
+            }
+        });
+
+        volverMenuHorarios.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                horarios.setVisibility(View.GONE);
+                menu.setVisibility(View.VISIBLE);
+            }
+        });
+
+        volverMenuComedores.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                comedores.setVisibility(View.GONE);
+                menu.setVisibility(View.VISIBLE);
+            }
         });
 
     }
