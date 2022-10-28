@@ -1,0 +1,45 @@
+main{
+    open
+        int a, e;
+        double b;
+        char c;
+        list of int d;
+        bool prueba;
+    close
+
+
+int Funcion(){
+    open 
+        int a;
+        int b;
+        int d;
+    close
+    c=3
+     a=7;
+     b=6;
+     d=a-b;   
+
+  return d;  
+}
+
+e=Funcion();
+
+if (e equals 1 ) 
+    then write (d);
+else
+    write (hola);
+
+
+for i=3 to i less 20 do 
+    a=a+1;
+
+while i less 50 
+    i=i+5;
+
+i xor a;
+i or a;
+prueba = True;
+
+write(i)
+
+}
