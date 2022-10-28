@@ -19,42 +19,32 @@
 //********************
 //REVISAR
 %right IGUAL
-// Operadores binarios de lista
-suma resta producto duvusuib  ** % -- @
-// Operado unarios de las listas
-# ? 
-// Operados unarios
-not - 
 // Operadores binarios 
+%left AND OR XOR
+%left EQUAL NOTEQUAL
+%left LESS GREATER LESSEQ GREATEREQ
 
+%left MAS MENOS
+%left POR DIV
 
-
+// Operados unarios
 %left NOT
+
+// Operado unarios de las listas
 %left SOSTENIDO
 %left INTERROGACION
-%left EQUAL
-%left NOTEQUAL
-%left AND
-%left OR
-%left XOR
 
-%left LESS
-%left GREATER
-%left LESSEQ
-%left GREATEREQ
+// Operadores binarios de lista
 %left ARROBA
-
-%left MAS
-%left MENOS
-%left MENOSMENOS
 %left PORCENTAJE
 %left DOBLEPOR
 
+%left MENOSMENOS
 
-%left POR DIV
-%left TER1
-%left TER2
- ;
+// Terciario de lista
+%token TER1
+%token TER2
+
 //*******************
 %token MAIN
 %token LLAVEIZQ
@@ -82,11 +72,6 @@ not -
 %token FINVARIABLES
 %token LITERAL
 %token IDENTIFICADOR
-
-
-
-
-
 %%
 // Producciones
 // ######################
@@ -159,7 +144,7 @@ MENOSPOR : MENOS
 OPUNI : NOT
         | SOSTENIDO
         | INTERROGACION 
-        | 1MENOS
+        | MENOS
 OPBIN : EQUAL
         | MENOS
         | POR
