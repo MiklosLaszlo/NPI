@@ -14,11 +14,14 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
@@ -76,23 +79,26 @@ public class MainActivity extends AppCompatActivity {
     private String nombre_subgrupo = "";
 
     // Para gestionar menus
-    private Button irHorarios;
-    private Button irComedores;
-    private Button volverMenuHorarios;
-    private Button volverMenuComedores;
+
+    private ImageButton changeButton1;
+    private ImageButton changeButton2;
 
     private ScrollView horarios;
     private ScrollView comedores;
-    private LinearLayout menu;
 
     // Comedores
     private WebView dialogFlow;
+    WebSettings webSettings;
+    final String iframe = "" +
+            "<html>\n" +
+            "\t<body>\n" +
+            "\t\t<iframe style=\"position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;\" src=\"https://console.dialogflow.com/api-client/demo/embedded/4e9c22e4-7818-4c96-bd8a-8acdb6c7b3d0\"></iframe>\n" +
+            "\t</body>\n" +
+            "</html>";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Pruebas con la base de datos
         db = new BasedatosHorarios(getApplicationContext());
-        // Fin pruebas
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -101,6 +107,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Unimos cada texto, boton... a su correspondente en el Layout
+        // Horarios
+        horarios = findViewById(R.id.Horarios);
+
         editText = findViewById(R.id.textmic);
         micButton = findViewById(R.id.mic);
         ttsButton = findViewById(R.id.button_mic);
@@ -121,17 +130,12 @@ public class MainActivity extends AppCompatActivity {
 
         resultLayout = findViewById(R.id.resultLayout);
 
-        // Gestion de menus
-        irComedores = findViewById(R.id.Ir_comedores);
-        irHorarios = findViewById(R.id.Ir_horarios);
-        volverMenuComedores = findViewById(R.id.Volver_menu_comedores);
-        volverMenuHorarios = findViewById(R.id.volver_menu_horarios);
-
-        horarios = findViewById(R.id.Horarios);
-        comedores = findViewById(R.id.Comedores);
-        menu = findViewById(R.id.Menu);
+        changeButton1 = findViewById(R.id.changeButton1);
 
         // Comedores
+        comedores = findViewById(R.id.Comedores);
+
+        changeButton2 = findViewById(R.id.changeButton2);
         dialogFlow = findViewById(R.id.DialogFlow);
 
         textToSpeechEngine = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
@@ -231,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
                 else{
                     text = "No existe un grado " + text;
                     if ( !nombre_asignatura.isEmpty() ) text+= " con la asignatura" + nombre_asignatura;
-                    textoSalida.setText(text);
                 }
 
                 textToSpeechEngine.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts1");
@@ -427,6 +430,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        ttsButton2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String text = String.valueOf(editText2.getText());
+                if (!text.isEmpty())
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        textToSpeechEngine2.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts1");
+                    }
+            }
+        });
+
         // Boton que sirve para llamar a la funcion de buscar horario, escribe en el texto de salida y lo dice.
         ttsButtonSalida.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -470,7 +483,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         // Boton que sirve para llamar a la funcion de buscar horario, escribe en el texto de salida y lo dice.
         ttsButtonSalida.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -506,35 +518,26 @@ public class MainActivity extends AppCompatActivity {
         editText2.addTextChangedListener(textWatcher);
         editText3.addTextChangedListener(textWatcher);
 
-        irComedores.setOnClickListener(new View.OnClickListener() {
-           public void onClick(View v) {
-                menu.setVisibility(View.GONE);
+        changeButton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                horarios.setVisibility(View.GONE);
                 comedores.setVisibility(View.VISIBLE);
-           }
+            }
         });
 
-        irHorarios.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                menu.setVisibility(View.GONE);
+        changeButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                comedores.setVisibility(View.GONE);
                 horarios.setVisibility(View.VISIBLE);
             }
         });
 
-        volverMenuHorarios.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                horarios.setVisibility(View.GONE);
-                menu.setVisibility(View.VISIBLE);
-            }
-        });
+        webSettings = dialogFlow.getSettings();
+        webSettings.setJavaScriptEnabled(true);
 
-        volverMenuComedores.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                comedores.setVisibility(View.GONE);
-                menu.setVisibility(View.VISIBLE);
-            }
-        });
-
-        dialogFlow.loadUrl("https://console.dialogflow.com/api-client/demo/embedded/0929993a-8fb2-477d-bdd6-2cdeba41c710");
+        dialogFlow.loadData(Base64.encodeToString(iframe.getBytes(),Base64.NO_PADDING), "text/html", "base64");
 
     }
 
@@ -566,5 +569,9 @@ public class MainActivity extends AppCompatActivity {
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 Toast.makeText(this,"Permission Granted",Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void getChatbotWeb(){
+        
     }
 }
