@@ -11,7 +11,7 @@
         android:id="@+id/Horarios"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
+        android:visibility="visible"
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="643dp">
 
@@ -263,7 +263,8 @@
                     android:layout_margin="10dp"
                     android:text="Rellene el resto de campos"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:visibility="invisible" />
 
             </LinearLayout>
 
@@ -276,7 +277,7 @@
         android:id="@+id/Comedores"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
+        android:visibility="gone"
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="1dp">
 
