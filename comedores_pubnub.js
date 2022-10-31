@@ -92,7 +92,6 @@ export default (request, response) => {
         let inter_table = html.indexOf('id="__doku_menu_comedor_pts"');
         let second_table_end = html.indexOf('<!-- SECTION "Menú Comedor (PTS)" [7536-] -->');
         let tablas = [html.substring(first_table_start,inter_table), html.substring(inter_table,second_table_end)];
-        //console.log(tablas);
         for(let h in tablas){
             // Buscamos que dias hay menú
             let aux = tablas[h].match(/<strong>(L|M|J|V|S)+[a-zA-Zá-źÁ-Ź0-9 ]*,[a-zA-Zá-źÁ-Ź0-9 ]*<\/strong>/g);
@@ -121,21 +120,18 @@ export default (request, response) => {
             
 
         }
-        //console.log(comedores);
-        // NICO:
-        // ~Aqui he obtenido todos los menus, sinceramente creo que el proceso se puede acortar (dependiendo de que nos pasen)
-        // ~Por ejemplo como tengo los dias ordenados, solo extrago el menu de ese dia (es variar el for)
-        // ~Con los menus habria que trastear la funcion getMenus, o quedarnos con algo de lo que devuelve
-        // ~En fin que solo falta hacer retoques a la busqueda y tal, lo dificil esta hecho
-        
-        console.log(comedores)
-        console.log(respuesta)
         response.status = 200;
 
         if(comedorDialogFlow != 'PTS'){
             for(let i in comedores[0]){
                 let numeros = comedores[0][i][0].match(/[0-9]+/g);
                 let mes = comedores[0][i][0].match(/(ENERO|FEBRERO|MARZO|ABRIL|MAYO|JUNIO|JULIO|AGOSTO|SEPTIEMBRE|OCTUBRE|NOVIEMBRE|DICIEMBRE)/g);
+                console.log(numeros[0])
+                console.log(numeros[1])
+                console.log(mes[0])
+                console.log(diaTratado.getDate())
+                console.log(diaTratado.getFullYear())
+                console.log(diaTratado.getMonth())
                 if( (numeros[0] == diaTratado.getDate() ) && (numeros[1] == diaTratado.getFullYear()) && (month2number(mes[0]) == diaTratado.getMonth() )) {
                     for(let j = 1; j < comedores[0][i].length; j++){
                         if(menuDialogFlow == j){
@@ -164,9 +160,14 @@ export default (request, response) => {
                 }
             }
 
-            if(respuesta == ""){
-                respuesta = "Ese dia el comedor no está abierto"
-            }
+            
+        }
+
+        if(respuesta == ""){
+            if(diaTratado.getDay() != 6)
+                respuesta = "No hay info para ese dia"
+            else
+                respuesta = "Ese dia el comedor esta cerrado"
         }
 
         // Set the headers the way you like
