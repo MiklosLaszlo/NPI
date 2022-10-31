@@ -71,7 +71,7 @@ public class BasedatosHorarios {
     }
 
     public boolean setAsignatura(String asignatura_p, String grado){
-        Log.i("a", "asignatura: " + asignatura_p + " grado " + grado);
+        //Log.i("a", "asignatura: " + asignatura_p + " grado " + grado);
         List<Asignatura> asignaturas = asignaturaDAO.getAsignaturaId(grado, asignatura_p);
         if(asignaturas.size() != 1) {
             asignatura.id = -1; subrupo.id = -1;
