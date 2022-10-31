@@ -8,12 +8,13 @@ export default (request, response) => {
     // Lo que usamos son los parameters, NOTA: los alias tambien se pasan por si queremosusarlos
     var entradaDialogFlow = JSON.parse(bodyString);
     console.log("Entrada DialogFlow: "+entradaDialogFlow);
-    var diaDialogFlow=entradaDialogFlow['queryResult']['parameters'].dia.toUpperCase();
+    var diaDialogFlow=entradaDialogFlow['queryResult']['parameters'].dia;
     var menuDialogFlow=entradaDialogFlow['queryResult']['parameters'].menu;
     var comedorDialogFlow=entradaDialogFlow['queryResult']['parameters'].comedor;
     var controlDias = new Date();
-    var diaHoy = controlDias.getDay();
-    
+    var diaTratado = new Date(diaDialogFlow);
+
+    console.log(entradaDialogFlow['queryResult']['parameters']);
 
     var respuesta="";
 
@@ -53,46 +54,44 @@ export default (request, response) => {
         return devolver;
     }
 
-    function dia2number(dia){
-        switch(dia){
-            case 'LUNES':
+    function month2number(mes){
+        switch(mes){
+            case 'ENERO':
                 return 0;
-                break;
-            case 'MARTES':
+            case 'FEBRERO':
                 return 1;
-                break;
-            case 'MIÉRCOLES':
+            case 'MARZO':
                 return 2;
-                break;
-            case 'JUEVES':
+            case 'ABRIL':
                 return 3;
-                break;
-            case 'VIERNES':
+            case 'MAYO':
                 return 4;
-                break;
-            case 'SÁBADO':
+            case 'JUNIO':
                 return 5;
-                break;
-            case 'DOMINGO':
+            case 'JULIO':
                 return 6;
-                break;
-            default:
-                return -1;
-                break;
+            case 'AGOSTO':
+                return 7;
+            case 'SEPTIEMBRE':
+                return 8;
+            case 'OCTUBRE':
+                return 9;
+            case 'NOVIEMBRE':
+                return 10;
+            case 'DICIEMBRE':
+                return 11;                
         }
     }
-
-    var diaPedido = dia2number(diaDialogFlow)
 
     return xhr.fetch("https://scu.ugr.es/pages/menu/comedor").then(function (response) {
         // The API call was successful!
         return response.text();
     }).then(function (html) {
         // This is the HTML from our response as a text string
-        let first_table_start = body.indexOf('id="__doku_menu_semanal_comedores_fuentenueva_aynadamar_y_cartuja_-carlos_v"');
-        let inter_table = body.indexOf('id="__doku_menu_comedor_pts"');
-        let second_table_end = body.indexOf('<!-- SECTION "Menú Comedor (PTS)" [7536-] -->');
-        let tablas = [body.substring(first_table_start,inter_table), body.substring(inter_table,second_table_end)];
+        let first_table_start = html.indexOf('id="__doku_menu_semanal_comedores_fuentenueva_aynadamar_y_cartuja_-carlos_v"');
+        let inter_table = html.indexOf('id="__doku_menu_comedor_pts"');
+        let second_table_end = html.indexOf('<!-- SECTION "Menú Comedor (PTS)" [7536-] -->');
+        let tablas = [html.substring(first_table_start,inter_table), html.substring(inter_table,second_table_end)];
         //console.log(tablas);
         for(let h in tablas){
             // Buscamos que dias hay menú
@@ -135,49 +134,32 @@ export default (request, response) => {
 
         if(comedorDialogFlow != 'PTS'){
             for(let i in comedores[0]){
-                let respondido = false
-                if(diaDialogFlow == comedores[0][i][0].substring(0,comedores[0][i][0].indexOf(','))){
-                    if(respondido){
-                        if(diaHoy != diaPedido){
-                            respondido = false
+                let numeros = comedores[0][i][0].match(/[0-9]+/g);
+                let mes = comedores[0][i][0].match(/(ENERO|FEBRERO|MARZO|ABRIL|MAYO|JUNIO|JULIO|AGOSTO|SEPTIEMBRE|OCTUBRE|NOVIEMBRE|DICIEMBRE)/g);
+                if( (numeros[0] == diaTratado.getDate() ) && (numeros[1] == diaTratado.getFullYear()) && (month2number(mes[0]) == diaTratado.getMonth() )) {
+                    for(let j = 1; j < comedores[0][i].length; j++){
+                        if(menuDialogFlow == j){
+                            respuesta = comedores[0][i][j]
                         }
-                    }
-                    if(!respondido){
-                        for(let j = 1; j < comedores[0][i].length; j++){
-                            if(menuDialogFlow == j){
-                                respuesta = comedores[0][i][j]
-                            }
-                            if(comedores[0][i][j] == 'CERRADO'){
-                                respuesta = 'Ese dia el comedor está cerrado'
-                            }
+                        if(comedores[0][i][j] == 'CERRADO'){
+                            respuesta = 'Ese dia el comedor está cerrado'
                         }
-                        respondido = true
                     }
                 }
-            }
-            if(respuesta == ""){
-                respuesta = "Ese dia el comedor no está abierto"
             }
         }
         else{
             for(let i in comedores[1]){
-                let respondido = false
-                if(diaDialogFlow == comedores[1][i][0].substring(0,comedores[1][i][0].indexOf(','))){
-                    if(respondido){
-                        if(diaHoy != diaPedido){
-                            respondido = false
+                let numeros = comedores[1][i][0].match(/[0-9]+/g);
+                let mes = comedores[1][i][0].match(/(ENERO|FEBRERO|MARZO|ABRIL|MAYO|JUNIO|JULIO|AGOSTO|SEPTIEMBRE|OCTUBRE|NOVIEMBRE|DICIEMBRE)/g);
+                if( (numeros[0] == diaTratado.getDate() ) && (numeros[1] == diaTratado.getFullYear()) && (month2number(mes[0]) == diaTratado.getMonth() )) {
+                    for(let j = 1; j < comedores[1][i].length; j++){
+                        if(menuDialogFlow == j){
+                            respuesta = comedores[1][i][j]
                         }
-                    }
-                    if(!respondido){
-                        for(let j = 1; j < comedores[1][i].length; j++){
-                            if(menuDialogFlow == j){
-                                respuesta = comedores[1][i][j]
-                            }
-                            if(comedores[0][i][j] == 'CERRADO'){
-                                respuesta = 'Ese dia el comedor está cerrado'
-                            }
+                        if(comedores[1][i][j] == 'CERRADO'){
+                            respuesta = 'Ese dia el comedor está cerrado'
                         }
-                        respondido = true
                     }
                 }
             }
@@ -193,7 +175,7 @@ export default (request, response) => {
 
     }).catch(function (err) {
         // There was an error
-        console.warn('Something went wrong.', err);
+        console.warn('Ha habido un error al buscar comedores.', err);
         return response.send({ fulfillmentText: respuesta });
     });
 };
