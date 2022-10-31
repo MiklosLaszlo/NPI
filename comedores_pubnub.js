@@ -133,7 +133,7 @@ export default (request, response) => {
         console.log(respuesta)
         response.status = 200;
 
-        if(comedorDialogFlow == 'PTS'){
+        if(comedorDialogFlow != 'PTS'){
             for(let i in comedores[0]){
                 let respondido = false
                 if(diaDialogFlow == comedores[0][i][0].substring(0,comedores[0][i][0].indexOf(','))){
