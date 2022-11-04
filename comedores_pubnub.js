@@ -11,10 +11,7 @@ export default (request, response) => {
     var diaDialogFlow=entradaDialogFlow['queryResult']['parameters'].dia;
     var menuDialogFlow=parseInt(entradaDialogFlow['queryResult']['parameters'].menu)  +1;
     var comedorDialogFlow=entradaDialogFlow['queryResult']['parameters'].comedor;
-    var controlDias = new Date();
     var diaTratado = new Date(diaDialogFlow);
-
-    console.log(entradaDialogFlow['queryResult']['parameters']);
 
     var respuesta="";
 
@@ -35,7 +32,7 @@ export default (request, response) => {
                 // Obtenemos numero de platos de un menu (primero, segundo, tercero...)
                 let n_comidas = diseccion.match(/leftalign\">[a-zA-Zá-źÁ-Ź ]* </g);
                 // Obtenemos la descripcion de cada plato
-                let n_descripcion_comida = diseccion.match(/<strong>[a-zA-Zá-źÁ-Ź0-9,ñ\(\)\{\}\[\]\-\_ ]*<\/strong>/g);
+                let n_descripcion_comida = diseccion.match(/<strong>[a-zA-Zá-źÁ-Ź0-9,ñ\(\)\{\}\[\]\-\_\\\/\|\%\$\~ ]*<\/strong>/g);
                 
                 // Unimos todo
                 for(let j=0; j < n_comidas.length; j++){
@@ -122,8 +119,6 @@ return xhr.fetch("https://scu.ugr.es/pages/menu/comedor").then(function (respons
 
         }
         response.status = 200;
-        console.log(comedores)
-        console.log(menuDialogFlow);
         if(comedorDialogFlow != 'PTS'){
             for(let i=0; i<comedores[0].length;i++){
                 let numeros = comedores[0][i][0].match(/[0-9]+/g);
