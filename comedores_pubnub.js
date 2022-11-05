@@ -9,12 +9,9 @@ export default (request, response) => {
     var entradaDialogFlow = JSON.parse(bodyString);
     console.log("Entrada DialogFlow: "+entradaDialogFlow);
     var diaDialogFlow=entradaDialogFlow['queryResult']['parameters'].dia;
-    var menuDialogFlow=entradaDialogFlow['queryResult']['parameters'].menu;
+    var menuDialogFlow=parseInt(entradaDialogFlow['queryResult']['parameters'].menu)  +1;
     var comedorDialogFlow=entradaDialogFlow['queryResult']['parameters'].comedor;
-    var controlDias = new Date();
     var diaTratado = new Date(diaDialogFlow);
-
-    console.log(entradaDialogFlow['queryResult']['parameters']);
 
     var respuesta="";
 
@@ -24,25 +21,26 @@ export default (request, response) => {
         let devolver = new Array();
 		// Si no hay menús es que está cerrado
 		if(n_menus != null){
-            for(i=0; i < n_menus.length; i++){
-                let diseccion;
-                let menu_completo = n_menus[i] + ": "
+            for(let i=0; i < n_menus.length; i++){
+                let diseccion = "";
+                let menu_completo = n_menus[i] + ": ";
+
                 if (i < n_menus.length-1)
                     diseccion = subtabla.substring(subtabla.indexOf(n_menus[i]), subtabla.indexOf(n_menus[i+1]) ) 
                 else
                     diseccion = subtabla.substring(subtabla.indexOf(n_menus[i]) )
                 // Obtenemos numero de platos de un menu (primero, segundo, tercero...)
-            let n_comidas = diseccion.match(/leftalign\">[a-zA-Zá-źÁ-Ź ]* </g);
+                let n_comidas = diseccion.match(/leftalign\">[a-zA-Zá-źÁ-Ź ]* </g);
                 // Obtenemos la descripcion de cada plato
-                let n_descripcion_comida = diseccion.match(/<strong>[a-zA-Zá-źÁ-Ź0-9,ñ\(\)\{\}\[\]\-\_ ]*<\/strong>/g);
+                let n_descripcion_comida = diseccion.match(/<strong>[a-zA-Zá-źÁ-Ź0-9,ñ\(\)\{\}\[\]\-\_\\\/\|\%\$\~ ]*<\/strong>/g);
                 
                 // Unimos todo
-                for(let j in n_comidas){
+                for(let j=0; j < n_comidas.length; j++){
                     menu_completo += n_comidas[j].substring(n_comidas[j].indexOf('>')+1,n_comidas[j].indexOf('<')) + " " +  n_descripcion_comida[j].substring(n_descripcion_comida[j].indexOf('>')+1,n_descripcion_comida[j].indexOf('</'))
                     if ( j < n_comidas.length-2)
-                        menu_completo += ", "
+                        menu_completo += ", ";
                     if ( j == n_comidas.length-2)
-                        menu_completo += " y de "
+                        menu_completo += " y de ";
                 }
 
                 // Metemos uno de los menus
@@ -83,7 +81,7 @@ export default (request, response) => {
         }
     }
 
-    return xhr.fetch("https://scu.ugr.es/pages/menu/comedor").then(function (response) {
+return xhr.fetch("https://scu.ugr.es/pages/menu/comedor").then(function (response) {
         // The API call was successful!
         return response.text();
     }).then(function (html) {
@@ -92,12 +90,12 @@ export default (request, response) => {
         let inter_table = html.indexOf('id="__doku_menu_comedor_pts"');
         let second_table_end = html.indexOf('<!-- SECTION "Menú Comedor (PTS)" [7536-] -->');
         let tablas = [html.substring(first_table_start,inter_table), html.substring(inter_table,second_table_end)];
-        for(let h in tablas){
+        for(let h=0; h<tablas.length; h++){
             // Buscamos que dias hay menú
             let aux = tablas[h].match(/<strong>(L|M|J|V|S)+[a-zA-Zá-źÁ-Ź0-9 ]*,[a-zA-Zá-źÁ-Ź0-9 ]*<\/strong>/g);
             let menus = new Array();
             let dias = new Array();
-            for(let i in aux){
+            for(let i=0; i<aux.length; i++){
                 // Limpiamos la basura, solo queremos dia de la semana y fecha
                 dias.push( aux[i].substring(aux[i].indexOf('>')+1,aux[i].indexOf('/')-1));
             }
@@ -121,17 +119,10 @@ export default (request, response) => {
 
         }
         response.status = 200;
-
         if(comedorDialogFlow != 'PTS'){
-            for(let i in comedores[0]){
+            for(let i=0; i<comedores[0].length;i++){
                 let numeros = comedores[0][i][0].match(/[0-9]+/g);
                 let mes = comedores[0][i][0].match(/(ENERO|FEBRERO|MARZO|ABRIL|MAYO|JUNIO|JULIO|AGOSTO|SEPTIEMBRE|OCTUBRE|NOVIEMBRE|DICIEMBRE)/g);
-                console.log(numeros[0])
-                console.log(numeros[1])
-                console.log(mes[0])
-                console.log(diaTratado.getDate())
-                console.log(diaTratado.getFullYear())
-                console.log(diaTratado.getMonth())
                 if( (numeros[0] == diaTratado.getDate() ) && (numeros[1] == diaTratado.getFullYear()) && (month2number(mes[0]) == diaTratado.getMonth() )) {
                     for(let j = 1; j < comedores[0][i].length; j++){
                         if(menuDialogFlow == j){
@@ -145,7 +136,7 @@ export default (request, response) => {
             }
         }
         else{
-            for(let i in comedores[1]){
+            for(let i=0; i<comedores[1].length;i++){
                 let numeros = comedores[1][i][0].match(/[0-9]+/g);
                 let mes = comedores[1][i][0].match(/(ENERO|FEBRERO|MARZO|ABRIL|MAYO|JUNIO|JULIO|AGOSTO|SEPTIEMBRE|OCTUBRE|NOVIEMBRE|DICIEMBRE)/g);
                 if( (numeros[0] == diaTratado.getDate() ) && (numeros[1] == diaTratado.getFullYear()) && (month2number(mes[0]) == diaTratado.getMonth() )) {
