@@ -492,20 +492,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Boton que sirve para llamar a la funcion de buscar horario, escribe en el texto de salida y lo dice.
-        ttsButtonSalida.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                db.setAsignatura(editText2.getText().toString(), editText.getText().toString());
-                db.setSubgrupo(editText3.getText().toString());
-                textoSalida.setText(db.getHorario());
-                String text = String.valueOf(textoSalida.getText());
-                String voz= db.getHorarioTTS();
-                if (!text.isEmpty())
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        textToSpeechEnginesalida.speak(voz, TextToSpeech.QUEUE_FLUSH, null, "tts1");
-                    }
-            }
-        });
 
         micButton3.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -541,10 +527,10 @@ public class MainActivity extends AppCompatActivity {
                 db.setAsignatura(editText2.getText().toString().trim(), editText.getText().toString().trim());
                 db.setSubgrupo(editText3.getText().toString());
                 textoSalida.setText(db.getHorario());
-                String text = String.valueOf(textoSalida.getText());
-                if (!text.isEmpty())
+                String voz = db.getHorarioTTS();
+                if (!voz.isEmpty())
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        textToSpeechEnginesalida.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts1");
+                        textToSpeechEnginesalida.speak(voz, TextToSpeech.QUEUE_FLUSH, null, "tts1");
                     }
             }
         });

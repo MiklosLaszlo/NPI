@@ -115,9 +115,9 @@ public class BasedatosHorarios {
 
     public String getHorario() {
         if(lista_horas.isEmpty()) return "Rellene el resto de campos con valores válidos";
-        String salida = "La asignatura " + asignatura.nombre + " del grado " + asignatura.grado + " (subgrupo " + subrupo.nombre + ") son los:\n" ;
+        String salida = "La asignatura " + asignatura.nombre + " (subgrupo " + subrupo.nombre + "), del grado de " + asignatura.grado + ", son los:\n" ;
         for (Hora h : lista_horas){
-            salida+= "     " + BasedatosHorarios.dias.get(h.dia) + ": de " + h.horaInicio + " a " + h.horaFin + " en el aula: " + h.clase + "\n";
+            salida+= "     " + BasedatosHorarios.dias.get(h.dia) + " -> " + h.horaInicio + " - " + h.horaFin + " aula: " + h.clase + "\n";
         }
         return salida;
     }
@@ -126,7 +126,7 @@ public class BasedatosHorarios {
         //String salida = "La asignatura " + asignatura.nombre + " del grado " + asignatura.grado + " (subgrupo " + subrupo.nombre + ") son los:\n" ;
         String salida= "El subgrupo "  + subrupo.nombre + " de  " + asignatura.nombre + " son los: \n";
         for (Hora h : lista_horas){
-            salida+= "     " + BasedatosHorarios.dias.get(h.dia) + ": de " + h.horaInicio + " a " + h.horaFin + " en el aula: " + h.clase + "\n";
+            salida+= "     " + BasedatosHorarios.dias.get(h.dia) + ": de " + h.horaInicio + " a " + h.horaFin + " en el aula " + h.clase + ".\n";
         }
         return salida;
     }
