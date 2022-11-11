@@ -24,7 +24,7 @@
 %left EQUAL NOTEQUAL
 %left LESS GREATER LESSEQ GREATEREQ
 
-%left MAS MENOS
+%left MAS MENOSMENOS
 %left POR DIV
 
 // Operados unarios
@@ -39,7 +39,7 @@
 %left PORCENTAJE
 %left DOBLEPOR
 
-%left MENOSMENOS
+%left MENOS
 
 // Terciario de lista
 %nonassoc TER1
@@ -130,7 +130,6 @@ expresion : PARIZQ expresion PARDCH
         | agregado
         | LITERAL ;
 llamar_funcion : IDENTIFICADOR argumentos
-        | IDENTIFICADOR argumentos PYC ;
         
 argumentos : PARIZQ lista_argumentos PARDCH ;
 lista_argumentos : IDENTIFICADOR
