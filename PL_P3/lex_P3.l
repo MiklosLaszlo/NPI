@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "constants.h"
+#include "y.tab.h"
 
 #define RESET_COLOR    "\x1b[0m"
 #define BG_COLOR_RED     "\x1B[41m"
@@ -66,7 +66,7 @@ otros .
 
 "not" {
     strcpy(atributo, "0");
-    return (OPUNI);
+    return (NOT);
 }
 
 "=" {
@@ -75,7 +75,7 @@ otros .
 }
 "#" {
     strcpy(atributo, "2");
-    return (OPUNI);
+    return (SOSTENIDO);
 }
 
 "int" {
@@ -120,79 +120,79 @@ otros .
 
 "?" {
     strcpy(atributo, "3");
-    return (OPUNI);
+    return (INTERROGACION);
 }
 
 "equal" {
     strcpy(atributo, "0");
-    return (OPBIN);
+    return (EQUAL);
 }
 
 "not_equal" {
     strcpy(atributo, "1");
-    return (OPBIN);
+    return (NOTEQUAL);
 }
 "and" {
     strcpy(atributo, "2");
-    return (OPBIN);
+    return (AND);
 }
 
 "or" {
     strcpy(atributo, "3");
-    return (OPBIN);
+    return (OR);
 }
 "xor" {
     strcpy(atributo, "4");
-    return (OPBIN);
+    return (XOR);
 }
 "+" {
     strcpy(atributo, "5");
-    return (OPBIN);
+    return (MAS);
 }
 
 
 "/" {
     strcpy(atributo, "6");
-    return (OPBIN);
+    return (DIV);
 }
 
 "less" {
     strcpy(atributo, "7");
-    return (OPBIN);
+    return (LESS);
 }
 
 "greater" {
     strcpy(atributo, "8");
-    return (OPBIN);
+    return (GREATER);
 }
 
 "less_eq" {
     strcpy(atributo, "9");
-    return (OPBIN);
+    return (LESSEQ);
 }
 
 "greater_eq" {
     strcpy(atributo, "10");
-    return (OPBIN);
+    return (GREATEREQ);
 }
 
 "@" {
     strcpy(atributo, "11");
-    return (OPBIN);
+    return (ARROBA);
 }
 
 "--" {
     strcpy(atributo, "12");
-    return (OPBIN);
+    return (MENOSMENOS);
 }
 "%" {
     strcpy(atributo, "13");
-    return (OPBIN);
+    return (PORCENTAJE);
 }
 
 "**" {
     strcpy(atributo, "14");
-    return (OPBIN);
+    return (DOBLEPOR);
 }
 
 "if" {
@@ -269,7 +269,7 @@ otros .
 
 "-" {
     strcpy(atributo, "0");
-    return (MENOSPOR);
+    return (MENOS);
 }
 
 
@@ -296,7 +296,7 @@ otros .
 
 "*" {
     strcpy(atributo, "1");
-    return (MENOSPOR);
+    return (POR);
 }
 
 ("'"({letra}|{numero})"'") {
@@ -334,7 +334,7 @@ otros .
 
 %%
 
-/* Procedimientos de usuario */
+/* Procedimientos de usuario 
 
 int main (int argc, char** argv) {
 
@@ -375,3 +375,4 @@ int main (int argc, char** argv) {
 	exit(0);
 
 }
+*/
