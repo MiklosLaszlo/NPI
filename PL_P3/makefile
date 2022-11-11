@@ -1,7 +1,7 @@
 # $< Primero
 # $^ todos
 all: yacc_P3.y lex.yy.c 
-	yacc $<
+	yacc -v $<
 salida_lex.out : lex.yy.c
 	gcc $< -o $@
 test_lex: salida_lex.out prueba

@@ -42,8 +42,7 @@
 %left MENOS
 
 // Terciario de lista
-%nonassoc TER1
-%nonassoc TER2
+%nonassoc TER1 TER2
 
 //*******************
 %token MAIN
@@ -108,7 +107,7 @@ sentencia : sentencia_asignacion
         | sentencia_return 
         | sentencia_for_pascal
         | sentencia_lista
-        | ;
+        | PYC ;
 sentencia_asignacion : IDENTIFICADOR IGUAL expresion PYC ;
 sentencia_if : IF PARIZQ expresion PARDCH THEN bloque
         ELSE bloque
@@ -122,8 +121,8 @@ sentencia_lista : IDENTIFICADOR MOVLISTA PYC
         | PRINCIPIOLISTA IDENTIFICADOR PYC ;
         
 expresion : PARIZQ expresion PARDCH
-        | OPUNI expresion
-        | expresion OPBIN expresion
+        | OPUNI expresion %prec NOT
+        | expresion OPBIN expresion %prec AND
         | expresion TER1 expresion TER2 expresion
         | IDENTIFICADOR
         | llamar_funcion
@@ -141,7 +140,7 @@ lista_expresiones : lista_expresiones COMA expresion
 OPUNI : NOT
         | SOSTENIDO
         | INTERROGACION 
-        | MENOS
+        | MENOS ;
 OPBIN : EQUAL
         | MENOS
         | POR
