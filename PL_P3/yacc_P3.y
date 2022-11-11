@@ -20,10 +20,13 @@
 //REVISAR
 %right IGUAL
 // Operadores binarios 
-%left AND OR XOR
-%left EQUAL NOTEQUAL
-%left LESS GREATER LESSEQ GREATEREQ
+//%left AND OR XOR
+%left LOGICOS
+//%left EQUAL NOTEQUAL
+%left IGUALDAD
 
+//%left LESS GREATER LESSEQ GREATEREQ
+%left COMPARACION
 %left MAS MENOSMENOS
 %left POR DIV
 
@@ -38,12 +41,10 @@
 %left ARROBA
 %left PORCENTAJE
 %left DOBLEPOR
-
 %left MENOS
 
 // Terciario de lista
 %nonassoc TER1 TER2
-
 //*******************
 %token MAIN
 %token LLAVEIZQ
@@ -122,7 +123,7 @@ sentencia_lista : IDENTIFICADOR MOVLISTA PYC
         
 expresion : PARIZQ expresion PARDCH
         | OPUNI expresion %prec NOT
-        | expresion OPBIN expresion %prec AND
+        | expresion OPBIN expresion %prec LOGICOS
         | expresion TER1 expresion TER2 expresion
         | IDENTIFICADOR
         | llamar_funcion
@@ -141,19 +142,13 @@ OPUNI : NOT
         | SOSTENIDO
         | INTERROGACION 
         | MENOS ;
-OPBIN : EQUAL
+OPBIN : IGUALDAD
         | MENOS
         | POR
-        | NOTEQUAL
-        | AND
-        | OR
-        | XOR
+        | LOGICOS
         | MAS
         | DIV
-        | LESS
-        | GREATER
-        | LESSEQ
-        | GREATEREQ
+        | COMPARACION
         | ARROBA
         | MENOSMENOS
         | PORCENTAJE
