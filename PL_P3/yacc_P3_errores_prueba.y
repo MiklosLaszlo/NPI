@@ -97,7 +97,7 @@ declarar_funcion : tipo_basico IDENTIFICADOR parametros bloque PYC
 		  | tipo_basico IDENTIFICADOR parametros bloque error { yyerrok; explicacion_error('Error, la declaración de funciones acaba en \';\'.'); }  
 parametros : PARIZQ PARDCH
         | PARIZQ lista_parametros PARDCH 
-		  | PARIZQ error { yyerrok; explicacion_error('Error, debe introducir una lista de parámetros separados por comas'); }
+		  //| PARIZQ error { yyerrok; explicacion_error('Error, debe introducir una lista de parámetros separados por comas'); }
 		  | PARIZQ lista_parametros error { yyerrok; explicacion_error('Error, debe cerrarse el paréntesis'); }
 lista_parametros : tipo_basico IDENTIFICADOR 
         | lista_parametros COMA tipo_basico IDENTIFICADOR 
@@ -148,7 +148,7 @@ sentencia_for_pascal : FOR sentencia_asignacion TO expresion DO bloque
 		  | FOR sentencia_asignacion TO expresion DO error { yyerrok; explicacion_error('Error, se esperaba un bloque'); }
 sentencia_lista : IDENTIFICADOR MOVLISTA PYC
         | PRINCIPIOLISTA IDENTIFICADOR PYC 
-		  | IDENTIFICADOR error { yyerrok; explicacion_error('Error, se esperaba \'<<\''); }
+		  //| IDENTIFICADOR error { yyerrok; explicacion_error('Error, se esperaba \'<<\''); }
 		  | IDENTIFICADOR MOVLISTA error { yyerrok; explicacion_error('Error, debe acabar en \';\''); }
 		  | PRINCIPIOLISTA error { yyerrok; explicacion_error('Error, se esperaba un identificador'); }
 		  | PRINCIPIOLISTA IDENTIFICADOR error { yyerrok; explicacion_error('Error, debe acabar en \';\''); }
@@ -161,25 +161,26 @@ expresion : PARIZQ expresion PARDCH
         | llamar_funcion
         | agregado
         | LITERAL 
-
-		  | PARIZQ error { yyerrok; explicacion_error('Error, se esperaba una expresión'); }
+		 /* | PARIZQ error { yyerrok; explicacion_error('Error, se esperaba una expresión'); }
 		  | PARIZQ expresion error { yyerrok; explicacion_error('Error, debe cerrarse el paréntesis'); }
 		  | OPUNI error { yyerrok; explicacion_error('Error, se esperaba una expresión'); }
 		  | expresion OPBIN error { yyerrok; explicacion_error('Error, se esperaba una expresión'); }
 		  | expresion TER1 error { yyerrok; explicacion_error('Error, se esperaba una expresión'); }
 		  | expresion TER1 expresion error { yyerrok; explicacion_error('Error, se esperaba \'@@\''); }
-		  | expresion TER1 expresion TER2 error { yyerrok; explicacion_error('Error, se esperaba una expresión'); } 
+		  | expresion TER1 expresion TER2 error { yyerrok; explicacion_error('Error, se esperaba una expresión'); } */
 
 
 llamar_funcion : IDENTIFICADOR argumentos
-		  | IDENTIFICADOR error { yyerrok; explicacion_error('Error, debe indicar los argumentos de la función'); };
+		//  | IDENTIFICADOR error { yyerrok; explicacion_error('Error, debe indicar los argumentos de la función'); };
         
 argumentos : PARIZQ lista_argumentos PARDCH 
-		  | PARIZQ error { yyerrok; explicacion_error('Error, debe indicar los argumentos separados por coma')}
+		  //|  PARIZQ error { yyerrok; explicacion_error('Error, debe indicar los argumentos separados por coma')}
 		  | PARIZQ lista_argumentos error { yyerrok; explicacion_error('Error, la lista de argumentos debe acabar con paréntesis'); }
+
 lista_argumentos : IDENTIFICADOR
         | lista_argumentos COMA IDENTIFICADOR
-        | 
+        |
+
 agregado : CORIZQ lista_expresiones CORDCH 
 		  | CORIZQ error {yytext('Error, debe proporcionar una lista de expresiones separadas por comas')}
 		  | CORIZQ lista_expresiones error { yytext('Error, debe cerrar el corchete'); }
