@@ -135,8 +135,8 @@ llamar_funcion : IDENTIFICADOR argumentos ;
 argumentos : PARIZQ lista_argumentos PARDCH ;
 lista_argumentos : IDENTIFICADOR
         | lista_argumentos COMA IDENTIFICADOR
-        | IDENTIFICADOR
-        | lista_argumentos COMA IDENTIFICADOR
+        | LITERAL
+        | lista_argumentos COMA LITERAL
         | ;
 agregado : CORIZQ lista_expresiones CORDCH ;
 lista_expresiones : lista_expresiones COMA expresion

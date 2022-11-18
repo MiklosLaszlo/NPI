@@ -66,7 +66,7 @@ otros .
 
 "not" {
     strcpy(atributo, "0");
-    return (NOT);
+    return (OPUNI);
 }
 
 "=" {
@@ -75,7 +75,7 @@ otros .
 }
 "#" {
     strcpy(atributo, "2");
-    return (SOSTENIDO);
+    return (OPUNI);
 }
 
 "int" {
@@ -120,80 +120,60 @@ otros .
 
 "?" {
     strcpy(atributo, "3");
-    return (INTERROGACION);
+    return (OPUNI);
 }
 
-"equal" {
-    strcpy(atributo, "0");
-    return (EQUAL);
+"IGUALDAD" {
+    strcpy(atributo,"1");
+    return (OPBIN);
 }
-
-"not_equal" {
-    strcpy(atributo, "1");
-    return (NOTEQUAL);
-}
-"and" {
-    strcpy(atributo, "2");
-    return (AND);
-}
-
-"or" {
-    strcpy(atributo, "3");
-    return (OR);
-}
-"xor" {
-    strcpy(atributo, "4");
-    return (XOR);
+"LOGICOS" {
+    strcpy(atributo , "2");
+    return (OPBIN);
 }
 "+" {
-    strcpy(atributo, "5");
-    return (MAS);
+    strcpy(atributo, "3");
+    return (OPBIN);
 }
 
 
 "/" {
-    strcpy(atributo, "6");
-    return (DIV);
+    strcpy(atributo, "4");
+    return (OPBIN);
 }
 
-"less" {
-    strcpy(atributo, "7");
-    return (LESS);
+"COMPARACION" {
+    strcpy(atributo,"5");
+    return (OPBIN);
 }
-
-"greater" {
-    strcpy(atributo, "8");
-    return (GREATER);
-}
-
-"less_eq" {
-    strcpy(atributo, "9");
-    return (LESSEQ);
-}
-
-"greater_eq" {
-    strcpy(atributo, "10");
-    return (GREATEREQ);
-}
-
 "@" {
-    strcpy(atributo, "11");
-    return (ARROBA);
+    strcpy(atributo, "6");
+    return (OPBIN);
 }
 
 "--" {
-    strcpy(atributo, "12");
-    return (MENOSMENOS);
+    strcpy(atributo, "7");
+    return (OPBIN);
 }
 "%" {
-    strcpy(atributo, "13");
-    return (PORCENTAJE);
+    strcpy(atributo, "8");
+    return (OPBIN);
 }
 
 "**" {
-    strcpy(atributo, "14");
-    return (DOBLEPOR);
+    strcpy(atributo, "9");
+    return (OPBIN);
 }
+"*" {
+    strcpy(atributo, "10");
+    return (OPBIN);
+}
+
+"-" {
+    strcpy(atributo, "11");
+    return (OPBIN);
+}
+
 
 "if" {
     strcpy(atributo, "");
@@ -267,10 +247,7 @@ otros .
     return (PRINCIPIOLISTA);
 }
 
-"-" {
-    strcpy(atributo, "0");
-    return (MENOS);
-}
+
 
 
 "<<" {
@@ -294,10 +271,7 @@ otros .
 }
 
 
-"*" {
-    strcpy(atributo, "1");
-    return (POR);
-}
+
 
 ("'"({letra}|{numero})"'") {
     strcpy(atributo, "0");
@@ -334,7 +308,7 @@ otros .
 
 %%
 
-/* Procedimientos de usuario 
+/* Procedimientos de usuario */
 
 int main (int argc, char** argv) {
 
@@ -375,4 +349,3 @@ int main (int argc, char** argv) {
 	exit(0);
 
 }
-*/
