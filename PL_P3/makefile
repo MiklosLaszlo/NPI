@@ -1,10 +1,18 @@
 # $< Primero
 # $^ todos
+<<<<<<< HEAD
 
 all: yacc
 
 yacc: y.tab.c
 	gcc -o salida_yacc y.tab.c
+=======
+<<<<<<< HEAD
+all: y.tab.c
+	gcc y.tab.c
+y.tab.c: yacc_P3.y lex.yy.c 
+	yacc -v -d $<
+>>>>>>> 30fe7abda18cf886c623c23ebe8432f733305550
 
 salida_lex.out : lex.yy.c
 	gcc $< -o $@
