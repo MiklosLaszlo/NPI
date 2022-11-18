@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "constants.h"
+#include "y.tab.h"
 
 #define RESET_COLOR    "\x1b[0m"
 #define BG_COLOR_RED     "\x1B[41m"
