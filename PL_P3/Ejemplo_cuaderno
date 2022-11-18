@@ -78,13 +78,13 @@ main{
 	lf = lf++10.0@0;
 	lc = lc++'c'@0;
 
-	if( ?(le++20@0) equal 20) then {
+	if( ?(le++20.0) equal 20) then {
 		ve = ?pe ;
 	}
 	else{
 		pe = pe * 2 ;
 	}
-	pe = pe2 - pe++10@0 * (20/2000) ; 
+	pe = pe2 - pe++10.0@0 * (20/2000) ; 
 	
 	return pe;
 	};

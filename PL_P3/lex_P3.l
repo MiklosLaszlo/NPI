@@ -299,7 +299,7 @@ otros .
 
 
 
-("'"({letra}|{numero}|[ ]|:)"'") {
+("'"({letra}|{numero}|[ ]|\:)"'") {
     strcpy(atributo, "0");
     return (LITERAL);
 }
@@ -309,7 +309,7 @@ otros .
     return (LITERAL);
 }
 
-({numero}+.{numero}+) {
+({numero}+\.{numero}+) {
     strcpy(atributo, "2");
     return (LITERAL);
 }
