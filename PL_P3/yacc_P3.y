@@ -45,7 +45,7 @@
 %left MENOS
 
 // Terciario de lista
-%nonassoc TER1 TER2
+%nonassoc TER1
 //*******************
 %token MAIN
 %token LLAVEIZQ
@@ -125,7 +125,7 @@ sentencia_lista : IDENTIFICADOR MOVLISTA PYC
 expresion : PARIZQ expresion PARDCH
         | OPUNI expresion %prec NOT
         | expresion OPBIN expresion %prec LOGICOS
-        | expresion TER1 expresion TER2 expresion
+        | expresion TER1 expresion ARROBA expresion
         | IDENTIFICADOR
         | llamar_funcion
         | agregado
