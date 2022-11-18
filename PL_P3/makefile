@@ -1,6 +1,5 @@
 # $< Primero
 # $^ todos
-<<<<<<< HEAD
 all: y.tab.c
 	gcc y.tab.c
 y.tab.c: yacc_P3.y lex.yy.c 

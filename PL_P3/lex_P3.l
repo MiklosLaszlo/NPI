@@ -120,22 +120,45 @@ otros .
 
 "less" {
     strcpy(atributo, "7");
-    return (OPBIN);
+    return (COMPARACION);
 }
 
 "greater" {
     strcpy(atributo, "8");
-    return (OPBIN);
+    return (COMPARACION);
 }
 
 "less_eq" {
     strcpy(atributo, "9");
-    return (OPBIN);
+    return (COMPARACION);
 }
 
 "greater_eq" {
     strcpy(atributo, "10");
-    return (OPBIN);
+    return (COMPARACION);
+}
+
+"equal" {
+    strcpy(atributo, "0");
+    return (IGUALDAD);
+}
+
+"not_equal" {
+    strcpy(atributo, "1");
+    return (IGUALDAD);
+}
+"and" {
+    strcpy(atributo, "2");
+    return (LOGICOS);
+}
+
+"or" {
+    strcpy(atributo, "3");
+    return (LOGICOS);
+}
+"xor" {
+    strcpy(atributo, "4");
+    return (LOGICOS);
 }
 
 "?" {
