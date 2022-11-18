@@ -1,3 +1,4 @@
+
 # $< Primero
 # $^ todos
 all: yacc_P3.y lex.yy.c 
@@ -7,5 +8,5 @@ salida_lex.out : lex.yy.c
 test_lex: salida_lex.out prueba
 	./salida_lex.out prueba
 
-lex.yy.c : lex_P3.l constants.h
+lex.yy.c : lex_P3.l y.tab.h
 	flex $<
