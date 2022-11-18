@@ -66,7 +66,7 @@ otros .
 
 "not" {
     strcpy(atributo, "0");
-    return (OPUNI);
+    return (NOT);
 }
 
 "=" {
@@ -75,7 +75,7 @@ otros .
 }
 "#" {
     strcpy(atributo, "2");
-    return (OPUNI);
+    return (SOSTENIDO);
 }
 
 "int" {
@@ -118,60 +118,69 @@ otros .
    return (TYPE);
 }
 
-"?" {
-    strcpy(atributo, "3");
-    return (OPUNI);
+"less" {
+    strcpy(atributo, "7");
+    return (OPBIN);
 }
 
-"IGUALDAD" {
-    strcpy(atributo,"1");
+"greater" {
+    strcpy(atributo, "8");
     return (OPBIN);
 }
-"LOGICOS" {
-    strcpy(atributo , "2");
+
+"less_eq" {
+    strcpy(atributo, "9");
     return (OPBIN);
 }
+
+"greater_eq" {
+    strcpy(atributo, "10");
+    return (OPBIN);
+}
+
+"?" {
+    strcpy(atributo, "3");
+    return (INTERROGACION);
+}
+
 "+" {
     strcpy(atributo, "3");
-    return (OPBIN);
+    return (MAS);
 }
 
 
 "/" {
     strcpy(atributo, "4");
-    return (OPBIN);
+    return (MULTIPLICATIVO);
 }
 
-"COMPARACION" {
-    strcpy(atributo,"5");
-    return (OPBIN);
-}
+
 "@" {
     strcpy(atributo, "6");
-    return (OPBIN);
+    return (ARROBA);
 }
 
 "--" {
     strcpy(atributo, "7");
-    return (OPBIN);
+    return (MENOSMENOS);
 }
 "%" {
     strcpy(atributo, "8");
-    return (OPBIN);
+    return (PORCENTAJE);
 }
 
 "**" {
     strcpy(atributo, "9");
-    return (OPBIN);
+    return (DOBLEPOR);
 }
 "*" {
     strcpy(atributo, "10");
-    return (OPBIN);
+    return (MULTIPLICATIVO);
 }
 
 "-" {
     strcpy(atributo, "11");
-    return (OPBIN);
+    return (MENOS);
 }
 
 
@@ -308,7 +317,7 @@ otros .
 
 %%
 
-/* Procedimientos de usuario */
+/* Procedimientos de usuario 
 
 int main (int argc, char** argv) {
 
@@ -349,3 +358,4 @@ int main (int argc, char** argv) {
 	exit(0);
 
 }
+*/

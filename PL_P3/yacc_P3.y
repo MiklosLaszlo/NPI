@@ -155,4 +155,36 @@ OPBIN : IGUALDAD
         | MENOSMENOS
         | PORCENTAJE
         | DOBLEPOR ;
-%%      
+%% 
+
+#include "lex.yy.c"
+void yyerror( char *msg ){
+	fprintf(stderr, "Línea %d: %s\n", yylineno, msg) ;
+}
+
+int main (int argc, char** argv)
+{
+    // Se comprueba que se recibe 1 argumento (nombre del fichero fuente)
+	if (argc <= 1) {
+
+        printf("\nError al ejecutar la aplicación...\n");
+        printf("Uso: %s nombre_fichero_fuente\n", argv[0]);
+
+		exit(-1);
+
+	}
+
+    // Se abre el fichero recibido por parámetro
+    yyin = fopen(argv[1], "r");
+
+    // Si "yyin" es nulo no se ha podido abrir el fichero
+    if (yyin == NULL) {
+
+        printf ("\nError al abrir el fichero %s\n", argv[1]);
+
+        exit (-2);
+
+    }
+
+    yyparse();
+}

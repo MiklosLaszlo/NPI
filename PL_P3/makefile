@@ -1,6 +1,8 @@
 # $< Primero
 # $^ todos
-all: yacc_P3.y lex.yy.c 
+all: y.tab.c
+	gcc y.tab.c
+y.tab.c: yacc_P3.y lex.yy.c 
 	yacc -v -d $<
 
 salida_lex.out : lex.yy.c
