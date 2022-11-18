@@ -28,7 +28,8 @@
 //%left LESS GREATER LESSEQ GREATEREQ
 %left COMPARACION
 %left MAS MENOSMENOS
-%left POR DIV
+//%left POR DIV
+%left MULTIPLICATIVO
 
 // Operados unarios
 %left NOT
@@ -144,10 +145,9 @@ OPUNI : NOT
         | MENOS ;
 OPBIN : IGUALDAD
         | MENOS
-        | POR
         | LOGICOS
         | MAS
-        | DIV
+        | MULTIPLICATIVO
         | COMPARACION
         | ARROBA
         | MENOSMENOS
