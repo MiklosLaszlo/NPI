@@ -1,13 +1,10 @@
 # $< Primero
 # $^ todos
-<<<<<<< HEAD
-all: y.tab.c
-	gcc y.tab.c
-y.tab.c: yacc_P3.y lex.yy.c 
-=======
-all: yacc_P3_errores_prueba.y lex.yy.c 
->>>>>>> 5242b054056d179e05f693eeaa4815217a64c3b2
-	yacc -v -d $<
+
+all: yacc
+
+yacc: y.tab.c
+	gcc -o salida_yacc y.tab.c
 
 salida_lex.out : lex.yy.c
 	gcc $< -o $@
@@ -15,10 +12,13 @@ salida_lex.out : lex.yy.c
 test_lex: salida_lex.out prueba
 	./salida_lex.out prueba
 
+test_yacc: yacc
+	./salida_yacc prueba
+
 lex.yy.c : lex_P3.l y.tab.h
 	flex $<
 
-y.tab.h: yacc_P3_errores_prueba.y clean
+y.tab.c: yacc_P3.y clean lex.yy.c 
 	yacc -v -d $<
 
 clean:
