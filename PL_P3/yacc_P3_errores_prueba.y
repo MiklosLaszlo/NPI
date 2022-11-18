@@ -161,13 +161,13 @@ expresion : PARIZQ expresion PARDCH
         | llamar_funcion
         | agregado
         | LITERAL 
-		 /* | PARIZQ error { yyerrok; explicacion_error('Error, se esperaba una expresión'); }
+		  | PARIZQ error { yyerrok; explicacion_error('Error, se esperaba una expresión'); }
 		  | PARIZQ expresion error { yyerrok; explicacion_error('Error, debe cerrarse el paréntesis'); }
 		  | OPUNI error { yyerrok; explicacion_error('Error, se esperaba una expresión'); }
 		  | expresion OPBIN error { yyerrok; explicacion_error('Error, se esperaba una expresión'); }
 		  | expresion TER1 error { yyerrok; explicacion_error('Error, se esperaba una expresión'); }
 		  | expresion TER1 expresion error { yyerrok; explicacion_error('Error, se esperaba \'@@\''); }
-		  | expresion TER1 expresion TER2 error { yyerrok; explicacion_error('Error, se esperaba una expresión'); } */
+		  | expresion TER1 expresion TER2 error { yyerrok; explicacion_error('Error, se esperaba una expresión'); } 
 
 
 llamar_funcion : IDENTIFICADOR argumentos
