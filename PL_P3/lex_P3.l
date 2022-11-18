@@ -166,6 +166,11 @@ otros .
     return (INTERROGACION);
 }
 
+"++" {
+    strcpy(atributo, "");
+    return (TER1);
+}
+
 "+" {
     strcpy(atributo, "3");
     return (MAS);
@@ -176,7 +181,6 @@ otros .
     strcpy(atributo, "4");
     return (MULTIPLICATIVO);
 }
-
 
 "@" {
     strcpy(atributo, "6");
@@ -263,16 +267,6 @@ otros .
     return(WHILE);
 }
 
-"++" {
-    strcpy(atributo, "");
-    return (TER1);
-}
-
-"@@" {
-    strcpy(atributo, "");
-    return (TER2);
-}
-
 
 "$" {
     strcpy(atributo, "");
@@ -305,7 +299,7 @@ otros .
 
 
 
-("'"({letra}|{numero})"'") {
+("'"({letra}|{numero}|[ ]|:)"'") {
     strcpy(atributo, "0");
     return (LITERAL);
 }
