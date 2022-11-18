@@ -1,8 +1,8 @@
 %{
     #include <stdlib.h>
     #include <stdio.h>
-    #include <string.h>   
-    
+    #include <string.h>
+    #include "y.tab.h"
     // #include "y.tab.h" // Creo que esto habria que añadirlo al lex
 
     // La siguiente declaracion permite que ’yyerror’ se pueda invocar desde el
@@ -86,7 +86,7 @@ declar_de_variables_locales : INIVARIABLES
         variables_locales
         FINVARIABLES
         | ;
-variables_locales : variables_locales PYC cuerpo_declar_variables
+variables_locales : variables_locales cuerpo_declar_variables PYC
         | cuerpo_declar_variables PYC ;
 cuerpo_declar_variables : tipo_basico lista_identificadores ;
 lista_identificadores : lista_identificadores COMA IDENTIFICADOR
@@ -115,10 +115,10 @@ sentencia_if : IF PARIZQ expresion PARDCH THEN bloque
         ELSE bloque
         | IF PARIZQ expresion PARDCH THEN bloque ;
 sentencia_while : WHILE PARIZQ expresion PARDCH bloque ;
-sentencia_entrada : READ lista_identificadores PYC ;
-sentencia_salida : WRITE lista_expresiones PYC ; 
+sentencia_entrada : READ PARIZQ lista_identificadores PARDCH PYC ;
+sentencia_salida : WRITE PARIZQ lista_expresiones PARDCH PYC ; 
 sentencia_return : RETURN expresion PYC ;
-sentencia_for_pascal : FOR sentencia_asignacion TO expresion DO bloque ;
+sentencia_for_pascal : FOR IDENTIFICADOR IGUAL expresion TO expresion DO bloque ;
 sentencia_lista : IDENTIFICADOR MOVLISTA PYC
         | PRINCIPIOLISTA IDENTIFICADOR PYC ;
         
@@ -130,10 +130,12 @@ expresion : PARIZQ expresion PARDCH
         | llamar_funcion
         | agregado
         | LITERAL ;
-llamar_funcion : IDENTIFICADOR argumentos
+llamar_funcion : IDENTIFICADOR argumentos ;
         
 argumentos : PARIZQ lista_argumentos PARDCH ;
 lista_argumentos : IDENTIFICADOR
+        | lista_argumentos COMA IDENTIFICADOR
+        | IDENTIFICADOR
         | lista_argumentos COMA IDENTIFICADOR
         | ;
 agregado : CORIZQ lista_expresiones CORDCH ;

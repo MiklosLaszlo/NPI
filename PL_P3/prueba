@@ -14,32 +14,56 @@ int Funcion(){
         int b;
         int d;
     close
-    c=3
+    c=3;
      a=7;
      b=6;
      d=a-b;   
 
   return d;  
-}
+};
+
+int Funcion(int a,bool b, list of char c){
+    open 
+        int a;
+        int b;
+        int d;
+    close
+    c=3;
+     a=7;
+     b=6;
+     d=a-b;   
+
+  return d;  
+};
 
 e=Funcion();
+e=Funcion(a,b,14,True);
 
-if (e equals 1 ) 
-    then write (d);
+if (e equal 1 ) 
+    then {write (d);}
 else
-    write (hola);
+    {write (hola);}
 
 
-for i=3 to i less 20 do 
+for i=3 to i less 20 do{
     a=a+1;
+    if (e equal 1 ) 
+        then {write (d);}
+    else
+        {write (hola);}
+    }
 
-while i less 50 
+while (i less 50) {
     i=i+5;
+}
 
-i xor a;
-i or a;
+a = i xor a;
+a = i or a;
 prueba = True;
 
-write(i)
+write ((i) , a , 4);
+d=[12,'a',1+2,Funcion()];
+d<<;
+d>>;
 
-}
+};
