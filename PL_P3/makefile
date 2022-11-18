@@ -1,7 +1,10 @@
 # $< Primero
 # $^ todos
+all: yacc
 
-
+yacc: y.tab.c
+	gcc -o salida_yacc y.tab.c
+	
 salida_lex.out : lex.yy.c
 	gcc $< -o $@
 
