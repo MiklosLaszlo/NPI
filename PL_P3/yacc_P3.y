@@ -40,17 +40,19 @@ void explicacion_error( char * prod ) {
 %left PORCENTAJE
 %left DOBLEPOR
 %left MENOS
-
+%left LITERAL
+%left IDENTIFICADOR
+%left LLAVEIZQ
+%right LLAVEDCH
+%left CORIZQ
+%right CORDCH
+%left PARIZQ
+%right PARDCH
 // Terciario de lista
-%nonassoc TER1 TER2
+%nonassoc TER1 
 //*******************
 %token MAIN
-%token LLAVEIZQ
-%token LLAVEDCH
-%token CORIZQ
-%token CORDCH
-%token PARIZQ
-%token PARDCH
+
 %token TYPE
 %token IF
 %token THEN
@@ -68,8 +70,7 @@ void explicacion_error( char * prod ) {
 %token MOVLISTA
 %token INIVARIABLES
 %token FINVARIABLES
-%token LITERAL
-%token IDENTIFICADOR
+
 %%
 // Producciones
 // ######################
@@ -177,11 +178,11 @@ sentencia_lista : IDENTIFICADOR MOVLISTA PYC
 		  | PRINCIPIOLISTA error { yyerrok; explicacion_error("Error, se esperaba un identificador"); }
 		  | PRINCIPIOLISTA IDENTIFICADOR error { yyerrok; explicacion_error("Error, debe acabar en \";\""); } */
         
-expresion : PARIZQ expresion PARDCH
+expresion : PARIZQ expresion PARDCH 
         | OPUNI expresion %prec NOT
         | expresion OPBIN expresion %prec LOGICOS
-        | expresion TER1 expresion ARROBA expresion
-        | IDENTIFICADOR
+        | expresion TER1 expresion ARROBA expresion %prec IGUAL
+        | IDENTIFICADOR 
         | llamar_funcion
         | agregado
         | LITERAL 
@@ -191,7 +192,7 @@ expresion : PARIZQ expresion PARDCH
 		  | expresion OPBIN error { yyerrok; explicacion_error("Error, se esperaba una expresión"); }
 		  | expresion TER1 error { yyerrok; explicacion_error("Error, se esperaba una expresión"); }
 		  | expresion TER1 expresion error { yyerrok; explicacion_error("Error, se esperaba \"@@\""); }
-		  | expresion TER1 expresion TER2 error { yyerrok; explicacion_error("Error, se esperaba una expresión"); } 
+		  | expresion TER1 expresion ARROBA error { yyerrok; explicacion_error("Error, se esperaba una expresión"); } 
 
 llamar_funcion : IDENTIFICADOR argumentos ;
         
