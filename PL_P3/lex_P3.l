@@ -69,6 +69,11 @@ otros .
     return (NOT);
 }
 
+"@@" {
+    strcpy(atributo, "");
+    return (TER2);
+}
+
 "=" {
     strcpy(atributo, "");
     return (IGUAL);

@@ -74,11 +74,12 @@ main{
 			}
 			return d1 ;
 		};
+	
 	le = le++x@0;
 	lf = lf++10.0@0;
 	lc = lc++'c'@0;
 
-	if( ?(le++20.0) equal 20) then {
+	if( ?(le++20@0) equal 20) then {
 		ve = ?pe ;
 	}
 	else{
