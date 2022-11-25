@@ -20,6 +20,10 @@ lex.yy.c : lex_P3.l y.tab.h
 y.tab.c: yacc_P3.y clean lex.yy.c 
 	yacc -v -d $<
 
+y.tab.h: yacc_P3.y clean lex.yy.c
+	yacc -v -d $<
+	
+
 clean:
 	rm -f y.output
 	rm -f y.tab.c
