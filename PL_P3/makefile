@@ -12,7 +12,7 @@ test_lex: salida_lex.out prueba
 	./salida_lex.out prueba
 
 test_yacc: yacc
-	./salida_yacc prueba
+	./salida_yacc Ejemplo_cuaderno
 
 lex.yy.c : lex_P3.l y.tab.h
 	flex $<

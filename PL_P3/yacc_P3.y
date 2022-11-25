@@ -1,13 +1,15 @@
 %{
 #include "lex.yy.c"
 
+#define RESET_COLOR    "\x1b[0m"
+#define BG_COLOR_YELLOW     "\x1B[43m"
+
 void yyerror( char *msg ){
-	fprintf(stderr, "Línea %d: %s\n", yylineno, msg) ;
+	//fprintf(stderr, BG_COLOR_YELLOW "YY Error sintáctico"  RESET_COLOR " Línea %d, No se esperaba el lexema \'%s\'\n" ,yylineno, yytext);
 }
 
-void explicacion_error( char * prod ) {
-	//printf("Línea %d, Error sintáctico en la producción %d, no se esperaba: '%s'", nlinea, prod, yytext );
-	fprintf(stderr, "%s\n" ,prod);
+void explicacion_error( char * msg ) {
+	fprintf(stderr, BG_COLOR_YELLOW "Error sintáctico"  RESET_COLOR " Línea %d, No se esperaba \'%s\'. %s\n" ,yylineno, yytext, msg);
 }
 %}
 
@@ -35,6 +37,7 @@ void explicacion_error( char * prod ) {
 %left SOSTENIDO
 %left INTERROGACION
 
+%nonassoc TER1 
 // Operadores binarios de lista
 %left ARROBA
 %left PORCENTAJE
@@ -49,7 +52,6 @@ void explicacion_error( char * prod ) {
 %left PARIZQ
 %right PARDCH
 // Terciario de lista
-%nonassoc TER1 
 //*******************
 %token MAIN
 
@@ -95,6 +97,7 @@ declar_de_variables_locales : INIVARIABLES
         | 
 		  | INIVARIABLES error { yyerrok; explicacion_error("Error en el bloque de declaración de variables"); } 
 		  | INIVARIABLES variables_locales error { yyerrok; explicacion_error("Error, debe cerrarse el bloque de declaración de variables"); }
+
 variables_locales : variables_locales cuerpo_declar_variables PYC
         | cuerpo_declar_variables PYC 
   		  | cuerpo_declar_variables error { yyerrok; explicacion_error("Error, la declaración debe acabar en \";\"");};
@@ -181,7 +184,7 @@ sentencia_lista : IDENTIFICADOR MOVLISTA PYC
 expresion : PARIZQ expresion PARDCH 
         | OPUNI expresion %prec NOT
         | expresion OPBIN expresion %prec LOGICOS
-        | expresion TER1 expresion ARROBA expresion %prec IGUAL
+        | expresion TER1 expresion ARROBA expresion
         | IDENTIFICADOR 
         | llamar_funcion
         | agregado
@@ -191,8 +194,8 @@ expresion : PARIZQ expresion PARDCH
 		  | OPUNI error { yyerrok; explicacion_error("Error, se esperaba una expresión"); }
 		  | expresion OPBIN error { yyerrok; explicacion_error("Error, se esperaba una expresión"); }
 		  | expresion TER1 error { yyerrok; explicacion_error("Error, se esperaba una expresión"); }
-		  | expresion TER1 expresion error { yyerrok; explicacion_error("Error, se esperaba \"@@\""); }
-		  | expresion TER1 expresion ARROBA error { yyerrok; explicacion_error("Error, se esperaba una expresión"); } 
+		  | expresion TER1 expresion error { yyerrok; explicacion_error("Error, se esperaba \"@\""); }
+		//  | expresion TER1 expresion ARROBA error { yyerrok; explicacion_error("Error, se esperaba una expresión"); } 
 
 llamar_funcion : IDENTIFICADOR argumentos ;
         
