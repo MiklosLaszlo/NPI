@@ -1,31 +1,14 @@
-package com.example.myapplication;
+package com.example.drawerappugr;
+
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.os.Bundle;
-
-// Para gestos hechos con el Gesture Builder
-import android.gesture.Gesture;
-import android.gesture.GestureLibraries;
-import android.gesture.GestureLibrary;
-import android.gesture.GestureOverlayView;
-
-// Para Usar los sensores del movil
-import android.hardware.SensorManager; // Detecta (maneja) los sensores del movil.
-import android.hardware.Sensor;        // Manejadores especificos de cada sensor.
-
-import android.gesture.Prediction;
-import android.os.CountDownTimer;
-import android.os.TestLooperManager;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-
-public class MainActivity extends AppCompatActivity {
+public class pseudoMainNico extends AppCompatActivity {
 
 
     private TextView existGiroscope;

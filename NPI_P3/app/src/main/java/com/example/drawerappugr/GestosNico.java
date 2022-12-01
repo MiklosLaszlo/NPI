@@ -1,19 +1,15 @@
-package com.example.myapplication;
+package com.example.drawerappugr;
 
 // Para Usar los sensores del movil
 
-import android.app.Activity;
 import android.content.Context;
-import android.hardware.SensorEvent;  // Un evento de un sensor
-import android.hardware.SensorEventListener; // Escucha los eventos en cualquier sensor
-import android.hardware.SensorManager; // Detecta (maneja) los sensores del movil.
-import android.hardware.Sensor;        // Manejadores especificos de cada sensor.
-import android.os.Build;
-import android.os.Handler;
-import android.os.HandlerThread;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 
 
-public abstract class GestoGiroscopio implements SensorEventListener {
+public abstract class GestosNico implements SensorEventListener {
     private SensorManager mSensorManager;
     private Sensor mGiroscope;
     private Sensor mLinearAcelerometer;
@@ -29,7 +25,7 @@ public abstract class GestoGiroscopio implements SensorEventListener {
     private float prevVel;
 
 
-    public GestoGiroscopio(Context context) {
+    public GestosNico(Context context) {
         prevy=0;
         this.context = context;
         mSensorManager = (SensorManager) context.getSystemService (Context.SENSOR_SERVICE);
