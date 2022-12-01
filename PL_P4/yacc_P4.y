@@ -19,6 +19,7 @@ void explicacion_error_semantico( char * msg ) {
 }
 
 struct entradaTS entrada_aux = {indefinido,"","",desconocido,desconocido,0};
+struct entradaTS entrada_funciones = {funcion,"","",desconocido,desconocido,0};
 %}
 
 // TOKENS
@@ -104,41 +105,50 @@ bloque : LLAVEIZQ	{InsertarMarca();}
 
 declar_de_variables_locales : INIVARIABLES {entrada_aux.entrada = variable;}
         variables_locales
-        FINVARIABLES {entrada_aux.entrada = indefinido;}
+        FINVARIABLES
         | 
 		| INIVARIABLES {entrada_aux.entrada = variable;} error { yyerrok; explicacion_error_sintactico("Error en el bloque de declaración de variables"); } 
 		| INIVARIABLES  {entrada_aux.entrada = variable;} variables_locales error { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el bloque de declaración de variables"); }
 
-variables_locales : variables_locales cuerpo_declar_variables 
-		PYC {push(entrada_aux);}
-        | cuerpo_declar_variables 
-		PYC {push(entrada_aux);}
+variables_locales : variables_locales cuerpo_declar_variables PYC
+        | cuerpo_declar_variables PYC
   		  | cuerpo_declar_variables error { yyerrok; explicacion_error_sintactico("Error, la declaración debe acabar en \";\"");};
 
 cuerpo_declar_variables : tipo_basico lista_identificadores 
 		  | tipo_basico error { yyerrok; explicacion_error_sintactico("Error, después del tipo básico va una lista de identificadores"); }
 
 lista_identificadores : lista_identificadores
-		 COMA 			{push(entrada_aux);}
-		 IDENTIFICADOR  {strcpy(entrada_aux.nombre ,atributo);} 
-        | IDENTIFICADOR {strcpy(entrada_aux.nombre ,atributo);} 
+		 COMA 			
+		 IDENTIFICADOR  {strcpy(entrada_aux.nombre ,atributo);push(entrada_aux);} 
+        | IDENTIFICADOR {strcpy(entrada_aux.nombre ,atributo);push(entrada_aux);} 
 		  // El error de esto lo englobo en el de arriba
 
 declar_de_subprogs : declar_de_subprogs declarar_funcion
         | ;
-declarar_funcion : tipo_basico IDENTIFICADOR parametros bloque PYC 
-		  | tipo_basico error { yyerrok; explicacion_error_sintactico("Error, al declarar una función tras el tipo básico va el identificador"); }
-		  | tipo_basico IDENTIFICADOR error { yyerrok; explicacion_error_sintactico("Error, en una función tras el identificador vienen los parámetros."); } 
-		  | tipo_basico IDENTIFICADOR parametros error { yyerrok; explicacion_error_sintactico("Error, en una función tras los parámetros viene un bloque."); }
-		  | tipo_basico IDENTIFICADOR parametros bloque error { yyerrok; explicacion_error_sintactico("Error, la declaración de funciones acaba en \";\"."); }  
+declarar_funcion : tipo_basico {entrada_funciones.dato_referencia = entrada_aux.dato_referencia;entrada_funciones.dato_lista =entrada_aux.dato_lista;} 
+				  IDENTIFICADOR {strcpy(entrada_funciones.nombre ,atributo);}
+				  parametros {push(entrada_funciones);entrada_funciones.n_parametros=0;}
+				  bloque 
+				  PYC 
+		  | tipo_basico {entrada_funciones.dato_referencia = entrada_aux.dato_referencia;entrada_funciones.dato_lista =entrada_aux.dato_lista;}
+		   error { yyerrok; explicacion_error_sintactico("Error, al declarar una función tras el tipo básico va el identificador"); }
+		  | tipo_basico {entrada_funciones.dato_referencia = entrada_aux.dato_referencia;entrada_funciones.dato_lista =entrada_aux.dato_lista;} 
+		  IDENTIFICADOR {strcpy(entrada_funciones.nombre ,atributo);}
+		  error { yyerrok; explicacion_error_sintactico("Error, en una función tras el identificador vienen los parámetros."); } 
+		  | tipo_basico {entrada_funciones.dato_referencia = entrada_aux.dato_referencia;entrada_funciones.dato_lista =entrada_aux.dato_lista;}
+		  IDENTIFICADOR {strcpy(entrada_funciones.nombre ,atributo);} 
+		  parametros error { yyerrok; explicacion_error_sintactico("Error, en una función tras los parámetros viene un bloque."); }
+		  | tipo_basico {entrada_funciones.dato_referencia = entrada_aux.dato_referencia;entrada_funciones.dato_lista =entrada_aux.dato_lista;} 
+		  IDENTIFICADOR {strcpy(entrada_funciones.nombre ,atributo);}
+		  parametros {push(entrada_funciones);entrada_funciones.n_parametros=0;}bloque error { yyerrok; explicacion_error_sintactico("Error, la declaración de funciones acaba en \";\"."); }  
 
 parametros : PARIZQ PARDCH
-        | PARIZQ lista_parametros PARDCH 
+        | PARIZQ {entrada_aux.entrada = parametro_formal;} lista_parametros PARDCH
 		  //| PARIZQ error { yyerrok; explicacion_error_sintactico("Error, debe introducir una lista de parámetros separados por comas"); }
-		  | PARIZQ lista_parametros error { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el paréntesis"); }
-lista_parametros : tipo_basico IDENTIFICADOR 
-        | lista_parametros COMA tipo_basico IDENTIFICADOR 
-		  | tipo_basico error { yyerrok; explicacion_error_sintactico("Error, tras el tipo básico debe introducir un identificador"); }
+		  | PARIZQ {entrada_aux.entrada = parametro_formal;} lista_parametros error { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el paréntesis"); }
+lista_parametros : tipo_basico IDENTIFICADOR {entrada_funciones.n_parametros+=1;strcpy(entrada_aux.nombre ,atributo);push(entrada_aux);}
+        | lista_parametros COMA tipo_basico IDENTIFICADOR {entrada_funciones.n_parametros+=1;strcpy(entrada_aux.nombre ,atributo);push(entrada_aux);}
+		| tipo_basico error { yyerrok; explicacion_error_sintactico("Error, tras el tipo básico debe introducir un identificador"); }
 tipo_basico : TYPE {
 	if(strcmp(atributo,"0")==0)
 		entrada_aux.dato_referencia = entero;
@@ -198,11 +208,11 @@ sentencia_while : WHILE PARIZQ expresion PARDCH bloque
 		  | WHILE PARIZQ error { yyerrok; explicacion_error_sintactico("Error, la condición debe ser una expresión"); }
 		  | WHILE PARIZQ expresion error { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el paréntesis"); }
 		  | WHILE PARIZQ expresion PARDCH error { yyerrok; explicacion_error_sintactico("Error, se esperaba un bloque"); }
-sentencia_entrada : READ PARIZQ lista_identificadores PARDCH PYC 
+sentencia_entrada : READ PARIZQ lista_entrada PARDCH PYC 
     	  | READ error { yyerrok; explicacion_error_sintactico("Error, se esperaba un paréntesis"); }
 		  | READ PARIZQ error { yyerrok; explicacion_error_sintactico("Error, debe introducir una lista de identificadores separados por comas"); }
-		  | READ PARIZQ lista_identificadores error { yyerrok; explicacion_error_sintactico("Error, debe cerrar el paréntesis de la lista de identificadores"); }
-		  | READ PARIZQ lista_identificadores PARDCH error { yyerrok; explicacion_error_sintactico("Error, se esperaba \";\""); }
+		  | READ PARIZQ lista_entrada error { yyerrok; explicacion_error_sintactico("Error, debe cerrar el paréntesis de la lista de identificadores"); }
+		  | READ PARIZQ lista_entrada PARDCH error { yyerrok; explicacion_error_sintactico("Error, se esperaba \";\""); }
 sentencia_salida : WRITE PARIZQ lista_expresiones PARDCH PYC
 		  | WRITE error { yyerrok; explicacion_error_sintactico("Error, se esperaba un paréntesis"); }
 		  | WRITE PARIZQ error { yyerrok; explicacion_error_sintactico("Error, debe introducir una lista de expresiones separados por comas"); }
@@ -223,7 +233,12 @@ sentencia_lista : IDENTIFICADOR MOVLISTA PYC
 		  /* | IDENTIFICADOR MOVLISTA error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); }
 		  | PRINCIPIOLISTA error { yyerrok; explicacion_error_sintactico("Error, se esperaba un identificador"); }
 		  | PRINCIPIOLISTA IDENTIFICADOR error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); } */
-        
+
+lista_entrada : lista_entrada
+		 COMA 			
+		 IDENTIFICADOR 
+        | IDENTIFICADOR  
+
 expresion : PARIZQ expresion PARDCH 
         | OPUNI expresion %prec NOT
         | expresion OPBIN expresion %prec LOGICOS
