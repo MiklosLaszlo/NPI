@@ -1,38 +1,56 @@
-#include "stdio.h"
-#include "stdlib.h"
+#include <stdbool.h>
+
+#include <stdio.h>
+#include <stdlib.h>
 
 #define MAX_TS 1000
 
-typedef int booleano;
 //Si debug es 1 obtendremos informacion sobre lo que estamos haciendo
-int debug=0;
+int debug=1;
 
 #define true 1
 #define false 0
 
-typedef enum {marca,funcion,variable,parametro_formal} TipoEntrada;
+typedef enum {marca,funcion,variable,parametro_formal,indefinido} TipoEntrada;
 typedef enum {booleano,entero,real,caracter,lista,desconocido} TipoDato;
 
 typedef struct  entradaTS{
     TipoEntrada entrada;      // Indica el tipo de entrada
-    char *nombre; 
-    char *valor;              // Contendra los caracteres que forman el identificador
+    char nombre[100]; 
+    char valor[50];              // Contendra los caracteres que forman el identificador
     TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
                               // o parametro formal indica el tipo de dato al que hace referencia
     TipoDato dato_lista;      //tipo de datos que contiene la lista                    
-    unsigned int parametros;  //Si tipoDato  es funcion indica el numero de parametros   
+    unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros   
 };
 //Definimos la TS como un array multidimensional de entradas
-entradaTS  TS[MAX_TS];
+struct entradaTS  TS[MAX_TS];
 
 //Variable para saber por donde estamos de la pila
 long int TOPE=0;
 
-#define YYSTYPE entradaTS // Cada simbolo que se lea tendra estructura de tipo entradaTS
+//Metodo auxiliar para mostrar la entrada
+char* toStringEntrada(TipoEntrada e){
+    if(e==marca) return "marca";
+    if(e==funcion) return "funcion";
+    if(e==funcion) return "variable";
+    if(e==parametro_formal) return "parametro_formal";
+    return " ";
+}
+
+char* toStringTipoDato(TipoDato dato){
+    if(dato==entero) return "entero";
+    if(dato==booleano) return "booleano";
+    if(dato==real) return "real";
+    if(dato==caracter) return "caracter";
+    if(dato==lista) return "lista";
+    return "";
+}
+////////////////////////
 
 
 //Insertar elemento en la pila
-void push(entradaTS e){
+void push(struct entradaTS e){
     if(debug)
         printf("Inserto %s %s \n", toStringEntrada(e.entrada), e.nombre);
     if(TOPE==MAX_TS){
@@ -41,11 +59,11 @@ void push(entradaTS e){
     }   
     else{
         TS[TOPE].entrada=e.entrada;
-        TS[TOPE].nombre=e.nombre;
-        TS[TOPE].valor=e.valor;
+        strcpy(TS[TOPE].nombre,e.nombre);
+        strcpy(TS[TOPE].valor,e.valor);
         TS[TOPE].dato_referencia=e.dato_referencia;
         TS[TOPE].dato_lista=e.dato_lista;
-        TS[TOPE].parametros=e.parametros;
+        TS[TOPE].n_parametros=e.n_parametros;
         TOPE++;
     }
 }
@@ -62,11 +80,11 @@ void clear(){
 }
 
 //Sacar el ultimo elemento de la pila
-entradaTS pop(){
+struct entradaTS pop(){
     if(debug)
         printf("Sacando el ultimo elemento de la pila \n");
     if(TOPE > 0) {
-        entradaTS aux=TS[TOPE];   
+        struct entradaTS aux=TS[TOPE];   
         TOPE--;
         return aux;
     } 
@@ -108,17 +126,19 @@ void EliminarBloque(){
 
 // identificador es el nombre de una variable o de una funcion
 int  search_identificador(char * nom){
-    if(debug) printf("Se procede a buscar si una variable esta dentro del mismo bloque")
-    entradaTS aux=TS[TOPE];
+    if(debug) printf("Se procede a buscar si una variable esta dentro del mismo bloque");
+    struct entradaTS aux=TS[TOPE];
     int i=TOPE-1;
 
-    if(strlen(nombre ==0)){
+    if(strlen(nom ==0)){
         printf("Error: Se ha introducido una cadena vacia");
         exit(-1);
     }
     //Mientras que no encontremos la marca de inicio de bloque
-    while(aux.entrada!=marca){
-        if(strcmp(MAX_TS[i].nombre,nom)==0 && ((MAX_TS[i].entrada==variable) || (MAX_TS[i].entrada==funcion)) )
+    // NICO: Ahora mismo hace:lee toda la pila hasta encontrar el nombre mientras sea una funcion o una variable.
+    //       si no lo encuentra devuelve -1 
+    while(aux.entrada!=marca && (i > -1)){
+        if(strcmp(TS[i].nombre,nom)==0 && ((TS[i].entrada==variable) || (TS[i].entrada==funcion)) )
             return i;
         i--;    
     }
@@ -127,24 +147,6 @@ int  search_identificador(char * nom){
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//Metodo auxiliar para mostrar la entrada
-char *toStringEntrada(TipoEntrada e){
-    if(e==marca) return "marca";
-    if(e==funcion) return "funcion";
-    if(e==funcion) return "variable";
-    if(e==parametro_formal) return "parametro_formal";
-    return " ";
-}
-
-char *toStringTipoDato(TipoDato dato){
-    if(dato==entero) return "entero";
-    if(dato==booleano) return "booleano";
-    if(dato==real) return "real";
-    if(dato==caracter) return "caracter";
-    if(dato==lista) return "lista";
-    return "";
-}
 
 
 void printTS(){
@@ -158,7 +160,7 @@ void printTS(){
 }
 
 
-void ErrorOperarTipos(entradaTS dato1,entradaTS dato2){
+void ErrorOperarTipos(struct entradaTS dato1, struct entradaTS dato2){
     //En caso de que ambas variables tengan un tipo asignado
     if(dato1.dato_referencia!=desconocido && dato2.dato_referencia!=desconocido) {
         if(dato1.dato_referencia==lista)
@@ -171,29 +173,29 @@ void ErrorOperarTipos(entradaTS dato1,entradaTS dato2){
 }
 
 
-void ErrorDeclaradaEnBLoque(entradaTS dato){
+void ErrorDeclaradaEnBLoque(struct entradaTS dato){
     if(dato.dato_referencia!=desconocido)
         printf(" Error semantico : La %s %s ya ha sido declarada en este bloque \n" , toStringTipoDato(dato.dato_referencia) , dato.nombre);
 }
 
-void ErrorNoDeclarada(entradaTS dato){
-    if(dato!=desconocido){
+void ErrorNoDeclarada(struct entradaTS dato){
+    if(dato.dato_referencia!=desconocido){
         printf("Error semantico : La %s %s no ha sido declarada \n" , toStringTipoDato(dato.dato_referencia) , dato.nombre);
     }
 }
 
 
-void ErrorNombreParametros(entradaTS dato){
-    if(dato!=desconocido)
+void ErrorNombreParametros(struct entradaTS dato){
+    if(dato.dato_referencia!=desconocido)
         printf("Error semantico: Hay mas de un parametro con el mismo nombre %s \n" , dato.nombre);
 }
 
-void ErrorEnAsignacion(entradaTS dato1, entradaTS dato2){
+void ErrorEnAsignacion(struct entradaTS dato1, struct entradaTS dato2){
     if(dato1.dato_referencia!=desconocido && dato2.dato_referencia!=desconocido)
         printf("Error semantico: Los tipos que hay en la asignacion %s y %s no coinciden \n" , toStringTipoDato(dato1.dato_referencia),toStringTipoDato(dato2.dato_referencia));
 }
 
-void ErrorTipoInternoLista(entradaTS dato1,entradaTS dato2){
+void ErrorTipoInternoLista(struct entradaTS dato1,struct entradaTS dato2){
     if (dato1.dato_referencia !=desconocido && dato2.dato_referencia !=desconocido)
         printf("Error semantico: Los tipos %s  y  %s no coinciden \n", toStringTipoDato(dato1.dato_lista),toStringTipoDato(dato2.dato_lista) );
 }

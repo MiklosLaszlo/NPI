@@ -18,18 +18,18 @@ main{
 					double xf, x2 ;
 				close
 				double funcionC (bool c1, int c2) {
-				open
-					double x1 ;
-				close
-				x1= 1.3 ;
-				if (c2 greater 10) then {
-					c2= c2-1 ;
-				}
-				else{
-					x1= 3.1 ;
-				}
-				return x1 ;
-			};
+					open
+						double x1 ;
+					close
+					x1= 1.3 ;
+					if (c2 greater 10) then {
+						c2= c2-1 ;
+					}
+					else{
+						x1= 3.1 ;
+					}
+					return x1 ;
+				};
 			xf= functionC (true, 10);
 			x2= xf*(funcionC(false,1)-funcionC(true,23))/10.0;
 			while (x2*funcionC(false,1)-xf less 10.0){
