@@ -9,6 +9,22 @@
 #define BG_COLOR_YELLOW     "\x1B[43m"
 #define BG_COLOR_GREEN     "\x1B[32m"
 
+#ifndef ENUM
+#define ENUM
+	typedef enum {marca,funcion,variable,parametro_formal,indefinido} TipoEntrada;
+	typedef enum {booleano,entero,real,caracter,lista,desconocido} TipoDato;
+
+	typedef struct  entradaTS{
+    TipoEntrada entrada;      // Indica el tipo de entrada
+    char nombre[100]; 
+    char valor[50];              // Contendra los caracteres que forman el identificador
+    TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
+                              // o parametro formal indica el tipo de dato al que hace referencia
+    TipoDato dato_lista;      //tipo de datos que contiene la lista                    
+    unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros   
+};
+#endif // MACRO
+
 void yyerror( char *msg ){
 	//fprintf(stderr, BG_COLOR_YELLOW "YY Error sintáctico"  RESET_COLOR " Línea %d, No se esperaba el lexema \'%s\'\n" ,yylineno, yytext);
 }
@@ -22,8 +38,8 @@ void explicacion_error_semantico( char * msg ) {
 }
 
 struct entradaTS entrada_aux = {indefinido,"","",desconocido,desconocido,0};
-struct entradaTS entrada_funciones = {funcion,"","",desconocido,desconocido,0};
 
+int n_parametros=0;
 
 %}
 
@@ -108,7 +124,7 @@ bloque : LLAVEIZQ	{InsertarMarca();}
 		//  | LLAVEIZQ declar_de_variables_locales declar_de_subprogs error { yyerrok; explicacion_error_sintactico('Error en el orden del bloque'); } 
 		  | LLAVEIZQ {InsertarMarca();} declar_de_variables_locales declar_de_subprogs error { yyerrok; explicacion_error_sintactico("El bloque debe acabar con }"); } 
 
-declar_de_variables_locales : INIVARIABLES variables_locales FINVARIABLES {entrada_aux.entrada = variable;}
+declar_de_variables_locales : INIVARIABLES variables_locales FINVARIABLES 
         | 
 		| INIVARIABLES error { yyerrok; explicacion_error_sintactico("Error en el bloque de declaración de variables"); } 
 		| INIVARIABLES variables_locales error { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el bloque de declaración de variables"); }
@@ -122,33 +138,28 @@ cuerpo_declar_variables : tipo_basico lista_identificadores
 
 lista_identificadores : lista_identificadores
 		 COMA 			
-		 IDENTIFICADOR  {strcpy(entrada_aux.nombre ,atributo);push(entrada_aux);} 
-        | IDENTIFICADOR {strcpy(entrada_aux.nombre ,atributo);push(entrada_aux);} 
+		 IDENTIFICADOR  {push2($1,variable);} 
+        | IDENTIFICADOR {push2($1,variable);} 
 		  // El error de esto lo englobo en el de arriba
 
 declar_de_subprogs : declar_de_subprogs declarar_funcion
         | ;
 declarar_funcion : tipo_basico 
 				  IDENTIFICADOR 
-				  parametros 
+				  parametros {$2.n_parametros=n_parametros;push2($2,funcion);n_parametros=0;}
 				  bloque 
 				  PYC 
-				  {
-					entrada_funciones.dato_referencia = entrada_aux.dato_referencia;entrada_funciones.dato_lista =entrada_aux.dato_lista;
-					strcpy(entrada_funciones.nombre ,atributo);
-					push(entrada_funciones);entrada_funciones.n_parametros=0;
-				  }
 		  | tipo_basico error { yyerrok; explicacion_error_sintactico("Error, al declarar una función tras el tipo básico va el identificador"); }
 		  | tipo_basico IDENTIFICADOR error { yyerrok; explicacion_error_sintactico("Error, en una función tras el identificador vienen los parámetros."); } 
-		  | tipo_basico IDENTIFICADOR parametros error { yyerrok; explicacion_error_sintactico("Error, en una función tras los parámetros viene un bloque."); }
-		  | tipo_basico IDENTIFICADOR parametros bloque error { yyerrok; explicacion_error_sintactico("Error, la declaración de funciones acaba en \";\"."); }  
+		  | tipo_basico IDENTIFICADOR parametros {$1.n_parametros=n_parametros;push2($1,funcion);n_parametros=0;} error { yyerrok; explicacion_error_sintactico("Error, en una función tras los parámetros viene un bloque."); }
+		  | tipo_basico IDENTIFICADOR parametros {$1.n_parametros=n_parametros;push2($1,funcion);n_parametros=0;} bloque error { yyerrok; explicacion_error_sintactico("Error, la declaración de funciones acaba en \";\"."); }  
 
 parametros : PARIZQ PARDCH
-        | PARIZQ lista_parametros PARDCH {entrada_aux.entrada = parametro_formal;}
+        | PARIZQ lista_parametros PARDCH 
 		  //| PARIZQ error { yyerrok; explicacion_error_sintactico("Error, debe introducir una lista de parámetros separados por comas"); }
 		  | PARIZQ lista_parametros error { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el paréntesis"); }
-lista_parametros : tipo_basico IDENTIFICADOR {entrada_funciones.n_parametros+=1;strcpy(entrada_aux.nombre ,atributo);push(entrada_aux);}
-        | lista_parametros COMA tipo_basico IDENTIFICADOR {entrada_funciones.n_parametros+=1;strcpy(entrada_aux.nombre ,atributo);push(entrada_aux);}
+lista_parametros : tipo_basico IDENTIFICADOR {n_parametros+=1;push2($2,parametro_formal);}
+        | lista_parametros COMA tipo_basico IDENTIFICADOR {n_parametros+=1;push2($2,parametro_formal);}
 		| tipo_basico error { yyerrok; explicacion_error_sintactico("Error, tras el tipo básico debe introducir un identificador"); }
 tipo_basico : TYPE { $$.entrada = $1.entrada; }
 		// Ya no hay que comparar atributos. Las cosas finales las tenemos
@@ -228,22 +239,22 @@ expresion : PARIZQ expresion PARDCH
 		  | expresion TER1 expresion error { yyerrok; explicacion_error_sintactico("Error, se esperaba \"@\""); }
 		//  | expresion TER1 expresion ARROBA error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); } 
 
-llamar_funcion : IDENTIFICADOR argumentos ; {/*Hace falta algo como push funccion*/}
+llamar_funcion : IDENTIFICADOR argumentos ; //{/*Hace falta algo como push funccion*/}
         
 argumentos : PARIZQ lista_argumentos PARDCH
 		 | PARIZQ lista_argumentos error { yyerrok; explicacion_error_sintactico("Error, la lista de argumentos debe acabar con paréntesis"); }
 
-lista_argumentos : IDENTIFICADOR { push($1); }
-        | LITERAL { push($1); }
-        | lista_argumentos COMA IDENTIFICADOR { push($3); }
-        | lista_argumentos COMA LITERAL { push($3); }
+lista_argumentos : IDENTIFICADOR 
+        | LITERAL 
+        | lista_argumentos COMA IDENTIFICADOR 
+        | lista_argumentos COMA LITERAL 
         | ;
 agregado : CORIZQ lista_expresiones CORDCH
 		  | CORIZQ error {yyerrok; explicacion_error_sintactico("Error, debe proporcionar una lista de expresiones separadas por comas");}
 		  | CORIZQ lista_expresiones error { yyerrok; explicacion_error_sintactico("Error, debe cerrar el corchete"); }
 
-lista_expresiones : lista_expresiones COMA expresion { push($3); }
-        | expresion { push($1); }
+lista_expresiones : lista_expresiones COMA expresion 
+        | expresion 
 OPUNI : NOT
         | SOSTENIDO
         | INTERROGACION 

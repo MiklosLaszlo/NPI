@@ -96,52 +96,52 @@ otros .
 }
 
 "int" {
-	yylval.entrada = entero;
+	yylval.dato_referencia = entero;
    strcpy(atributo, "0");
    return (TYPE); 
 }
 
 "double" {
-	yylval.entrada = real;
+	yylval.dato_referencia = real;
    strcpy(atributo, "1");
    return (TYPE);
 }
 
 "char" {
-	yylval.entrada = caracter;
+	yylval.dato_referencia = caracter;
     strcpy(atributo, "2");
    return (TYPE);
 }
 
 "bool" {
-	yylval.entrada = booleano;
+	yylval.dato_referencia = booleano;
     strcpy(atributo, "3");
    return (TYPE);
 }
 
 "list"[ ]"of"[ ]"int" {
-	yylval.entrada = lista;
+	yylval.dato_referencia = lista;
 	yylval.dato_lista = entero;
     strcpy(atributo, "4");
    return (TYPE);
 }
 
 "list"[ ]"of"[ ]"double" {
-	yylval.entrada = lista;
+	yylval.dato_referencia = lista;
 	yylval.dato_lista = real;
     strcpy(atributo, "5");
    return (TYPE);
 }
 
 "list"[ ]"of"[ ]"char" {
-	yylval.entrada = lista;
+	yylval.dato_referencia = lista;
 	yylval.dato_lista = caracter;
     strcpy(atributo, "6");
    return (TYPE);
 }
 
 "list"[ ]"of"[ ]"bool" {
-	yylval.entrada = lista;
+	yylval.dato_referencia = lista;
 	yylval.dato_lista = booleano;
     strcpy(atributo, "7");
    return (TYPE);
@@ -329,32 +329,31 @@ otros .
 
 
 ("'"({letra}|{numero}|[ ]|\:)"'") {
-	yylval.entrada = caracter;
+	yylval.dato_referencia = caracter;
     strcpy(atributo, "0");
     return (LITERAL);
 }
 
 ({numero}+) {
-	yylval.entrada = entero;
+	yylval.dato_referencia = entero;
     strcpy(atributo, "1");
     return (LITERAL);
 }
 
 ({numero}+\.{numero}+) {
-	yylval.entrada = real;
+	yylval.dato_referencia = real;
     strcpy(atributo, "2");
     return (LITERAL);
 }
 
 ("True"|"False") {
-	yylval.entrada = booleano;
+	yylval.dato_referencia = booleano;
     strcpy(atributo, "3");
     return (LITERAL);
 }
 
 ({letra})({letra}|{numero})* {
-	yylval.entrada = variable;
-	strcpy(yylval.valor, yytext);
+	strcpy(yylval.nombre, yytext);
      strcpy(atributo, yytext);
      return(IDENTIFICADOR);
  }
