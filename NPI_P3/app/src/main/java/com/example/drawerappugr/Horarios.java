@@ -26,7 +26,7 @@ public class Horarios {
 
             Jueves.add(new StructHorarios("8:30","10:30","1.2","VC"));
             Jueves.add(new StructHorarios("10:30","12:30","3.7","VC(practicas)"));
-            Jueves.add(new StructHorarios("12:30","14:30","1.2","PL"))
+            Jueves.add(new StructHorarios("12:30","14:30","1.2","PL"));
             h.add(Jueves);
 
             Viernes.add(new StructHorarios("8:30","10:30","3.3","NPI(practicas"));
@@ -37,4 +37,5 @@ public class Horarios {
     }
 
     public ArrayList<StructHorarios> getDia(int i){ return h.get(i); }
+
 }
