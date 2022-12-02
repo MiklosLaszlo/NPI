@@ -22,6 +22,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -41,7 +42,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.Locale;
-
+import android.widget.RelativeLayout;
 import database.BasedatosHorarios;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,6 +52,11 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     ActionBarDrawerToggle actionBarDrawerToggle;
     ViewFlipper viewFlipper;
+
+    // Mis variables //
+    RelativeLayout relativeLayout;
+    TextView textView;
+    SwipeListener swipeListener;
 
     // Sistema Horarios
     public static final Integer RecordAudioRequestCode = 1;
@@ -80,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
     private LinearLayout resultLayout;
 
-    private BasedatosHorarios db;
+
 
     private String nombre_grado = "";
     private String nombre_asignatura = "";
@@ -95,6 +101,66 @@ public class MainActivity extends AppCompatActivity {
             "\t\t<iframe style=\"position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;\" src=\"https://console.dialogflow.com/api-client/demo/embedded/4e9c22e4-7818-4c96-bd8a-8acdb6c7b3d0\"></iframe>\n" +
             "\t</body>\n" +
             "</html>";
+
+
+    //Clases //
+    private class SwipeListener implements View.OnTouchListener{
+        GestureDetector gestureDetector;
+
+        SwipeListener(View view){
+            int threshold = 100;
+            int velocity_threshold=100;
+
+            GestureDetector.SimpleOnGestureListener listener=
+                    new GestureDetector.SimpleOnGestureListener(){
+                        @Override
+                        public boolean onDown(MotionEvent e){
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                            float xDiff= e2.getX()- e1.getX();
+                            float YDiff = e2.getY() - e1.getY();
+                            try {
+                                if(Math.abs(xDiff)> Math.abs(YDiff)){
+                                    if(Math.abs(xDiff)> threshold && Math.abs(velocityX ) > velocity_threshold){
+                                        if(xDiff>0){
+                                            textView.setText("Swipe a la derecha");
+                                        }else{
+                                            textView.setText("Swipe a la izquierda");
+                                        }
+                                        return true;
+                                    }
+                                }else{
+                                    if(Math.abs(YDiff)> threshold && Math.abs(velocityY)>velocity_threshold) {
+                                        if (YDiff > 0) {
+                                            textView.setText("Swipe hacia abajo");
+                                        }
+                                        else {
+                                            textView.setText("Swipe hacia arriba");
+                                        }
+                                        return true;
+                                    }
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                            return false;
+                        }
+                    };
+            gestureDetector =new GestureDetector(listener);
+            view.setOnTouchListener(this);
+        }
+
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            return gestureDetector.onTouchEvent(motionEvent);
+        }
+    }
+
+
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
