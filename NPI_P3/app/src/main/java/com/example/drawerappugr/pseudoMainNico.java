@@ -29,7 +29,7 @@ public class pseudoMainNico extends AppCompatActivity {
 
     private int contando;
 
-    private GestoGiroscopio gestoGiroscopio;
+    private GestosNico gestoGiroscopio;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
