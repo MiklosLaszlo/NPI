@@ -55,7 +55,7 @@ char* toStringTipoDato(TipoDato dato){
 //Insertar elemento en la pila
 void push(struct entradaTS e){
     if(debug)
-        printf("Inserto %s %s \n", toStringEntrada(e.entrada), e.nombre);
+        printf("Inserto %s %s %s %s %i\n", toStringEntrada(e.entrada), e.nombre, , ,e.n_parametros);
     if(TOPE==MAX_TS){
         printf("ERROR: Se ha alcanzado el tamaño maximo de la pila \n");
         exit(-1);

@@ -157,9 +157,9 @@ declarar_funcion : tipo_basico
 parametros : PARIZQ PARDCH
         | PARIZQ lista_parametros PARDCH 
 		  //| PARIZQ error { yyerrok; explicacion_error_sintactico("Error, debe introducir una lista de parámetros separados por comas"); }
-		  | PARIZQ lista_parametros error { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el paréntesis"); }
+		| PARIZQ lista_parametros error { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el paréntesis"); }
 lista_parametros : tipo_basico IDENTIFICADOR {n_parametros+=1;push2($2,parametro_formal);}
-        | lista_parametros COMA tipo_basico IDENTIFICADOR {n_parametros+=1;push2($2,parametro_formal);}
+        | lista_parametros COMA tipo_basico IDENTIFICADOR {n_parametros+=1;push2($4,parametro_formal);}
 		| tipo_basico error { yyerrok; explicacion_error_sintactico("Error, tras el tipo básico debe introducir un identificador"); }
 tipo_basico : TYPE { $$.entrada = $1.entrada; }
 		// Ya no hay que comparar atributos. Las cosas finales las tenemos
