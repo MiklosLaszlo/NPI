@@ -1,5 +1,5 @@
 #include <stdbool.h>
-
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -55,7 +55,7 @@ char* toStringTipoDato(TipoDato dato){
 //Insertar elemento en la pila
 void push(struct entradaTS e){
     if(debug)
-        printf("Inserto %s %s %s %s %i\n", toStringEntrada(e.entrada), e.nombre, , ,e.n_parametros);
+        printf("Inserto %s %s %s %s %i\n", toStringEntrada(e.entrada), e.nombre, toStringTipoDato(e.dato_referencia), toStringTipoDato(e.dato_lista),e.n_parametros);
     if(TOPE==MAX_TS){
         printf("ERROR: Se ha alcanzado el tamaño maximo de la pila \n");
         exit(-1);
@@ -70,6 +70,26 @@ void push(struct entradaTS e){
         TOPE++;
     }
 }
+
+//Insertar elemento en la pila
+void push2(struct entradaTS e, TipoEntrada ent){
+    if(debug)
+        printf("Inserto %s %s %s %s %i\n", toStringEntrada(ent), e.nombre, toStringTipoDato(e.dato_referencia), toStringTipoDato(e.dato_lista),e.n_parametros);
+    if(TOPE==MAX_TS){
+        printf("ERROR: Se ha alcanzado el tamaño maximo de la pila \n");
+        exit(-1);
+    }   
+    else{
+        TS[TOPE].entrada=ent;
+        strcpy(TS[TOPE].nombre,e.nombre);
+        strcpy(TS[TOPE].valor,e.valor);
+        TS[TOPE].dato_referencia=e.dato_referencia;
+        TS[TOPE].dato_lista=e.dato_lista;
+        TS[TOPE].n_parametros=e.n_parametros;
+        TOPE++;
+    }
+}
+
 //Metodo para saber si la pila esta vacia
 bool isEmpty(){
     return (TOPE==0);
@@ -133,7 +153,7 @@ int  search_identificador(char * nom){
     struct entradaTS aux=TS[TOPE];
     int i=TOPE-1;
 
-    if(strlen(nom ==0)){
+    if(strlen(nom)==0){
         printf("Error: Se ha introducido una cadena vacia");
         exit(-1);
     }
