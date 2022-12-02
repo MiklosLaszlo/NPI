@@ -25,10 +25,10 @@ int debug=1;
 		less, greater, less_eq, greater_eq,arroba, menosmenos, porcentaje,doblepor} TipoOperador;
 
 	typedef struct  entradaTS{
-   TipoEntrada entrada;      // Indica el tipo de entrada
+   TipoEntrada entrada=indefinido;      // Indica el tipo de entrada
    char nombre[100]; 
    // char valor[50];              // Contendra los caracteres que forman el identificador
-   TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
+   TipoDato dato_referencia=desconocido; // En caso de que entrada sea funcion,variable
                              // o parametro formal indica el tipo de dato al que hace referencia
    TipoDato dato_lista;      //tipo de datos que contiene la lista                    
    unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros 
@@ -169,15 +169,17 @@ int  search_identificador(char * nom){
     // NICO: Ahora mismo hace:lee toda la pila hasta encontrar el nombre mientras sea una funcion o una variable.
     //       si no lo encuentra devuelve -1 
     while(aux.entrada!=marca && (i > -1)){
+
         if(strcmp(TS[i].nombre,nom)==0 && ((TS[i].entrada==variable) || (TS[i].entrada==funcion)) )
             return i;
+        aux.entrada=TS[i].entrada;    
         i--;    
     }
     return -1;
 }
 
 
-bool Es_mismoTipo(entradaTS dato1,entradaTS dato2 ){
+bool Es_mismoTipo(struct entradaTS dato1, struct entradaTS dato2 ){
     if(dato1.dato_referencia!=desconocido && dato2.dato_referencia!=desconocido){
         if(dato1.dato_referencia==dato2.dato_referencia==lista)
             if(dato1.dato_lista==dato2.dato_lista)
@@ -187,6 +189,18 @@ bool Es_mismoTipo(entradaTS dato1,entradaTS dato2 ){
     }         
     return false;           
 }
+
+TipoDato AceptaOperadorBinario(struct entradaTS dato1,struct entradaTS dato2){
+    if(Es_mismoTipo(dato1,dato2)){
+        if( dato1.dato_referencia==TipoDato.entero )
+            return TipoDato.entero;
+        if( dato1.dato_referencia==TipoDato.real )
+            return TipoDato.real
+    }   
+    return TipoDato.desconocido;    
+}
+
+
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -215,10 +229,6 @@ void ErrorOperarTipos(entradaTS dato1,entradaTS dato2){
             printf("Error semantico : No se pueden operar los tipos %s y %s " , toStringTipoDato(dato1.dato_referencia),toStringTipoDato(dato2.dato_referencia));    
     }
 }
-
-
-
-
 
 void ErrorDeclaradaEnBLoque(struct entradaTS dato){
     if(dato.dato_referencia!=desconocido)
