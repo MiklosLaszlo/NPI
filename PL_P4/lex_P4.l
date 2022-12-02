@@ -6,19 +6,27 @@
 
 #ifndef ENUM
 #define ENUM
-	typedef enum {marca,funcion,variable,parametro_formal,indefinido} TipoEntrada;
+	typedef enum {marca,funcion,variable,parametro_formal,indefinido,operador} TipoEntrada;
 	typedef enum {booleano,entero,real,caracter,lista,desconocido} TipoDato;
+	typedef enum {
+		negacion,sostenido,interrogacion,menos,
+		equal, not_equal,
+		and, or, xor,
+		masmas,
+		mas,
+		entre, por,
+		less, greater, less_eq, greater_eq,arroba, menosmenos, porcentaje,doblepor} TipoOperador;
 
 	typedef struct  entradaTS{
-    TipoEntrada entrada;      // Indica el tipo de entrada
-    char nombre[100]; 
-    char valor[50];              // Contendra los caracteres que forman el identificador
-    TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
-                              // o parametro formal indica el tipo de dato al que hace referencia
-    TipoDato dato_lista;      //tipo de datos que contiene la lista                    
-    unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros   
+   TipoEntrada entrada;      // Indica el tipo de entrada
+   char nombre[100]; 
+   // char valor[50];              // Contendra los caracteres que forman el identificador
+   TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
+                             // o parametro formal indica el tipo de dato al que hace referencia
+   TipoDato dato_lista;      //tipo de datos que contiene la lista                    
+   unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros 
+	TipoOperador tipo_operador; // En caso de ser operador, qué operador es  
 };
-#endif // MACRO
 
 #include "y.tab.h"
 
@@ -149,93 +157,131 @@ otros .
 
 "less" {
     strcpy(atributo, "0");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = less;
     return (COMPARACION);
 }
 
 "greater" {
     strcpy(atributo, "1");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = greater;
     return (COMPARACION);
 }
 
 "less_eq" {
     strcpy(atributo, "2");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = less_eq;
     return (COMPARACION);
 }
 
 "greater_eq" {
     strcpy(atributo, "3");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = greater_eq;
     return (COMPARACION);
 }
 
 "equal" {
     strcpy(atributo, "1");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = equal;
     return (IGUALDAD);
 }
 
 "not_equal" {
     strcpy(atributo, "0");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = not_equal;
     return (IGUALDAD);
 }
 "and" {
     strcpy(atributo, "0");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = and;
     return (LOGICOS);
 }
 
 "or" {
     strcpy(atributo, "1");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = or;
     return (LOGICOS);
 }
 "xor" {
     strcpy(atributo, "2");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = xor;
     return (LOGICOS);
 }
 
 "?" {
     strcpy(atributo, "");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = interrogacion;
     return (INTERROGACION);
 }
 
 "++" {
     strcpy(atributo, "");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = masmas;
     return (TER1);
 }
 
 "+" {
     strcpy(atributo, "");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = mas;
     return (MAS);
 }
 
 
 "/" {
     strcpy(atributo, "1");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = entre;
     return (MULTIPLICATIVO);
 }
 
 "@" {
     strcpy(atributo, "");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = arroba;
     return (ARROBA);
 }
 
 "--" {
     strcpy(atributo, "");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = menosmenos;
     return (MENOSMENOS);
 }
 "%" {
     strcpy(atributo, "");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = porcentaje;
     return (PORCENTAJE);
 }
 
 "**" {
     strcpy(atributo, "");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = doblepor;
     return (DOBLEPOR);
 }
 "*" {
     strcpy(atributo, "0");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = por;
     return (MULTIPLICATIVO);
 }
 
 "-" {
     strcpy(atributo, "");
+	 yylval.entrada = operador;
+	 yylval.tipo_operador = menos;
     return (MENOS);
 }
 
