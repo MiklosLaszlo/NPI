@@ -70,6 +70,26 @@ void push(struct entradaTS e){
         TOPE++;
     }
 }
+
+//Insertar elemento en la pila
+void push2(struct entradaTS e, TipoEntrada ent){
+    if(debug)
+        printf("Inserto %s %s \n", toStringEntrada(ent), e.nombre);
+    if(TOPE==MAX_TS){
+        printf("ERROR: Se ha alcanzado el tamaño maximo de la pila \n");
+        exit(-1);
+    }   
+    else{
+        TS[TOPE].entrada=ent;
+        strcpy(TS[TOPE].nombre,e.nombre);
+        strcpy(TS[TOPE].valor,e.valor);
+        TS[TOPE].dato_referencia=e.dato_referencia;
+        TS[TOPE].dato_lista=e.dato_lista;
+        TS[TOPE].n_parametros=e.n_parametros;
+        TOPE++;
+    }
+}
+
 //Metodo para saber si la pila esta vacia
 bool isEmpty(){
     return (TOPE==0);
