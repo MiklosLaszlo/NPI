@@ -11,10 +11,12 @@ int debug=1;
 #define true 1
 #define false 0
 
-typedef enum {marca,funcion,variable,parametro_formal,indefinido} TipoEntrada;
-typedef enum {booleano,entero,real,caracter,lista,desconocido} TipoDato;
+#ifndef ENUM
+#define ENUM
+	typedef enum {marca,funcion,variable,parametro_formal,indefinido} TipoEntrada;
+	typedef enum {booleano,entero,real,caracter,lista,desconocido} TipoDato;
 
-typedef struct  entradaTS{
+	typedef struct  entradaTS{
     TipoEntrada entrada;      // Indica el tipo de entrada
     char nombre[100]; 
     char valor[50];              // Contendra los caracteres que forman el identificador
@@ -23,6 +25,7 @@ typedef struct  entradaTS{
     TipoDato dato_lista;      //tipo de datos que contiene la lista                    
     unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros   
 };
+#endif // MACRO
 //Definimos la TS como un array multidimensional de entradas
 struct entradaTS  TS[MAX_TS];
 
@@ -145,6 +148,7 @@ int  search_identificador(char * nom){
     return -1;
 }
 
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -198,4 +202,11 @@ void ErrorEnAsignacion(struct entradaTS dato1, struct entradaTS dato2){
 void ErrorTipoInternoLista(struct entradaTS dato1,struct entradaTS dato2){
     if (dato1.dato_referencia !=desconocido && dato2.dato_referencia !=desconocido)
         printf("Error semantico: Los tipos %s  y  %s no coinciden \n", toStringTipoDato(dato1.dato_lista),toStringTipoDato(dato2.dato_lista) );
+}
+
+////
+
+void comprueba_exp_logica(struct entradaTS dato){
+	if(dato.dato_referencia != booleano)
+		printf("Error semantico: Se esperaba una expresión lógica y se tiene %s \n", toStringTipoDato(dato.dato_lista) );
 }

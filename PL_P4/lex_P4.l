@@ -3,6 +3,23 @@
 
 #include <stdlib.h>
 #include <string.h>
+
+#ifndef ENUM
+#define ENUM
+	typedef enum {marca,funcion,variable,parametro_formal,indefinido} TipoEntrada;
+	typedef enum {booleano,entero,real,caracter,lista,desconocido} TipoDato;
+
+	typedef struct  entradaTS{
+    TipoEntrada entrada;      // Indica el tipo de entrada
+    char nombre[100]; 
+    char valor[50];              // Contendra los caracteres que forman el identificador
+    TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
+                              // o parametro formal indica el tipo de dato al que hace referencia
+    TipoDato dato_lista;      //tipo de datos que contiene la lista                    
+    unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros   
+};
+#endif // MACRO
+
 #include "y.tab.h"
 
 #define RESET_COLOR    "\x1b[0m"
@@ -79,41 +96,53 @@ otros .
 }
 
 "int" {
+	yylval.entrada = entero;
    strcpy(atributo, "0");
    return (TYPE); 
 }
 
 "double" {
-    strcpy(atributo, "1");
+	yylval.entrada = real;
+   strcpy(atributo, "1");
    return (TYPE);
 }
 
 "char" {
+	yylval.entrada = caracter;
     strcpy(atributo, "2");
    return (TYPE);
 }
 
 "bool" {
+	yylval.entrada = booleano;
     strcpy(atributo, "3");
    return (TYPE);
 }
 
 "list"[ ]"of"[ ]"int" {
+	yylval.entrada = lista;
+	yylval.dato_lista = entero;
     strcpy(atributo, "4");
    return (TYPE);
 }
 
 "list"[ ]"of"[ ]"double" {
+	yylval.entrada = lista;
+	yylval.dato_lista = real;
     strcpy(atributo, "5");
    return (TYPE);
 }
 
 "list"[ ]"of"[ ]"char" {
+	yylval.entrada = lista;
+	yylval.dato_lista = caracter;
     strcpy(atributo, "6");
    return (TYPE);
 }
 
 "list"[ ]"of"[ ]"bool" {
+	yylval.entrada = lista;
+	yylval.dato_lista = booleano;
     strcpy(atributo, "7");
    return (TYPE);
 }
@@ -300,26 +329,32 @@ otros .
 
 
 ("'"({letra}|{numero}|[ ]|\:)"'") {
+	yylval.entrada = caracter;
     strcpy(atributo, "0");
     return (LITERAL);
 }
 
 ({numero}+) {
+	yylval.entrada = entero;
     strcpy(atributo, "1");
     return (LITERAL);
 }
 
 ({numero}+\.{numero}+) {
+	yylval.entrada = real;
     strcpy(atributo, "2");
     return (LITERAL);
 }
 
 ("True"|"False") {
+	yylval.entrada = booleano;
     strcpy(atributo, "3");
     return (LITERAL);
 }
 
 ({letra})({letra}|{numero})* {
+	yylval.entrada = variable;
+	strcpy(yylval.valor, yytext);
      strcpy(atributo, yytext);
      return(IDENTIFICADOR);
  }
