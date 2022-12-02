@@ -1,10 +1,8 @@
 package com.example.drawerappugr;
 
 import android.annotation.SuppressLint;
-import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +19,10 @@ public class pruebasGestos extends AppCompatActivity {
     private TextView text2;
     private TextView text3;
 
+
+    GestosPantallaJM gestoPantalla = new GestosPantallaJM();
+    GestosSensorJM gestoSensor;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,12 +33,12 @@ public class pruebasGestos extends AppCompatActivity {
         text2 = findViewById(R.id.textView8);
         text3 = findViewById(R.id.textView9);
 
-        GestosJM.Callback cb = new GestosJM.Callback() {
+
+        GestosPantallaJM.Callback cb = new GestosPantallaJM.Callback() {
             @Override
-            public boolean cb(GestosJM.direction dir) {
+            public boolean cb(GestosPantallaJM.direction dir) {
                 Log.e("cb",dir.toString());
                 text1.setText(dir.toString());
-
                 return true;
             }
         };
@@ -44,16 +46,31 @@ public class pruebasGestos extends AppCompatActivity {
         layout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                return GestosJM.onTouchCallback(view, motionEvent, cb);
+                return gestoPantalla.onTouchCallback(view, motionEvent, cb);
             }
-
         });
+
+        GestosSensorJM.Callback cb_sensor = new GestosSensorJM.Callback() {
+            @Override
+            public boolean cb(boolean b) {
+                text2.setText(b + "");
+                return false;
+            }
+        };
+
+        gestoSensor = new GestosSensorJM(this){
+            @Override
+            public void onSensorChanged(SensorEvent sensorEvent){
+                onSensorChangedCallback(sensorEvent, cb_sensor);
+            }
+        };
+
     }
 
     /*@Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         Log.e("main","Touch");
-        GestosJM.double_swipe(motionEvent);
+        GestosPantallaJM.double_swipe(motionEvent);
 
         return true;
     }*/
