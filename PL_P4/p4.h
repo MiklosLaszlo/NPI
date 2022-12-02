@@ -190,7 +190,7 @@ bool Es_mismoTipo(struct entradaTS dato1, struct entradaTS dato2 ){
     return false;           
 }
 
-TipoDato AceptaOperadorBinario(struct entradaTS dato1,struct entradaTS dato2){
+TipoDato AceptaOperadorBinarioAritmetico(struct entradaTS dato1,struct entradaTS dato2){
     if(Es_mismoTipo(dato1,dato2)){
         if( dato1.dato_referencia==TipoDato.entero )
             return TipoDato.entero;
