@@ -73,7 +73,6 @@ void push(struct entradaTS e){
     else{
         TS[TOPE].entrada=e.entrada;
         strcpy(TS[TOPE].nombre,e.nombre);
-        strcpy(TS[TOPE].valor,e.valor);
         TS[TOPE].dato_referencia=e.dato_referencia;
         TS[TOPE].dato_lista=e.dato_lista;
         TS[TOPE].n_parametros=e.n_parametros;
@@ -92,7 +91,6 @@ void push2(struct entradaTS e, TipoEntrada ent){
     else{
         TS[TOPE].entrada=ent;
         strcpy(TS[TOPE].nombre,e.nombre);
-        strcpy(TS[TOPE].valor,e.valor);
         TS[TOPE].dato_referencia=e.dato_referencia;
         TS[TOPE].dato_lista=e.dato_lista;
         TS[TOPE].n_parametros=e.n_parametros;
