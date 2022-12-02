@@ -1,5 +1,5 @@
 #include <stdbool.h>
-
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -55,7 +55,7 @@ char* toStringTipoDato(TipoDato dato){
 //Insertar elemento en la pila
 void push(struct entradaTS e){
     if(debug)
-        printf("Inserto %s %s \n", toStringEntrada(e.entrada), e.nombre);
+        printf("Inserto %s %s %s %s %i\n", toStringEntrada(e.entrada), e.nombre, toStringTipoDato(e.dato_referencia), toStringTipoDato(e.dato_lista),e.n_parametros);
     if(TOPE==MAX_TS){
         printf("ERROR: Se ha alcanzado el tamaño maximo de la pila \n");
         exit(-1);
@@ -70,6 +70,26 @@ void push(struct entradaTS e){
         TOPE++;
     }
 }
+
+//Insertar elemento en la pila
+void push2(struct entradaTS e, TipoEntrada ent){
+    if(debug)
+        printf("Inserto %s %s %s %s %i\n", toStringEntrada(ent), e.nombre, toStringTipoDato(e.dato_referencia), toStringTipoDato(e.dato_lista),e.n_parametros);
+    if(TOPE==MAX_TS){
+        printf("ERROR: Se ha alcanzado el tamaño maximo de la pila \n");
+        exit(-1);
+    }   
+    else{
+        TS[TOPE].entrada=ent;
+        strcpy(TS[TOPE].nombre,e.nombre);
+        strcpy(TS[TOPE].valor,e.valor);
+        TS[TOPE].dato_referencia=e.dato_referencia;
+        TS[TOPE].dato_lista=e.dato_lista;
+        TS[TOPE].n_parametros=e.n_parametros;
+        TOPE++;
+    }
+}
+
 //Metodo para saber si la pila esta vacia
 bool isEmpty(){
     return (TOPE==0);
@@ -133,7 +153,7 @@ int  search_identificador(char * nom){
     struct entradaTS aux=TS[TOPE];
     int i=TOPE-1;
 
-    if(strlen(nom ==0)){
+    if(strlen(nom)==0){
         printf("Error: Se ha introducido una cadena vacia");
         exit(-1);
     }
@@ -146,6 +166,18 @@ int  search_identificador(char * nom){
         i--;    
     }
     return -1;
+}
+
+
+bool Es_mismoTipo(entradaTS dato1,entradaTS dato2 ){
+    if(dato1.dato_referencia!=desconocido && dato2.dato_referencia!=desconocido){
+        if(dato1.dato_referencia==dato2.dato_referencia==lista)
+            if(dato1.dato_lista==dato2.dato_lista)
+                return true;
+        if(dato1.dato_referencia==dato2.dato_referencia)
+            return true;
+    }         
+    return false;           
 }
 
 
@@ -164,7 +196,7 @@ void printTS(){
 }
 
 
-void ErrorOperarTipos(struct entradaTS dato1, struct entradaTS dato2){
+void ErrorOperarTipos(entradaTS dato1,entradaTS dato2){
     //En caso de que ambas variables tengan un tipo asignado
     if(dato1.dato_referencia!=desconocido && dato2.dato_referencia!=desconocido) {
         if(dato1.dato_referencia==lista)
@@ -175,6 +207,9 @@ void ErrorOperarTipos(struct entradaTS dato1, struct entradaTS dato2){
             printf("Error semantico : No se pueden operar los tipos %s y %s " , toStringTipoDato(dato1.dato_referencia),toStringTipoDato(dato2.dato_referencia));    
     }
 }
+
+
+
 
 
 void ErrorDeclaradaEnBLoque(struct entradaTS dato){
