@@ -13,19 +13,29 @@ int debug=1;
 
 #ifndef ENUM
 #define ENUM
-	typedef enum {marca,funcion,variable,parametro_formal,indefinido} TipoEntrada;
+	typedef enum {marca,funcion,variable,parametro_formal,indefinido,operador} TipoEntrada;
 	typedef enum {booleano,entero,real,caracter,lista,desconocido} TipoDato;
+	typedef enum {
+		negacion,sostenido,interrogacion,menos,
+		equal, not_equal,
+		and, or, xor,
+		masmas,
+		mas,
+		entre, por,
+		less, greater, less_eq, greater_eq,arroba, menosmenos, porcentaje,doblepor} TipoOperador;
 
 	typedef struct  entradaTS{
-    TipoEntrada entrada;      // Indica el tipo de entrada
-    char nombre[100]; 
-    char valor[50];              // Contendra los caracteres que forman el identificador
-    TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
-                              // o parametro formal indica el tipo de dato al que hace referencia
-    TipoDato dato_lista;      //tipo de datos que contiene la lista                    
-    unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros   
+   TipoEntrada entrada;      // Indica el tipo de entrada
+   char nombre[100]; 
+   // char valor[50];              // Contendra los caracteres que forman el identificador
+   TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
+                             // o parametro formal indica el tipo de dato al que hace referencia
+   TipoDato dato_lista;      //tipo de datos que contiene la lista                    
+   unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros 
+	TipoOperador tipo_operador; // En caso de ser operador, qué operador es  
 };
-#endif // MACRO
+#endif 
+
 //Definimos la TS como un array multidimensional de entradas
 struct entradaTS  TS[MAX_TS];
 

@@ -11,19 +11,27 @@
 
 #ifndef ENUM
 #define ENUM
-	typedef enum {marca,funcion,variable,parametro_formal,indefinido} TipoEntrada;
+	typedef enum {marca,funcion,variable,parametro_formal,indefinido,operador} TipoEntrada;
 	typedef enum {booleano,entero,real,caracter,lista,desconocido} TipoDato;
+	typedef enum {
+		negacion,sostenido,interrogacion,menos,
+		equal, not_equal,
+		and, or, xor,
+		masmas,
+		mas,
+		entre, por,
+		less, greater, less_eq, greater_eq,arroba, menosmenos, porcentaje,doblepor} TipoOperador;
 
 	typedef struct  entradaTS{
-    TipoEntrada entrada;      // Indica el tipo de entrada
-    char nombre[100]; 
-    char valor[50];              // Contendra los caracteres que forman el identificador
-    TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
-                              // o parametro formal indica el tipo de dato al que hace referencia
-    TipoDato dato_lista;      //tipo de datos que contiene la lista                    
-    unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros   
+   TipoEntrada entrada;      // Indica el tipo de entrada
+   char nombre[100]; 
+   // char valor[50];              // Contendra los caracteres que forman el identificador
+   TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
+                             // o parametro formal indica el tipo de dato al que hace referencia
+   TipoDato dato_lista;      //tipo de datos que contiene la lista                    
+   unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros 
+	TipoOperador tipo_operador; // En caso de ser operador, qué operador es  
 };
-#endif // MACRO
 
 void yyerror( char *msg ){
 	//fprintf(stderr, BG_COLOR_YELLOW "YY Error sintáctico"  RESET_COLOR " Línea %d, No se esperaba el lexema \'%s\'\n" ,yylineno, yytext);
@@ -223,9 +231,9 @@ lista_entrada : lista_entrada
 		 IDENTIFICADOR 
         | IDENTIFICADOR  
 
-expresion : PARIZQ expresion PARDCH 
-        | OPUNI expresion %prec NOT
-        | expresion OPBIN expresion %prec LOGICOS
+expresion : PARIZQ expresion PARDCH { $$ = $1; }
+        | OPUNI expresion %prec NOT {  }
+        | expresion OPBIN expresion %prec LOGICOS { $$ = comprobar_bin($1, $2);  }
         | expresion TER1 expresion ARROBA expresion
         | IDENTIFICADOR 
         | llamar_funcion
@@ -255,7 +263,7 @@ agregado : CORIZQ lista_expresiones CORDCH
 
 lista_expresiones : lista_expresiones COMA expresion 
         | expresion 
-OPUNI : NOT
+OPUNI : NOT 
         | SOSTENIDO
         | INTERROGACION 
         | MENOS ;
