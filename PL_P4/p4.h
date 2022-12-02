@@ -169,6 +169,18 @@ int  search_identificador(char * nom){
 }
 
 
+bool Es_mismoTipo(entradaTS dato1,entradaTS dato2 ){
+    if(dato1.dato_referencia!=desconocido && dato2.dato_referencia!=desconocido){
+        if(dato1.dato_referencia==dato2.dato_referencia==lista)
+            if(dato1.dato_lista==dato2.dato_lista)
+                return true;
+        if(dato1.dato_referencia==dato2.dato_referencia)
+            return true;
+    }         
+    return false;           
+}
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -184,7 +196,7 @@ void printTS(){
 }
 
 
-void ErrorOperarTipos(struct entradaTS dato1, struct entradaTS dato2){
+void ErrorOperarTipos(entradaTS dato1,entradaTS dato2){
     //En caso de que ambas variables tengan un tipo asignado
     if(dato1.dato_referencia!=desconocido && dato2.dato_referencia!=desconocido) {
         if(dato1.dato_referencia==lista)
@@ -195,6 +207,9 @@ void ErrorOperarTipos(struct entradaTS dato1, struct entradaTS dato2){
             printf("Error semantico : No se pueden operar los tipos %s y %s " , toStringTipoDato(dato1.dato_referencia),toStringTipoDato(dato2.dato_referencia));    
     }
 }
+
+
+
 
 
 void ErrorDeclaradaEnBLoque(struct entradaTS dato){
