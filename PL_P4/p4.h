@@ -32,7 +32,7 @@ int debug=1;
                              // o parametro formal indica el tipo de dato al que hace referencia
    TipoDato dato_lista;      //tipo de datos que contiene la lista                    
    unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros 
-	TipoOperador tipo_operador; // En caso de ser operador, qué operador es  
+   TipoOperador tipo_operador; // En caso de ser operador, qué operador es  
 };
 #endif 
 
@@ -108,6 +108,42 @@ void clear(){
     if(debug)
         printf("La pila ha sido vaciada \n");
     TOPE=0;    
+}
+//copia e2 en e1
+void copiaStruct(struct entradaTS& e1,struct entradaTS e2){
+    e1.dato_lista = e2.dato_lista;
+    e1.dato_referencia = e2.dato_referencia;
+    e1.entrada = e2.entrada;
+    e1.n_parametros = e2.n_parametros;
+    e1.tipo_operador = e2.tipo_operador;
+    strcpy(e1.nombre,e2.nombre);
+}
+////////////////////////
+
+//devuelve el argumento nº <arg> de la funcion <nombre>
+struct entradaTS getArg(char* nombre,int arg){
+    if(strlen(nombre)!=0){
+        int index = -1;
+        bool encontrado=false;
+        struct entradaTS tmp;
+
+        inicializarStruct(tmp);
+        
+        for(int i = TOPE-1; 0 <= i && !encontrado;--i){
+            if(strcmp(nombre,TS[i].nombre)==0 && TS[i].entrada == funcion){
+                index = i;
+                encontrado = true;
+            }
+        }
+
+        if(index > 0 && TS[index].n_parametros >= arg){
+            index = index-TS[index].n_parametros + arg - 1;
+            
+            if(0 <= index && index < TOPE)
+                copiaStruct(tmp,TS[index]);
+        }
+        return tmp;
+    }
 }
 
 //Sacar el ultimo elemento de la pila
