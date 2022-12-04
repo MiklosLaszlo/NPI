@@ -449,7 +449,8 @@ struct entradaTS operador_binario_lista(struct entradaTS operador, struct entrad
 }
 
 struct entradaTS operador_binario(struct entradaTS operador, struct entradaTS dato1, struct entradaTS dato2) {
-	switch (operador.tipo_operador)
+	struct entradaTS salida;
+    switch (operador.tipo_operador)
 	{
 	case equal:
 	case not_equal:
@@ -478,7 +479,7 @@ struct entradaTS operador_binario(struct entradaTS operador, struct entradaTS da
 		break;
 
 	default:
-		struct entradaTS salida;
+		
 		salida.dato_referencia = desconocido;
 		salida.entrada = indefinido;
 
@@ -535,47 +536,46 @@ bool esMismo(struct entradaTS e1,struct entradaTS e2){
 
 //Search parametros, devuelve la posición en la pila del parametro
 //Si no existe devuelve -1
-int search_parametro(char * nom, struct entradaTS param){
+struct entradaTS search_parametro(char * nom, struct entradaTS param){
+    struct  entradaTS dev;
     int p=-1;
     bool encontrado=false;
     if(strlen(nom)==0){
         printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" Se ha introducido una cadena vacía");
     }
-    int pos_funcion = search_identificador(nom);
+    int pos_funcion = pos_identificador(nom);
     int n_arg = TS[pos_funcion].n_parametros;
 
     for(int i=1;i<=n_arg && !encontrado;++i){
         if(esMismo(TS[pos_funcion-i],param)){
             p=pos_funcion-i;
             encontrado = true;
+            return TS[pos_funcion-i];
         }
     }
-    return p;
+    return dev;
 }
 
-struct entradaTS operador_binario_lista(struct entradaTS operador, struct entradaTS dato1, struct entradaTS dato2){
-    struct entradaTS salida;
-    salida.dato_referencia=indefinido;
-    
-        //Caso l@x
-        if(dato1.dato_referencia==lista && dato2.dato_referencia==entero && operador.tipo_operador==arroba)
-            salida.dato_referencia=entero;
-        //Caso l--x    
-        else if(dato1.dato_referencia==lista && dato2.dato_referencia==entero && operador.tipo_operador==menosmenos)
-            salida.dato_referencia=lista;
-        //Caso l%x    
-        else if(dato1.dato_referencia==lista && dato2.dato_referencia==entero && operador.tipo_operador==porcentaje)  
-            salida.dato_referencia=lista;  
-        //Caso l**l
-        else if(dato1.dato_referencia==lista && dato2.dato_referencia==lista && operador.tipo_operador==doblepor)
-            salida.dato_referencia=lista;
-        //Caso l +x  , l - x , l/x,l*x
-        else if((dato1.dato_referencia==lista && dato1.dato_lista==dato2.dato_referencia) && (dato2.dato_referencia==entero || dato2.dato_referencia==real))
-            salida.dato_referencia=lista;
-        //Caso x +l y x * l
-        else if((dato1.dato_referencia==entero || dato1.dato_referencia=real) && (dato2.dato_referencia==lista && dato2.dato_lista==dato1.dato_referencia))
-            salida.dato_referencia=dato1.dato_referencia;
-        else
-            printf(stderr,"Error semantico: se esperaba una lista y un real o entero o viceversa pero se obtuvo %s y %s ",dato1.dato_referencia,dato2.dato_referencia);    
-        return salida;
+//Funcion para buscar si un identificador existe dentro de su bloque, 
+//si la encuentra devuelve la posicion util, si no devuelve -1
+
+// identificador es el nombre de una variable o de una funcion
+int  pos_identificador(char * nom){
+    if(debug) printf("Se procede a buscar si una variable esta dentro del mismo bloque");
+    struct entradaTS aux=TS[TOPE];
+    int i=TOPE-1;
+
+    if(strlen(nom)==0){
+        printf("Error: Se ha introducido una cadena vacia");
+        exit(-1);
+    }
+    //Mientras que no encontremos la marca de inicio de bloque
+    // NICO: Ahora mismo hace:lee toda la pila hasta encontrar el nombre mientras sea una funcion o una variable.
+    //       si no lo encuentra devuelve -1 
+    while(aux.entrada!=marca && (i > -1)){
+        if(strcmp(TS[i].nombre,nom)==0 && ((TS[i].entrada==variable) || (TS[i].entrada==funcion)) )
+            return i;
+        i--;
+    }
+    return -1;
 }

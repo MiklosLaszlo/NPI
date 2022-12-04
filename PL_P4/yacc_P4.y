@@ -204,8 +204,8 @@ sentencia_lista : IDENTIFICADOR MOVLISTA PYC
 		  | PRINCIPIOLISTA IDENTIFICADOR error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); } */
 lista_entrada : lista_entrada
 		 COMA
-		 IDENTIFICADOR {search_identificador_pila($3);copiaStruct(&$$,$3); if($$.entrada!=variable) ErrorNoDeclarada($$);else $$.entrada =indefinido; }
-        | IDENTIFICADOR  {search_identificador_pila($1);copiaStruct(&$$,$1); if($$.entrada!=variable) ErrorNoDeclarada($$);else $$.entrada =indefinido; }
+		 IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($3.nombre)); if($$.entrada!=variable) ErrorNoDeclarada($$);else $$.entrada =indefinido; }
+        | IDENTIFICADOR  {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable) ErrorNoDeclarada($$);else $$.entrada =indefinido; }
 
 lista_salida : lista_salida COMA expresion 
 		| expresion 
@@ -217,7 +217,7 @@ expresion : PARIZQ expresion PARDCH { $$ = $1; }
         | OPUNI expresion %prec NOT { $$ = operador_unario($1, $2); }
         | expresion OPBIN expresion %prec LOGICOS { $$ = operador_binario($2, $1, $3);}
         | expresion TER1 expresion ARROBA expresion { $$ = operador_ternario($1,$3,$5);}
-        | IDENTIFICADOR {search_identificador_pila($1);copiaStruct(&$$,$1); if($$.entrada!=variable) ErrorNoDeclarada($$);else $$.entrada =indefinido; }
+        | IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable) ErrorNoDeclarada($$);else $$.entrada =indefinido; }
         | llamar_funcion {$$.dato_referencia=$1.dato_referencia;$$.dato_lista=$1.dato_lista;$$.entrada=variable;}
         | agregado {$$.dato_referencia=lista;$$.dato_lista=$1.dato_referencia;$$.entrada=variable;}
         | LITERAL {copiaStruct(&$$,$1);}
@@ -228,7 +228,7 @@ expresion : PARIZQ expresion PARDCH { $$ = $1; }
 		| expresion TER1 error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
 		| expresion TER1 expresion error { yyerrok; explicacion_error_sintactico("Error, se esperaba \"@\""); }
 		//  | expresion TER1 expresion ARROBA error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); } 
-llamar_funcion : IDENTIFICADOR {search_identificador_pila($1);copiaStruct(&$$,$1); if($$.entrada!=funcion) ErrorNoDeclarada($$);else $$.entrada =indefinido; } argumentos ; //{/*Hace falta algo como push funccion*/}
+llamar_funcion : IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=funcion) ErrorNoDeclarada($$);else $$.entrada =indefinido; } argumentos ; //{/*Hace falta algo como push funccion*/}
         
 argumentos : PARIZQ lista_argumentos PARDCH
 		| PARIZQ lista_argumentos error { yyerrok; explicacion_error_sintactico("Error, la lista de argumentos debe acabar con paréntesis"); }
