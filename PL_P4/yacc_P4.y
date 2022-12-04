@@ -210,7 +210,7 @@ lista_entrada : lista_entrada COMA IDENTIFICADOR {copiaStruct(&$$,search_identif
 lista_salida : lista_salida COMA expresion {copiaStruct(&$$,search_identificador_pila($3.nombre)); if($$.entrada!=variable) {ErrorNoDeclarada($$); $$.entrada=indefinido;} }
 		| expresion {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable) {ErrorNoDeclarada($$); $$.entrada=indefinido;} }
 
-expresion : PARIZQ expresion PARDCH { $$ = $1; }
+expresion : PARIZQ expresion PARDCH { copiaStruct(&$$, $2); }
 		| OPUNI expresion %prec NOT { copiaStruct(&$$, operador_unario($2,$1) ); }
 		| expresion OPBIN expresion %prec LOGICOS {copiaStruct(&$$,operador_binario($2, $1, $3));  }
 		| expresion TER1 expresion ARROBA expresion { copiaStruct(&$$,operador_ternario($1,$3,$5)); }
