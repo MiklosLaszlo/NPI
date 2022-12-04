@@ -19,15 +19,13 @@
 		less, greater, less_eq, greater_eq,arroba, menosmenos, porcentaje,doblepor} TipoOperador;
 
 	typedef struct  entradaTS{
-   TipoEntrada entrada;      // Indica el tipo de entrada
    TipoEntrada entrada = indefinido;      // Indica el tipo de entrada
    char nombre[100]; 
    // char valor[50];              // Contendra los caracteres que forman el identificador
-   TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
    TipoDato dato_referencia = desconocido; // En caso de que entrada sea funcion,variable
                              // o parametro formal indica el tipo de dato al que hace referencia
-   TipoDato dato_lista;      //tipo de datos que contiene la lista                    
-   unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros 
+   TipoDato dato_lista= desconocido;      //tipo de datos que contiene la lista                    
+   unsigned int n_parametros=0;  //Si tipoDato  es funcion indica el numero de parametros 
 	TipoOperador tipo_operador; // En caso de ser operador, qué operador es  
 };
 #endif
@@ -42,8 +40,11 @@ void explicacion_error_semantico( char * msg ) {
 	fprintf(stderr, BG_COLOR_PURPLE "Error semántico"  RESET_COLOR " Línea: %d.Error: %s\n" ,yylineno, msg);
 }
 int n_parametros=0;
+int funcion_actual=-1;
+int funcion_analizando=-1;
 TipoDato daton_anterior=desconocido;
-char nombre_funcion[100];
+char funcion_declarandose[20][100];
+char funcion_usandose[20][100];
 %}
 // TOKENS
 //********************
@@ -134,14 +135,14 @@ lista_identificadores : lista_identificadores
 declar_de_subprogs : declar_de_subprogs declarar_funcion
         | ;
 declarar_funcion : tipo_basico 
-				  IDENTIFICADOR 
+				  IDENTIFICADOR {funcion_actual++;strcpy(funcion_declarandose[funcion_actual],$2.nombre);} 
 				  parametros {$2.n_parametros=n_parametros;if(search_identificador_marca($2.nombre).entrada == marca) push2($2,funcion); else ErrorDeclaradaEnBLoque($2); n_parametros=0;}
 				  bloque 
-				  PYC 
+				  PYC {if(strcmp(funcion_declarandose[funcion_actual],"")!=0) explicacion_error_semantico("No se ha realizado un return de la función");funcion_actual--;}
 		  | tipo_basico error { yyerrok; explicacion_error_sintactico("Error, al declarar una función tras el tipo básico va el identificador"); }
-		  | tipo_basico IDENTIFICADOR error { yyerrok; explicacion_error_sintactico("Error, en una función tras el identificador vienen los parámetros."); } 
-		  | tipo_basico IDENTIFICADOR parametros {$2.n_parametros=n_parametros;if(search_identificador_marca($2.nombre).entrada == marca) push2($2,funcion); else ErrorDeclaradaEnBLoque($2); ;n_parametros=0;} error { yyerrok; explicacion_error_sintactico("Error, en una función tras los parámetros viene un bloque."); }
-		  | tipo_basico IDENTIFICADOR parametros {$2.n_parametros=n_parametros;if(search_identificador_marca($2.nombre).entrada == marca) push2($2,funcion); else ErrorDeclaradaEnBLoque($2); ;n_parametros=0;} bloque error { yyerrok; explicacion_error_sintactico("Error, la declaración de funciones acaba en \";\"."); }  
+		  | tipo_basico IDENTIFICADOR {funcion_actual++;strcpy(funcion_declarandose[funcion_actual],$2.nombre);}   error { yyerrok; explicacion_error_sintactico("Error, en una función tras el identificador vienen los parámetros."); } 
+		  | tipo_basico IDENTIFICADOR {funcion_actual++;strcpy(funcion_declarandose[funcion_actual],$2.nombre);}   parametros {$2.n_parametros=n_parametros;if(search_identificador_marca($2.nombre).entrada == marca) push2($2,funcion); else ErrorDeclaradaEnBLoque($2); n_parametros=0;} error { yyerrok; explicacion_error_sintactico("Error, en una función tras los parámetros viene un bloque."); }
+		  | tipo_basico IDENTIFICADOR {funcion_actual++;strcpy(funcion_declarandose[funcion_actual],$2.nombre);}   parametros {$2.n_parametros=n_parametros;if(search_identificador_marca($2.nombre).entrada == marca) push2($2,funcion); else ErrorDeclaradaEnBLoque($2); n_parametros=0;} bloque error { yyerrok; explicacion_error_sintactico("Error, la declaración de funciones acaba en \";\"."); }  
 parametros : PARIZQ PARDCH
         | PARIZQ lista_parametros PARDCH 
 		  //| PARIZQ error { yyerrok; explicacion_error_sintactico("Error, debe introducir una lista de parámetros separados por comas"); }
@@ -189,7 +190,8 @@ sentencia_salida : WRITE PARIZQ lista_salida PARDCH PYC
 		  | WRITE PARIZQ error { yyerrok; explicacion_error_sintactico("Error, debe introducir una lista de expresiones separados por comas"); }
 		  | WRITE PARIZQ lista_salida error { yyerrok; explicacion_error_sintactico("Error, debe cerrar el paréntesis de la lista de expresiones"); }
 		  | WRITE PARIZQ lista_salida PARDCH error { yyerrok; explicacion_error_sintactico("Error, se esperaba \";\""); }
-sentencia_return : RETURN expresion PYC  
+sentencia_return : RETURN expresion PYC {if(funcion_actual>-1){if(strcmp(funcion_declarandose[funcion_actual],"")!=0) if(!igualdad($2,search_identificador_pila(funcion_declarandose[funcion_actual]))) {explicacion_error_semantico("No se devuelve el tipo de la función");}
+			strcpy(funcion_declarandose[funcion_actual],"");}} 
 		  | RETURN error { yyerrok; explicacion_error_sintactico("Error, debe devolverse una expresión"); }
 		  | RETURN expresion error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); }
 sentencia_for_pascal : FOR IDENTIFICADOR IGUAL expresion TO expresion DO bloque {comprobar_for_pascal($2,$4,$6);} 
@@ -204,17 +206,17 @@ sentencia_lista : IDENTIFICADOR MOVLISTA PYC
 		  /* | IDENTIFICADOR MOVLISTA error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); }
 		  | PRINCIPIOLISTA error { yyerrok; explicacion_error_sintactico("Error, se esperaba un identificador"); }
 		  | PRINCIPIOLISTA IDENTIFICADOR error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); } */
-lista_entrada : lista_entrada COMA IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($3.nombre)); if($$.entrada!=variable) {ErrorNoDeclarada($$); $$.entrada=indefinido;} }
-        | IDENTIFICADOR  {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable) {ErrorNoDeclarada($$); $$.entrada=indefinido;} }
+lista_entrada : lista_entrada COMA IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($3.nombre)); if($$.entrada!=variable && $$.entrada!=parametro_formal) {ErrorNoDeclarada($$);}}
+        | IDENTIFICADOR  {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable && $$.entrada!=parametro_formal) {ErrorNoDeclarada($$);}}
 
 lista_salida : lista_salida COMA expresion {copiaStruct(&$$,search_identificador_pila($3.nombre)); if($$.entrada!=variable) {ErrorNoDeclarada($$); $$.entrada=indefinido;} }
-		| expresion {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable) {ErrorNoDeclarada($$); $$.entrada=indefinido;} }
+		| expresion {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable) {ErrorNoDeclarada($$); $$.entrada=indefinido;}}
 
 expresion : PARIZQ expresion PARDCH { copiaStruct(&$$, $2); }
 		| OPUNI expresion %prec NOT { copiaStruct(&$$, operador_unario($2,$1) ); }
 		| expresion OPBIN expresion %prec LOGICOS {copiaStruct(&$$,operador_binario($2, $1, $3));  }
 		| expresion TER1 expresion ARROBA expresion { copiaStruct(&$$,operador_ternario($1,$3,$5)); }
-		| IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable) ErrorNoDeclarada($$);else $$.entrada =indefinido; }
+		| IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable && $$.entrada!=parametro_formal) ErrorNoDeclarada($$);else $$.entrada =indefinido;}
 		| llamar_funcion {copiaStruct(&$$,$1); $$.entrada=variable;}
 		| agregado {$$.dato_referencia=lista;$$.dato_lista=$1.dato_referencia;$$.entrada=variable;}
 		| LITERAL {copiaStruct(&$$,$1);}
@@ -225,23 +227,37 @@ expresion : PARIZQ expresion PARDCH { copiaStruct(&$$, $2); }
 		| expresion TER1 error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
 		| expresion TER1 expresion error { yyerrok; explicacion_error_sintactico("Error, se esperaba \"@\""); }
 		//  | expresion TER1 expresion ARROBA error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); } 
-llamar_funcion : IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=funcion) {ErrorNoDeclarada($$);$$.entrada =indefinido;} strcmp(nombre_funcion,$1.nombre);} argumentos ; //{/*Hace falta algo como push funccion*/}
+llamar_funcion : IDENTIFICADOR {funcion_analizando++;strcpy(funcion_usandose[funcion_analizando],$1.nombre);}
+		argumentos
+		{copiaStruct(&$$,search_identificador_pila($1.nombre));
+		if($$.entrada!=funcion) {ErrorNoDeclarada($$);$$.entrada =indefinido;} 
+		;if(n_parametros!=$$.n_parametros) explicacion_error_semantico("Numero de argumentos incorrecto"); n_parametros=0;} //{/*Hace falta algo como push funccion*/}
         
-argumentos : PARIZQ lista_argumentos PARDCH
+argumentos : PARIZQ lista_argumentos PARDCH {funcion_analizando--;}
 		| PARIZQ lista_argumentos error { yyerrok; explicacion_error_sintactico("Error, la lista de argumentos debe acabar con paréntesis"); }
-lista_argumentos : IDENTIFICADOR {n_parametros1+=1; struct entradaTS s1, s2; copiaStruct(s1,search_identificador_pila($1.nombre));copiaStruct(s2,getArg(nombre_funcion,n_parametros));
-		if(s1.dato_entrada!=variable) explicacion_error_semantico("No se esta pasanod una variable") if(s1.dato_referencia!=s2.dato_referencia) explicacion_error_semantico("Tipo de argumento incorrecto"); if(s1.dato_referencia== lista && s2.dato_referencia==lista)}
-        | LITERAL
-		| agregado 
-        | lista_argumentos COMA IDENTIFICADOR 
-        | lista_argumentos COMA LITERAL 
+lista_argumentos : expresion {n_parametros+=1; struct entradaTS s2;
+		copiaStruct(&s2,getArg(funcion_usandose[funcion_analizando],n_parametros));
+		if(!igualdad($1,s2)) explicacion_error_semantico("No coinciden los tipos");
+		}
+
+        | lista_argumentos COMA expresion {n_parametros+=1; struct entradaTS s2; 	
+		
+		copiaStruct(&s2,getArg(funcion_usandose[funcion_analizando],n_parametros));
+		if(!igualdad($3,s2)) explicacion_error_semantico("No coinciden los tipos");
+		}
         | ;
-agregado : CORIZQ lista_expresiones CORDCH {$$.dato_referencia=lista;$$.dato_lista=$1.dato_referencia;}
+agregado : CORIZQ lista_expresiones CORDCH {$$.dato_referencia=lista;$$.dato_lista=daton_anterior;daton_anterior=desconocido;}
 		  | CORIZQ error {yyerrok; explicacion_error_sintactico("Error, debe proporcionar una lista de expresiones separadas por comas");}
 		  | CORIZQ lista_expresiones error { yyerrok; explicacion_error_sintactico("Error, debe cerrar el corchete"); }
 
-lista_expresiones : lista_expresiones COMA expresion {if (daton_anterior==indefinido) daton_anterior=$3.dato_referencia; if(daton_anterior!=$3.dato_referencia) ErrorTipoInternoLista(daton_anterior,$1.dato_referencia); $$.dato_referencia=daton_anterior;}
-        | expresion {if (daton_anterior==indefinido) daton_anterior=$1.dato_referencia; if(daton_anterior!=$1.dato_referencia) ErrorTipoInternoLista(daton_anterior,$1.dato_referencia); if(daton_anterior==lista) explicacion_error_semantico("No se puede hacer listas de listas"); $$.dato_referencia=daton_anterior;}
+lista_expresiones : lista_expresiones COMA expresion {if (daton_anterior==desconocido) daton_anterior=$3.dato_referencia;
+		if(daton_anterior!=$3.dato_referencia) explicacion_error_semantico("Todos los elementos de una lista deben de ser del mismo tipo");
+		if(daton_anterior==lista) explicacion_error_semantico("No se puede hacer listas de listas"); 
+		$$.dato_referencia=daton_anterior;}
+        | expresion {if (daton_anterior==desconocido) daton_anterior=$1.dato_referencia;
+		if(daton_anterior!=$1.dato_referencia) explicacion_error_semantico("Todos los elementos de una lista deben de ser del mismo tipo");
+		if(daton_anterior==lista) explicacion_error_semantico("No se puede hacer listas de listas");
+		$$.dato_referencia=daton_anterior;}
 
 OPUNI : NOT { copiaStruct(&$$,$1);}
         | SOSTENIDO { copiaStruct(&$$,$1);}

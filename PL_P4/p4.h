@@ -9,7 +9,7 @@
 #define MAX_TS 1000
 
 //Si debug es 1 obtendremos informacion sobre lo que estamos haciendo
-int debug=1;
+int debug=0;
 
 #define true 1
 #define false 0
@@ -29,12 +29,12 @@ int debug=1;
 
 	typedef struct  entradaTS{
    TipoEntrada entrada=indefinido;      // Indica el tipo de entrada
-   char nombre[100]; 
+   char nombre[100]=""; 
    // char valor[50];              // Contendra los caracteres que forman el identificador
    TipoDato dato_referencia=desconocido; // En caso de que entrada sea funcion,variable
                              // o parametro formal indica el tipo de dato al que hace referencia
-   TipoDato dato_lista;      //tipo de datos que contiene la lista                    
-   unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros 
+   TipoDato dato_lista=desconocido;      //tipo de datos que contiene la lista                    
+   unsigned int n_parametros=0;  //Si tipoDato  es funcion indica el numero de parametros 
    TipoOperador tipo_operador; // En caso de ser operador, qué operador es  
 };
 #endif 
@@ -51,6 +51,8 @@ char* toStringEntrada(TipoEntrada e){
     if(e==funcion) return "funcion";
     if(e==funcion) return "variable";
     if(e==parametro_formal) return "parametro_formal";
+    if(e==indefinido) return "indefinido";
+    if(e==operador) return "operador";
     return " ";
 }
 
@@ -60,6 +62,7 @@ char* toStringTipoDato(TipoDato dato){
     if(dato==real) return "real";
     if(dato==caracter) return "caracter";
     if(dato==lista) return "lista";
+    if(dato==desconocido) return "desconocido";
     return "";
 }
 ////////////////////////
@@ -81,12 +84,14 @@ void push(struct entradaTS e){
         TS[TOPE].n_parametros=e.n_parametros;
         TOPE++;
     }
+    //if(debug)
+        //printf("Tamaño actual de la pila %i\n",TOPE);
 }
 
 //Insertar elemento en la pila
 void push2(struct entradaTS e, TipoEntrada ent){
     if(debug)
-        printf("Inserto %s %s %s %s %i\n", toStringEntrada(ent), e.nombre, toStringTipoDato(e.dato_referencia), toStringTipoDato(e.dato_lista),e.n_parametros);
+        printf("Inserto %s %s %s %s %i. Posicion %i\n", toStringEntrada(ent), e.nombre, toStringTipoDato(e.dato_referencia), toStringTipoDato(e.dato_lista),e.n_parametros, TOPE);
     if(TOPE==MAX_TS){
         printf(BG_COLOR_PURPLE "ERROR:" RESET_COLOR"En línea %i.Se ha alcanzado el tamaño maximo de la pila \n",yylineno);
         exit(-1);
@@ -99,6 +104,8 @@ void push2(struct entradaTS e, TipoEntrada ent){
         TS[TOPE].n_parametros=e.n_parametros;
         TOPE++;
     }
+    //if(debug)
+        //printf("Tamaño actual de la pila %i\n",TOPE);
 }
 
 //Metodo para saber si la pila esta vacia
@@ -129,20 +136,22 @@ struct entradaTS getArg(char* nombre,int arg){
         int index = -1;
         bool encontrado=false;
         struct entradaTS tmp;
-        
         for(int i = TOPE-1; 0 <= i && !encontrado;--i){
             if(strcmp(nombre,TS[i].nombre)==0 && TS[i].entrada == funcion){
                 index = i;
                 encontrado = true;
             }
         }
-
         if(index > 0 && TS[index].n_parametros >= arg){
             index = index-TS[index].n_parametros + arg - 1;
             
-            if(0 <= index && index < TOPE)
+            if(0 <= index && index < TOPE){
+                
                 copiaStruct(&tmp,TS[index]);
+            }
         }
+        if(debug)
+            printf("Uso %s ,%s ,%s ,%s ,%i.\n", toStringEntrada(tmp.entrada), tmp.nombre, toStringTipoDato(tmp.dato_referencia), toStringTipoDato(tmp.dato_lista),tmp.n_parametros);
         return tmp;
     }
 }
@@ -172,6 +181,8 @@ void InsertarMarca(){
     }    
     TS[TOPE].entrada=marca;
     TOPE++;
+    //if(debug)
+        //printf("Tamaño actual de la pila %i\n",TOPE);
 }
 
 //Eliminamos todos los elementos hasta encontrar una marca de inicio de Bloque
@@ -187,6 +198,8 @@ void EliminarBloque(){
     }
     if(!es_marca)
         clear();
+    //if(debug)
+        //printf("Tamaño actual de la pila %i\n",TOPE);
 }
 
 //Funcion para buscar si un identificador existe dentro de su bloque, 
@@ -194,7 +207,6 @@ void EliminarBloque(){
 
 // identificador es el nombre de una variable o de una funcion
 struct entradaTS  search_identificador_marca(char * nom){
-    struct entradaTS aux=TS[TOPE];
     int i=TOPE-1;
 
     if(strlen(nom)==0){
@@ -203,11 +215,13 @@ struct entradaTS  search_identificador_marca(char * nom){
     //Mientras que no encontremos la marca de inicio de bloque
     // NICO: Ahora mismo hace:lee toda la pila hasta encontrar el nombre mientras sea una funcion o una variable.
     //       si no lo encuentra devuelve -1 
-    while(aux.entrada!=marca && (i > -1)){
+    while(TS[i].entrada!=marca && (i > -1)){
 
-        if(strcmp(TS[i].nombre,nom)==0 && ((TS[i].entrada==variable) || (TS[i].entrada==funcion)  || (TS[i].entrada==parametro_formal)) )
+        if(strcmp(TS[i].nombre,nom)==0 && ((TS[i].entrada==variable) || (TS[i].entrada==funcion)  || (TS[i].entrada==parametro_formal)) ){
+            if(debug)
+                printf("Uso %s, %s, %s, %s, %i.\n", toStringEntrada(TS[i].entrada), TS[i].nombre, toStringTipoDato(TS[i].dato_referencia), toStringTipoDato(TS[i].dato_lista),TS[i].n_parametros);
             return TS[i];
-        aux.entrada=TS[i].entrada;    
+        }   
         i--;    
     }
     return TS[0];
@@ -225,8 +239,11 @@ struct entradaTS  search_identificador_pila(char * nom){
     //       si no lo encuentra devuelve -1 
     while((i > -1)){
 
-        if(strcmp(TS[i].nombre,nom)==0 && ((TS[i].entrada==variable) || (TS[i].entrada==funcion) || (TS[i].entrada==parametro_formal)) )
+        if(strcmp(TS[i].nombre,nom)==0 && ((TS[i].entrada==variable) || (TS[i].entrada==funcion) || (TS[i].entrada==parametro_formal)) ){
+            if(debug)
+                printf("Uso %s, %s, %s, %s, %i.\n", toStringEntrada(TS[i].entrada), TS[i].nombre, toStringTipoDato(TS[i].dato_referencia), toStringTipoDato(TS[i].dato_lista),TS[i].n_parametros);
             return TS[i];
+        }
         aux.entrada=TS[i].entrada;    
         i--;    
     }
@@ -265,9 +282,8 @@ TipoDato AceptaOperadorBinarioAritmetico(struct entradaTS dato1,struct entradaTS
 void printTS(){
     
     printf("------------------------------------\n");
-    for(int pos = 0; pos <= TOPE-1;++pos){
-        toStringEntrada(TS[pos].entrada);
-        toStringTipoDato(TS[pos].dato_referencia);
+    for(int i = 0; i <= TOPE-1;i++){
+        printf("Posicion %i,%s, %s, %s, %s, %i.\n", i,toStringEntrada(TS[i].entrada), TS[i].nombre, toStringTipoDato(TS[i].dato_referencia), toStringTipoDato(TS[i].dato_lista),TS[i].n_parametros);
     }
     printf("------------------------------------\n");
 }
@@ -292,7 +308,7 @@ void ErrorDeclaradaEnBLoque(struct entradaTS dato){
 
 void ErrorNoDeclarada(struct entradaTS dato){
     if(dato.dato_referencia!=desconocido){
-        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. La %s %s %s no ha sido declarada \n" ,yylineno, toStringEntrada(dato.entrada),toStringTipoDato(dato.dato_referencia) , dato.nombre);
+        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. %s no está declarado \n" ,yylineno, dato.nombre);
     }
 }
 
@@ -314,6 +330,48 @@ void ErrorTipoInternoLista(TipoDato dato1,TipoDato dato2){
 
 ////
 
+bool comprobar_for_pascal(struct entradaTS identificador, struct entradaTS dato1, struct entradaTS dato2){
+	bool correcto = true;
+	TipoDato tipo_variable = search_identificador_pila(identificador.nombre).dato_referencia;
+	correcto &= tipo_variable == entero;
+	if(correcto){
+		correcto &= dato1.dato_referencia == entero;
+		if(correcto){
+			correcto &= dato2.dato_referencia == entero;
+			if(!correcto) 
+				printf(BG_COLOR_PURPLE "Error semantico." RESET_COLOR"Línea %d. El final debe ser un entero. Se tiene %s\n",yylineno, toStringTipoDato(dato2.dato_referencia));
+		}
+		else
+			printf(BG_COLOR_PURPLE "Error semantico." RESET_COLOR"Línea %d.Se esperaba una asignación a entero. Se tiene %s\n",yylineno, toStringTipoDato(dato1.dato_referencia));
+	}
+	else{
+		printf(BG_COLOR_PURPLE "Error semantico." RESET_COLOR"Línea %d.Se esperaba una variable ya declarada de tipo entero. Se tiene %s\n",yylineno, toStringTipoDato(tipo_variable));
+	}
+
+	return correcto;
+}
+
+bool comprobar_asignacion(struct entradaTS identificador, struct entradaTS dato1){
+	bool correcto = true;
+	TipoDato tipo_variable = search_identificador_pila(identificador.nombre).dato_referencia;
+	correcto &= tipo_variable != desconocido;
+	if(correcto){
+		correcto &= dato1.dato_referencia == tipo_variable;
+			if(!correcto) 
+				printf(BG_COLOR_PURPLE "Error semantico." RESET_COLOR "Línea %d. Los tipos deben coincidir. Se tiene tipo variable: %s, tipo dato: %s\n",yylineno, toStringTipoDato(tipo_variable),toStringTipoDato(dato1.dato_referencia));
+		
+	}
+	else{
+		printf(BG_COLOR_PURPLE "Error semantico." RESET_COLOR "Línea %d. La variable debe estar declarada. Se tiene %s\n",yylineno, toStringTipoDato(tipo_variable));
+	}
+
+	return correcto;
+}
+
+bool igualdad(struct entradaTS dato1, struct entradaTS dato2){
+	return ((dato1.dato_referencia == dato2.dato_referencia) && (dato1.dato_referencia != lista)) || ( dato1.dato_referencia == lista && dato2.dato_referencia == lista && dato1.dato_lista == dato2.dato_lista); 
+}
+
 void comprueba_exp_logica(struct entradaTS dato){
 	if(dato.dato_referencia != booleano)
 		printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. Se esperaba una expresión lógica y se tiene %s \n",yylineno, toStringTipoDato(dato.dato_referencia) );
@@ -330,7 +388,7 @@ struct entradaTS operador_ternario(struct entradaTS dato1, struct entradaTS dato
 		if( dato1.dato_lista == dato2.dato_referencia){
 			if(dato3.dato_referencia == entero){
 				salida.dato_referencia = lista;
-				salida.dato_lista = dato2.dato_lista;
+				salida.dato_lista = dato2.dato_referencia;
 			}
 			else
 				printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. La posición debe ser un entero, se tiene %s \n",yylineno, toStringTipoDato(dato3.dato_referencia));
@@ -359,8 +417,7 @@ struct entradaTS operador_binario_logico(struct entradaTS operador, struct entra
 	return salida;
 }
 
-struct entradaTS operador_binario_aritmetico(struct entradaTS dato1,struct entradaTS dato2){
-
+struct entradaTS operador_binario_aritmetico(struct entradaTS operador,struct entradaTS dato1,struct entradaTS dato2){
 	struct entradaTS salida;
 	salida.entrada = indefinido;
 	salida.dato_referencia = desconocido;
@@ -368,29 +425,29 @@ struct entradaTS operador_binario_aritmetico(struct entradaTS dato1,struct entra
 	bool lista_1 = dato1.dato_referencia == lista;
 	bool lista_2 = dato2.dato_referencia == lista;
 
-	if(dato1.dato_referencia == real && dato2.dato_referencia == real && !lista_1 && !lista_2){
+	if(dato1.dato_referencia == real && dato2.dato_referencia == real){
 		salida.dato_referencia = real;
 	}
-	else if(dato1.dato_referencia == entero && dato2.dato_referencia == entero && !lista_1 && !lista_2){
+	else if(dato1.dato_referencia == entero && dato2.dato_referencia == entero){
 		salida.dato_referencia = entero;
 	}
-	else{
-		printf("Error semántico: Se esperaban dos reales o dos enteros. Se tienen los tipos %s y %s \n",
+	else if (!lista_1 && !lista_2){
+		printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"Linea: %i.Se esperaban dos reales o dos enteros. Se tienen los tipos %s y %s \n", yylineno,
 		 toStringTipoDato(dato1.dato_referencia),
 		 toStringTipoDato(dato2.dato_referencia));
 	}
 
 	if(lista_1){
 		if(dato1.dato_lista == real && dato2.dato_referencia == real){
-			salida.dato_referencia = lista;
-			salida.dato_lista = real;
+            salida.dato_referencia = lista;
+            salida.dato_lista = real;
 		} 
 		else if(dato1.dato_lista == entero && dato2.dato_referencia == entero){
-			salida.dato_referencia = lista;
-			salida.dato_lista = entero;
+            salida.dato_referencia = lista;
+            salida.dato_lista = entero;
 		}
 		else{
-			printf("Error semántico: Una lista de %s debe operarse con un %s. Se tiene %s \n",
+			printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"Linea: %i.Una lista de %s debe operarse con un %s. Se tiene %s \n", yylineno,
 				toStringTipoDato(dato1.dato_lista),
 				toStringTipoDato(dato1.dato_lista),
 				toStringTipoDato(dato2.dato_referencia));
@@ -398,21 +455,37 @@ struct entradaTS operador_binario_aritmetico(struct entradaTS dato1,struct entra
 	}
 
 	if(lista_2){
-		if(dato1.dato_lista == real && dato2.dato_lista == real){
-			salida.dato_referencia = lista;
-			salida.dato_lista = real;
+		if(dato1.dato_referencia == real && dato2.dato_lista == real){
+            if(operador.tipo_operador != entre && operador.tipo_operador != menos){
+                salida.dato_referencia = lista;
+                salida.dato_lista = real;
+            }
+            else{
+                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"Linea: %i.Una lista de %s. No puede dividir o restar %s \n", yylineno,
+				toStringTipoDato(dato2.dato_lista),
+				toStringTipoDato(dato2.dato_lista),
+				toStringTipoDato(dato1.dato_referencia));
+            }
 		}
-		else if(dato1.dato_lista == entero && dato2.dato_lista == entero){
-			salida.dato_referencia = lista;
-			salida.dato_lista = entero;
-		}
+		else if(dato1.dato_referencia == entero && dato2.dato_lista == entero){
+            if(operador.tipo_operador != entre && operador.tipo_operador != menos){
+                salida.dato_referencia = lista;
+                salida.dato_lista = entero;
+            }
+            else{
+                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"Linea: %i.Una lista de %s de %s. No puede dividir o restar %s \n", yylineno,
+				toStringTipoDato(dato2.dato_lista),
+				toStringTipoDato(dato2.dato_lista),
+				toStringTipoDato(dato1.dato_referencia));
+		        }
+        }
 		else {
-			printf("Error semántico: Una lista de %s debe operarse con un %s. Se tiene %s \n",
+			printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"Linea: %i.Una lista de %s debe operarse con un %s. Se tiene %s \n", yylineno,
 				toStringTipoDato(dato2.dato_lista),
 				toStringTipoDato(dato2.dato_lista),
 				toStringTipoDato(dato1.dato_referencia));
 		}
-	}  
+	}
 	return salida;
 }
 
@@ -440,10 +513,40 @@ struct entradaTS operador_binario_lista(struct entradaTS operador, struct entrad
             salida.dato_referencia=dato1.dato_referencia;
         else
             printf(
-					"Error semantico: se esperaba una lista y un real o entero o viceversa pero se obtuvo %s y %s \n",
+					BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"Linea: %i. se esperaba una lista y un real o entero o viceversa pero se obtuvo %s y %s \n", yylineno,
 					toStringTipoDato(dato1.dato_referencia),
 					toStringTipoDato(dato2.dato_referencia));    
         return salida;
+}
+
+	// Se entiende que el operador es binario less, less_eq, greater,greater_eq,  equal, not_equal
+struct entradaTS operador_binario_logico_aritmetico(struct entradaTS operador, struct entradaTS dato1, struct entradaTS dato2 ){
+	struct entradaTS salida;
+	salida.dato_referencia = indefinido;
+    if(dato1.dato_referencia == dato2.dato_referencia){
+        if(dato1.dato_referencia==entero || dato1.dato_referencia==real)
+            salida.dato_referencia=booleano;
+        else
+            printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. Solo se pueden comparar entero-entero y real-real",yylineno, toStringTipoDato(dato1.dato_referencia), toStringTipoDato(dato2.dato_referencia));
+    }
+	
+	else 
+		 printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. Solo se pueden comparar entero-entero y real-real",yylineno, toStringTipoDato(dato1.dato_referencia), toStringTipoDato(dato2.dato_referencia));
+	return salida;
+}
+
+struct entradaTS operador_binario_igualdades(struct entradaTS operador, struct entradaTS dato1, struct entradaTS dato2 ){
+	struct entradaTS salida;
+	salida.dato_referencia = indefinido;
+    if(igualdad(dato1,dato2)){
+        salida.dato_referencia=booleano;
+        
+    }
+	
+	else {
+		 printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i.Los tipos de datos no son iguales para equal or not_equal. Dato tipo 1:%s Dato tipo 2: %s. Si son listas son de subtipos distintos",yylineno, toStringTipoDato(dato1.dato_referencia), toStringTipoDato(dato2.dato_referencia));
+    }
+    return salida;
 }
 
 struct entradaTS operador_binario(struct entradaTS operador, struct entradaTS dato1, struct entradaTS dato2) {
@@ -452,21 +555,25 @@ struct entradaTS operador_binario(struct entradaTS operador, struct entradaTS da
 	{
 	case equal:
 	case not_equal:
+        return operador_binario_igualdades(operador, dato1, dato2);
+        break;
 	case and:
 	case or:
 	case xor:
+        return operador_binario_logico(operador, dato1, dato2);
+		break;
 	case less:
 	case greater:
 	case less_eq:
 	case greater_eq:
-		return operador_binario_logico(operador, dato1, dato2);
+		return operador_binario_logico_aritmetico(operador, dato1, dato2);
 		break;
 	
 	case mas:
 	case menos:
 	case por:
 	case entre:
-		return operador_binario_aritmetico( dato1, dato2);
+		return operador_binario_aritmetico( operador,dato1, dato2);
 		break;
 
 	case arroba:
@@ -499,7 +606,7 @@ struct entradaTS operador_unario(struct entradaTS dato,struct entradaTS operador
         break;
         case sostenido:
             if (dato.dato_referencia != lista){
-                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. El primer operando no es una lista \n",yylineno);
+                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. La variable %s no es una lista\n",yylineno, dato.nombre);
             }
             else
                 coso.dato_referencia=entero;
@@ -507,10 +614,11 @@ struct entradaTS operador_unario(struct entradaTS dato,struct entradaTS operador
         
         case interrogacion:
             if (dato.dato_referencia != lista){
-                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. El primer operando no es una lista \n",yylineno);
+                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. La variable %s no es una lista\n",yylineno, dato.nombre);
             }
-            else
+            else{
                 coso.dato_referencia=dato.dato_lista;
+            }
         break;
         
         case menos:
@@ -572,44 +680,3 @@ int  pos_identificador(char * nom){
     return -1;
 }
 
-bool comprobar_for_pascal(struct entradaTS identificador, struct entradaTS dato1, struct entradaTS dato2){
-	bool correcto = true;
-	TipoDato tipo_variable = search_identificador_pila(identificador.nombre).dato_referencia;
-	correcto &= tipo_variable == entero;
-	if(correcto){
-		correcto &= dato1.dato_referencia == entero;
-		if(correcto){
-			correcto &= dato2.dato_referencia == entero;
-			if(!correcto) 
-				printf("Línea %d. Error semántico: el final debe ser un entero. Se tiene %s\n",yylineno, toStringTipoDato(dato2.dato_referencia));
-		}
-		else
-			printf("Línea %d. Error semántico: se esperaba una asignación a entero. Se tiene %s\n",yylineno, toStringTipoDato(dato1.dato_referencia));
-	}
-	else{
-		printf("Línea %d. Error semántico: se esperaba una variable ya declarada de tipo entero. Se tiene %s\n",yylineno, toStringTipoDato(tipo_variable));
-	}
-
-	return correcto;
-}
-
-bool comprobar_asignacion(struct entradaTS identificador, struct entradaTS dato1){
-	bool correcto = true;
-	TipoDato tipo_variable = search_identificador_pila(identificador.nombre).dato_referencia;
-	correcto &= tipo_variable != desconocido;
-	if(correcto){
-		correcto &= dato1.dato_referencia == tipo_variable;
-			if(!correcto) 
-				printf("Línea %d. Error semántico: Los tipos deben coincidir. Se tiene tipo variable: %s, tipo dato: %s\n",yylineno, toStringTipoDato(tipo_variable),toStringTipoDato(dato1.dato_referencia));
-		
-	}
-	else{
-		printf("Línea %d. Error semántico: la variable debe estar declarada. Se tiene %s\n",yylineno, toStringTipoDato(tipo_variable));
-	}
-
-	return correcto;
-}
-
-bool igualdad(struct entradaTS dato1, struct entradaTS dato2){
-	return ((dato1.dato_referencia == dato2.dato_referencia) && (dato1.dato_referencia != lista)) || ( dato1.dato_referencia == lista && dato2.dato_referencia == lista && dato1.dato_lista == dato2.dato_lista); 
-}

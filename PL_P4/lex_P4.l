@@ -376,30 +376,39 @@ otros .
 
 
 ("'"({letra}|{numero}|[ ]|\:)"'") {
+    strcpy(yylval.nombre, yytext);
+    yylval.entrada = indefinido;
 	yylval.dato_referencia = caracter;
     strcpy(atributo, "0");
     return (LITERAL);
 }
 
 ({numero}+) {
+    strcpy(yylval.nombre, yytext);
+    yylval.entrada = indefinido;
 	yylval.dato_referencia = entero;
     strcpy(atributo, "1");
     return (LITERAL);
 }
 
 ({numero}+\.{numero}+) {
+    strcpy(yylval.nombre, yytext);
+    yylval.entrada = indefinido;
 	yylval.dato_referencia = real;
     strcpy(atributo, "2");
     return (LITERAL);
 }
 
-("True"|"False") {
+("true"|"false") {
+    strcpy(yylval.nombre, yytext);
+    yylval.entrada = indefinido;
 	yylval.dato_referencia = booleano;
     strcpy(atributo, "3");
     return (LITERAL);
 }
 
 ({letra})({letra}|{numero})* {
+    yylval.entrada = indefinido;
 	strcpy(yylval.nombre, yytext);
     strcpy(atributo, yytext);
     return(IDENTIFICADOR);
