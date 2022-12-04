@@ -70,7 +70,7 @@ void push(struct entradaTS e){
     if(debug)
         printf("Inserto %s %s %s %s %i\n", toStringEntrada(e.entrada), e.nombre, toStringTipoDato(e.dato_referencia), toStringTipoDato(e.dato_lista),e.n_parametros);
     if(TOPE==MAX_TS){
-        printf(BG_COLOR_PURPLE "ERROR:" RESET_COLOR" Se ha alcanzado el tamaño maximo de la pila \n");
+        printf(BG_COLOR_PURPLE "ERROR:" RESET_COLOR"En línea %i. Se ha alcanzado el tamaño maximo de la pila.\n",yylineno);
         exit(-1);
     }   
     else{
@@ -88,7 +88,7 @@ void push2(struct entradaTS e, TipoEntrada ent){
     if(debug)
         printf("Inserto %s %s %s %s %i\n", toStringEntrada(ent), e.nombre, toStringTipoDato(e.dato_referencia), toStringTipoDato(e.dato_lista),e.n_parametros);
     if(TOPE==MAX_TS){
-        printf(BG_COLOR_PURPLE "ERROR:" RESET_COLOR "Se ha alcanzado el tamaño maximo de la pila \n");
+        printf(BG_COLOR_PURPLE "ERROR:" RESET_COLOR"En línea %i.Se ha alcanzado el tamaño maximo de la pila \n",yylineno);
         exit(-1);
     }   
     else{
@@ -157,7 +157,7 @@ struct entradaTS pop(){
         return aux;
     } 
     else{
-        printf(BG_COLOR_PURPLE "ERROR:" RESET_COLOR" No se ha podido eliminar el ultimo elemento de la pila \n");
+        printf(BG_COLOR_PURPLE "ERROR:" RESET_COLOR"En línea %i. No se ha podido eliminar el ultimo elemento de la pila \n");
         exit(-1);
     }   
 }
@@ -167,7 +167,7 @@ void InsertarMarca(){
     if(debug)
         printf("Insertando marca de inicio de bloque \n");
     if(TOPE==MAX_TS){
-        printf(BG_COLOR_PURPLE "ERROR:" RESET_COLOR " La pila esta llena \n");
+        printf(BG_COLOR_PURPLE "ERROR:" RESET_COLOR"En línea %i. La pila esta llena \n",yylineno);
         exit(-1);
     }    
     TS[TOPE].entrada=marca;
@@ -199,7 +199,7 @@ struct entradaTS  search_identificador_marca(char * nom){
     int i=TOPE-1;
 
     if(strlen(nom)==0){
-        printf(BG_COLOR_PURPLE "ERROR:" RESET_COLOR" Se ha introducido una cadena vacia \n");
+        printf(BG_COLOR_PURPLE "ERROR:" RESET_COLOR"En línea %i. Se ha introducido una cadena vacia \n",yylineno);
     }
     //Mientras que no encontremos la marca de inicio de bloque
     // NICO: Ahora mismo hace:lee toda la pila hasta encontrar el nombre mientras sea una funcion o una variable.
@@ -220,7 +220,7 @@ struct entradaTS  search_identificador_pila(char * nom){
     int i=TOPE-1;
 
     if(strlen(nom)==0){
-        printf(BG_COLOR_PURPLE "ERROR:" RESET_COLOR" Se ha introducido una cadena vacia \n");
+        printf(BG_COLOR_PURPLE "ERROR:" RESET_COLOR"En línea %i. Se ha introducido una cadena vacia \n",yylineno);
     }
     //Mientras que no encontremos la marca de inicio de bloque
     // NICO: Ahora mismo hace:lee toda la pila hasta encontrar el nombre mientras sea una funcion o una variable.
@@ -279,46 +279,46 @@ void ErrorOperarTipos(struct entradaTS dato1,struct entradaTS dato2){
     //En caso de que ambas variables tengan un tipo asignado
     if(dato1.dato_referencia!=desconocido && dato2.dato_referencia!=desconocido) {
         if(dato1.dato_referencia==lista)
-            printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" No se puede operar los tipos %s de %s y %s \n ", toStringTipoDato(dato1.dato_referencia), toStringTipoDato(dato1.dato_lista), toStringTipoDato(dato2.dato_referencia));
+            printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. No se puede operar los tipos %s de %s y %s \n ", yylineno,toStringTipoDato(dato1.dato_referencia), toStringTipoDato(dato1.dato_lista), toStringTipoDato(dato2.dato_referencia));
         else if( dato2.dato_referencia==lista)    
-            printf(BG_COLOR_PURPLE " Error semantico :" RESET_COLOR" No se puede operar los tipos %s  y %s de %s \n ", toStringTipoDato(dato1.dato_referencia), toStringTipoDato(dato2.dato_referencia), toStringTipoDato(dato2.dato_lista));
+            printf(BG_COLOR_PURPLE " Error semantico :" RESET_COLOR"En línea %i. No se puede operar los tipos %s  y %s de %s \n ",yylineno ,toStringTipoDato(dato1.dato_referencia), toStringTipoDato(dato2.dato_referencia), toStringTipoDato(dato2.dato_lista));
         else 
-            printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" No se pueden operar los tipos %s y %s \n" , toStringTipoDato(dato1.dato_referencia),toStringTipoDato(dato2.dato_referencia));    
+            printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. No se pueden operar los tipos %s y %s \n" ,yylineno, toStringTipoDato(dato1.dato_referencia),toStringTipoDato(dato2.dato_referencia));    
     }
 }
 
 void ErrorDeclaradaEnBLoque(struct entradaTS dato){
     if(dato.dato_referencia!=desconocido)
-        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" La %s %s ya ha sido declarada en este bloque \n" , toStringTipoDato(dato.dato_referencia) , dato.nombre);
+        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. La %s %s ya ha sido declarada en este bloque \n",yylineno , toStringTipoDato(dato.dato_referencia) , dato.nombre);
 }
 
 void ErrorNoDeclarada(struct entradaTS dato){
     if(dato.dato_referencia!=desconocido){
-        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" La %s %s no ha sido declarada \n" , toStringTipoDato(dato.dato_referencia) , dato.nombre);
+        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. La %s %s no ha sido declarada \n" ,yylineno, toStringTipoDato(dato.dato_referencia) , dato.nombre);
     }
 }
 
 
 void ErrorNombreParametros(struct entradaTS dato){
     if(dato.dato_referencia!=desconocido)
-        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" Hay mas de un parametro con el mismo nombre %s \n" , dato.nombre);
+        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. Hay mas de un parametro con el mismo nombre %s \n",yylineno , dato.nombre);
 }
 
 void ErrorEnAsignacion(struct entradaTS dato1, struct entradaTS dato2){
     if(dato1.dato_referencia!=desconocido && dato2.dato_referencia!=desconocido)
-        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" Los tipos que hay en la asignacion %s y %s no coinciden \n" , toStringTipoDato(dato1.dato_referencia),toStringTipoDato(dato2.dato_referencia));
+        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. Los tipos que hay en la asignacion %s y %s no coinciden \n",yylineno , toStringTipoDato(dato1.dato_referencia),toStringTipoDato(dato2.dato_referencia));
 }
 
 void ErrorTipoInternoLista(struct entradaTS dato1,struct entradaTS dato2){
     if (dato1.dato_referencia !=desconocido && dato2.dato_referencia !=desconocido)
-        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" Los tipos %s  y  %s no coinciden \n", toStringTipoDato(dato1.dato_lista),toStringTipoDato(dato2.dato_lista) );
+        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. Los tipos %s  y  %s no coinciden \n",yylineno, toStringTipoDato(dato1.dato_lista),toStringTipoDato(dato2.dato_lista) );
 }
 
 ////
 
 void comprueba_exp_logica(struct entradaTS dato){
 	if(dato.dato_referencia != booleano)
-		printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" Se esperaba una expresión lógica y se tiene %s \n", toStringTipoDato(dato.dato_referencia) );
+		printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. Se esperaba una expresión lógica y se tiene %s \n",yylineno, toStringTipoDato(dato.dato_referencia) );
 }
 
 
@@ -335,13 +335,13 @@ struct entradaTS operador_ternario(struct entradaTS dato1, struct entradaTS dato
 				salida.dato_lista = dato2.dato_lista;
 			}
 			else
-				printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" La posición debe ser un entero, se tiene %s \n", toStringTipoDato(dato3.dato_referencia));
+				printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. La posición debe ser un entero, se tiene %s \n",yylineno, toStringTipoDato(dato3.dato_referencia));
 		} 
 		else
-			printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" El elemento a insertar debe ser del tipo de la lista. Tipo lista: %s, tipo elemento: %s \n", toStringTipoDato(dato1.dato_lista), toStringTipoDato(dato2.dato_referencia));
+			printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. El elemento a insertar debe ser del tipo de la lista. Tipo lista: %s, tipo elemento: %s \n",yylineno, toStringTipoDato(dato1.dato_lista), toStringTipoDato(dato2.dato_referencia));
 	}
 	else
-		printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" Se esperaba una lista y se tiene %s \n", toStringTipoDato(dato1.dato_referencia));
+		printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. Se esperaba una lista y se tiene %s \n",yylineno, toStringTipoDato(dato1.dato_referencia));
 
 	return salida;
 }
@@ -356,7 +356,7 @@ struct entradaTS operador_binario_logico(struct entradaTS operador, struct entra
 		salida.dato_referencia = booleano;
 	}
 	else 
-		printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" El operador solo acepta tipos booleanos. Tipo dato1: %s, Tipo dato2: %s \n", toStringTipoDato(dato1.dato_referencia), toStringTipoDato(dato2.dato_referencia));
+		printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. El operador solo acepta tipos booleanos. Tipo dato1: %s, Tipo dato2: %s \n",yylineno, toStringTipoDato(dato1.dato_referencia), toStringTipoDato(dato2.dato_referencia));
 
 	return salida;
 }
@@ -492,7 +492,7 @@ struct entradaTS operador_unario(struct entradaTS dato,struct entradaTS operador
     switch(operador.tipo_operador){
         case negacion:
             if(dato.dato_referencia != booleano){
-                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" El primer operando no es un booleano \n");
+                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. El primer operando no es un booleano \n",yylineno);
             }
             else{
                 coso.dato_referencia=booleano;
@@ -501,7 +501,7 @@ struct entradaTS operador_unario(struct entradaTS dato,struct entradaTS operador
         break;
         case sostenido:
             if (dato.dato_referencia != lista){
-                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" El primer operando no es una lista \n");
+                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. El primer operando no es una lista \n",yylineno);
             }
             else
                 coso.dato_referencia=entero;
@@ -509,7 +509,7 @@ struct entradaTS operador_unario(struct entradaTS dato,struct entradaTS operador
         
         case interrogacion:
             if (dato.dato_referencia != lista){
-                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" El primer operando no es una lista \n");
+                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. El primer operando no es una lista \n",yylineno);
             }
             else
                 coso.dato_referencia=dato.dato_lista;
@@ -519,7 +519,7 @@ struct entradaTS operador_unario(struct entradaTS dato,struct entradaTS operador
             if(dato.dato_referencia==entero || dato.dato_referencia==real)
                 coso.dato_referencia=entero;
             else
-                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" El dato no es entero o real \n");
+                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. El dato no es entero o real \n",yylineno);
         break;
 
         default:
@@ -541,7 +541,7 @@ struct entradaTS search_parametro(char * nom, struct entradaTS param){
     int p=-1;
     bool encontrado=false;
     if(strlen(nom)==0){
-        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" Se ha introducido una cadena vacía \n");
+        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. Se ha introducido una cadena vacía \n",yylineno);
     }
     int pos_funcion = pos_identificador(nom);
     int n_arg = TS[pos_funcion].n_parametros;
@@ -567,7 +567,6 @@ int  pos_identificador(char * nom){
 
     if(strlen(nom)==0){
         printf("Error: Se ha introducido una cadena vacia \n");
-        exit(-1);
     }
     //Mientras que no encontremos la marca de inicio de bloque
     // NICO: Ahora mismo hace:lee toda la pila hasta encontrar el nombre mientras sea una funcion o una variable.
