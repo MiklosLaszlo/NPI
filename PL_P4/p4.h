@@ -580,6 +580,22 @@ int  pos_identificador(char * nom){
     return -1;
 }
 
-bool comprobar_for_pascal(struct entradaTS dato1, struct entradaTS dato2){
-	
+bool comprobar_for_pascal(struct entradaTS identificador, struct entradaTS dato1, struct entradaTS dato2){
+	bool correcto = true;
+	tipo_variable = search_identificador_pila(identificador.nombre).dato_referencia;
+	correcto &= tipo_variable == entero;
+	if(correcto){
+		correcto &= dato1.dato_referencia == entero;
+		if(correcto){
+			correcto &= dato2.dato_referencia == entero;
+			if(!correcto) 
+				prinft("Línea %d. Error semántico: el final debe ser un entero. Se tiene %s", dato2.dato_referencia);
+		}
+		else
+			prinft("Línea %d. Error semántico: se esperaba una asignación a entero. Se tiene %s", dato1.dato_referencia);
+	}
+	else{
+		prinft("Línea %d. Error semántico: se esperaba una variable ya declarada de tipo entero. Se tiene %s", tipo_variable);
+	}
+
 }
