@@ -160,7 +160,7 @@ sentencia : sentencia_asignacion
         | sentencia_for_pascal
         | sentencia_lista
         | PYC ;
-sentencia_asignacion : IDENTIFICADOR IGUAL expresion PYC 
+sentencia_asignacion : IDENTIFICADOR IGUAL expresion PYC {comprobar_asignacion($1,$3);}
 		  | IDENTIFICADOR IGUAL error { yyerrok; explicacion_error_sintactico("Error, el identificador debe estar igualada a una expresión");};
 		  | IDENTIFICADOR IGUAL expresion error { yyerrok; explicacion_error_sintactico("Error, la asignación debe acabar en \";\"");}
 sentencia_if : IF PARIZQ expresion PARDCH THEN bloque ELSE bloque { comprueba_exp_logica($3); }
@@ -190,7 +190,7 @@ sentencia_salida : WRITE PARIZQ lista_salida PARDCH PYC
 sentencia_return : RETURN expresion PYC  
 		  | RETURN error { yyerrok; explicacion_error_sintactico("Error, debe devolverse una expresión"); }
 		  | RETURN expresion error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); }
-sentencia_for_pascal : FOR IDENTIFICADOR IGUAL expresion TO expresion DO bloque
+sentencia_for_pascal : FOR IDENTIFICADOR IGUAL expresion TO expresion DO bloque {comprobar_for_pascal($2,$4,$6);} 
 		  | FOR error { yyerrok; explicacion_error_sintactico("Error, se esperaba una sentencia de asignación"); }
 		  | FOR sentencia_asignacion error { yyerrok; explicacion_error_sintactico("Error, se esperaba la palabra \"to\""); }
 		  | FOR sentencia_asignacion TO error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
@@ -202,25 +202,20 @@ sentencia_lista : IDENTIFICADOR MOVLISTA PYC
 		  /* | IDENTIFICADOR MOVLISTA error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); }
 		  | PRINCIPIOLISTA error { yyerrok; explicacion_error_sintactico("Error, se esperaba un identificador"); }
 		  | PRINCIPIOLISTA IDENTIFICADOR error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); } */
-lista_entrada : lista_entrada
-		 COMA
-		 IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($3.nombre)); if($$.entrada!=variable) ErrorNoDeclarada($$);else $$.entrada =indefinido; }
-        | IDENTIFICADOR  {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable) ErrorNoDeclarada($$);else $$.entrada =indefinido; }
+lista_entrada : lista_entrada COMA IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($3.nombre)); if($$.entrada!=variable) {ErrorNoDeclarada($$); $$.entrada=indefinido;} }
+        | IDENTIFICADOR  {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable) {ErrorNoDeclarada($$); $$.entrada=indefinido;} }
 
-lista_salida : lista_salida COMA expresion 
-		| expresion 
+lista_salida : lista_salida COMA expresion {copiaStruct(&$$,search_identificador_pila($3.nombre)); if($$.entrada!=variable) {ErrorNoDeclarada($$); $$.entrada=indefinido;} }
+		| expresion {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable) {ErrorNoDeclarada($$); $$.entrada=indefinido;} }
 
 expresion : PARIZQ expresion PARDCH { $$ = $1; }
-        | OPUNI expresion %prec NOT {  }
-        | expresion OPBIN expresion %prec LOGICOS { $$ = operador_binario($2, $1, $3);  }
-        | expresion TER1 expresion ARROBA expresion
-        | OPUNI expresion %prec NOT { $$ = operador_unario($1, $2); }
-        | expresion OPBIN expresion %prec LOGICOS { $$ = operador_binario($2, $1, $3);}
-        | expresion TER1 expresion ARROBA expresion { $$ = operador_ternario($1,$3,$5);}
-        | IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable) ErrorNoDeclarada($$);else $$.entrada =indefinido; }
-        | llamar_funcion {$$.dato_referencia=$1.dato_referencia;$$.dato_lista=$1.dato_lista;$$.entrada=variable;}
-        | agregado {$$.dato_referencia=lista;$$.dato_lista=$1.dato_referencia;$$.entrada=variable;}
-        | LITERAL {copiaStruct(&$$,$1);}
+		| OPUNI expresion %prec NOT { copiaStruct(&$$, operador_unario($2,$1) ); }
+		| expresion OPBIN expresion %prec LOGICOS {copiaStruct(&$$,operador_binario($2, $1, $3));  }
+		| expresion TER1 expresion ARROBA expresion { copiaStruct(&$$,operador_ternario($1,$3,$5)); }
+		| IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable) ErrorNoDeclarada($$);else $$.entrada =indefinido; }
+		| llamar_funcion {copiaStruct(&$$,$1); $$.entrada=variable;}
+		| agregado {$$.dato_referencia=lista;$$.dato_lista=$1.dato_referencia;$$.entrada=variable;}
+		| LITERAL {copiaStruct(&$$,$1);}
 		| PARIZQ error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
 		//  | PARIZQ expresion error { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el paréntesis"); }
 		| OPUNI error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
