@@ -43,6 +43,7 @@ void explicacion_error_semantico( char * msg ) {
 }
 int n_parametros=0;
 TipoDato daton_anterior=desconocido;
+char nombre_funcion[100];
 %}
 // TOKENS
 //********************
@@ -145,7 +146,7 @@ parametros : PARIZQ PARDCH
         | PARIZQ lista_parametros PARDCH 
 		  //| PARIZQ error { yyerrok; explicacion_error_sintactico("Error, debe introducir una lista de parámetros separados por comas"); }
 		| PARIZQ lista_parametros error { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el paréntesis"); }
-lista_parametros : tipo_basico IDENTIFICADOR {n_parametros+=1;push2($2,parametro_formal);}
+lista_parametros : tipo_basico IDENTIFICADOR {n_parametros+=1;if(!search_parametro($2.nombre))push2($2,parametro_formal);}
         | lista_parametros COMA tipo_basico IDENTIFICADOR {n_parametros+=1;push2($4,parametro_formal);}
 		| tipo_basico error { yyerrok; explicacion_error_sintactico("Error, tras el tipo básico debe introducir un identificador"); }
 tipo_basico : TYPE { $$.entrada = $1.entrada; }
@@ -212,9 +213,6 @@ lista_salida : lista_salida COMA expresion
 		| expresion 
 
 expresion : PARIZQ expresion PARDCH { $$ = $1; }
-        | OPUNI expresion %prec NOT {  }
-        | expresion OPBIN expresion %prec LOGICOS { $$ = operador_binario($2, $1, $3);  }
-        | expresion TER1 expresion ARROBA expresion
         | OPUNI expresion %prec NOT { $$ = operador_unario($1, $2); }
         | expresion OPBIN expresion %prec LOGICOS { $$ = operador_binario($2, $1, $3);}
         | expresion TER1 expresion ARROBA expresion { $$ = operador_ternario($1,$3,$5);}
@@ -229,12 +227,14 @@ expresion : PARIZQ expresion PARDCH { $$ = $1; }
 		| expresion TER1 error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
 		| expresion TER1 expresion error { yyerrok; explicacion_error_sintactico("Error, se esperaba \"@\""); }
 		//  | expresion TER1 expresion ARROBA error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); } 
-llamar_funcion : IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=funcion) ErrorNoDeclarada($$);else $$.entrada =indefinido; } argumentos ; //{/*Hace falta algo como push funccion*/}
+llamar_funcion : IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=funcion) {ErrorNoDeclarada($$);$$.entrada =indefinido;} strcmp(nombre_funcion,$1.nombre);} argumentos ; //{/*Hace falta algo como push funccion*/}
         
 argumentos : PARIZQ lista_argumentos PARDCH
 		| PARIZQ lista_argumentos error { yyerrok; explicacion_error_sintactico("Error, la lista de argumentos debe acabar con paréntesis"); }
-lista_argumentos : IDENTIFICADOR 
-        | LITERAL 
+lista_argumentos : IDENTIFICADOR {n_parametros1+=1; struct entradaTS s1, s2; copiaStruct(s1,search_identificador_pila($1.nombre));copiaStruct(s2,getArg(nombre_funcion,n_parametros));
+		if(s1.dato_entrada!=variable) explicacion_error_semantico("No se esta pasanod una variable") if(s1.dato_referencia!=s2.dato_referencia) explicacion_error_semantico("Tipo de argumento incorrecto"); if(s1.dato_referencia== lista && s2.dato_referencia==lista)}
+        | LITERAL
+		| agregado 
         | lista_argumentos COMA IDENTIFICADOR 
         | lista_argumentos COMA LITERAL 
         | ;

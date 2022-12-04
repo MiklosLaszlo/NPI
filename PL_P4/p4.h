@@ -205,7 +205,7 @@ struct entradaTS  search_identificador_marca(char * nom){
     //       si no lo encuentra devuelve -1 
     while(aux.entrada!=marca && (i > -1)){
 
-        if(strcmp(TS[i].nombre,nom)==0 && ((TS[i].entrada==variable) || (TS[i].entrada==funcion)) )
+        if(strcmp(TS[i].nombre,nom)==0 && ((TS[i].entrada==variable) || (TS[i].entrada==funcion)  || (TS[i].entrada==parametro_formal)) )
             return TS[i];
         aux.entrada=TS[i].entrada;    
         i--;    
@@ -225,7 +225,7 @@ struct entradaTS  search_identificador_pila(char * nom){
     //       si no lo encuentra devuelve -1 
     while((i > -1)){
 
-        if(strcmp(TS[i].nombre,nom)==0 && ((TS[i].entrada==variable) || (TS[i].entrada==funcion)) )
+        if(strcmp(TS[i].nombre,nom)==0 && ((TS[i].entrada==variable) || (TS[i].entrada==funcion) || (TS[i].entrada==parametro_formal)) )
             return TS[i];
         aux.entrada=TS[i].entrada;    
         i--;    
@@ -292,7 +292,7 @@ void ErrorDeclaradaEnBLoque(struct entradaTS dato){
 
 void ErrorNoDeclarada(struct entradaTS dato){
     if(dato.dato_referencia!=desconocido){
-        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. La %s %s no ha sido declarada \n" ,yylineno, toStringTipoDato(dato.dato_referencia) , dato.nombre);
+        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. La %s %s %s no ha sido declarada \n" ,yylineno, toStringEntrada(dato.entrada),toStringTipoDato(dato.dato_referencia) , dato.nombre);
     }
 }
 
@@ -534,24 +534,19 @@ bool esMismo(struct entradaTS e1,struct entradaTS e2){
 
 //Search parametros, devuelve la posición en la pila del parametro
 //Si no existe devuelve -1
-struct entradaTS search_parametro(char * nom, struct entradaTS param){
+bool search_parametro(char * nom){
     struct  entradaTS dev;
-    int p=-1;
-    bool encontrado=false;
     if(strlen(nom)==0){
         printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. Se ha introducido una cadena vacía \n",yylineno);
     }
-    int pos_funcion = pos_identificador(nom);
-    int n_arg = TS[pos_funcion].n_parametros;
-
-    for(int i=1;i<=n_arg && !encontrado;++i){
-        if(esMismo(TS[pos_funcion-i],param)){
-            p=pos_funcion-i;
-            encontrado = true;
-            return TS[pos_funcion-i];
+    int i=TOPE-1;
+    while(TS[i].entrada==parametro_formal){
+        if(strcmp(TS[i].nombre,nom)==0 ){
+            printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. Dos parametros con el mismo nombre \n",yylineno);
+            return true;
         }
     }
-    return dev;
+    return false;
 }
 
 //Funcion para buscar si un identificador existe dentro de su bloque, 
@@ -569,7 +564,7 @@ int  pos_identificador(char * nom){
     //Mientras que no encontremos la marca de inicio de bloque
     // NICO: Ahora mismo hace:lee toda la pila hasta encontrar el nombre mientras sea una funcion o una variable.
     //       si no lo encuentra devuelve -1 
-    while(aux.entrada!=marca && (i > -1)){
+    while(aux.entrada==marca && (i > -1)){
         if(strcmp(TS[i].nombre,nom)==0 && ((TS[i].entrada==variable) || (TS[i].entrada==funcion)) )
             return i;
         i--;
