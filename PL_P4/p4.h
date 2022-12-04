@@ -325,6 +325,44 @@ struct entradaTS operador_ternario(struct entradaTS dato1, struct entradaTS dato
 	return salida;
 }
 
+struct entradaTS operador_binario(struct entradaTS operador, struct entradaTS data1, struct entradaTS dato2) {
+	switch (operador.tipo_operador)
+	{
+	case equal:
+	case not_equal:
+	case and:
+	case or:
+	case xor:
+	case less:
+	case greater:
+	case less_eq:
+	case greater_eq:
+		return operador_binario_logico(operador, dato1, dato2);
+		break;
+	
+	case mas:
+	case menos:
+	case por:
+	case entre:
+		return operador_binario_aritmetico(operador, dato1, dato2);
+		break;
+
+	case arroba:
+	case menosmenos:
+	case porcentaje:
+	case doblepor:
+		return operador_binario_lista(operador, dato1, dato2);
+		break;
+
+	default:
+		struct entradaTS salida;
+		salida.dato_referencia = desconocido;
+		salida.entrada = indefinido;
+
+		break;
+	}
+}
+
 struct entradaTS operador_binario_logico(struct entradaTS operador, struct entradaTS dato1, struct entradaTS dato2 ){
 	// Se entiende que el operador es binario less, less_eq, greater,greater_eq,  equal, not_equal
 
