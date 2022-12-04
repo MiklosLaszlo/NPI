@@ -609,3 +609,7 @@ bool comprobar_asignacion(struct entradaTS identificador, struct entradaTS dato1
 
 	return correcto;
 }
+
+bool igualdad(struct entradaTS dato1, struct entradaTS dato2){
+	return ((dato1.dato_referencia == dato2.dato_referencia) && (dato1.dato_referencia != lista)) || ( dato1.dato_referencia == lista && dato2.dato_referencia == lista && dato1.dato_lista == dato2.dato_lista); 
+}
