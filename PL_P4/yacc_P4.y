@@ -240,20 +240,20 @@ agregado : CORIZQ lista_expresiones CORDCH
 
 lista_expresiones : lista_expresiones COMA expresion 
         | expresion 
-OPUNI : NOT { copiaStruct($$,$1);}
-        | SOSTENIDO { copiaStruct($$,$1);}
-        | INTERROGACION { copiaStruct($$,$1);}
-        | MENOS { copiaStruct($$,$1);}
-OPBIN : IGUALDAD { copiaStruct($$,$1);}
-        | MENOS { copiaStruct($$,$1);}
-        | LOGICOS { copiaStruct($$,$1);}
-        | MAS { copiaStruct($$,$1);}
-        | MULTIPLICATIVO { copiaStruct($$,$1);}
-        | COMPARACION { copiaStruct($$,$1);}
-        | ARROBA { copiaStruct($$,$1);}
-        | MENOSMENOS { copiaStruct($$,$1);}
-        | PORCENTAJE { copiaStruct($$,$1);}
-        | DOBLEPOR { copiaStruct($$,$1);}
+OPUNI : NOT { copiaStruct(&$$,$1);}
+        | SOSTENIDO { copiaStruct(&$$,$1);}
+        | INTERROGACION { copiaStruct(&$$,$1);}
+        | MENOS { copiaStruct(&$$,$1);}
+OPBIN : IGUALDAD { copiaStruct(&$$,$1);}
+        | MENOS { copiaStruct(&$$,$1);}
+        | LOGICOS { copiaStruct(&$$,$1);}
+        | MAS { copiaStruct(&$$,$1);}
+        | MULTIPLICATIVO { copiaStruct(&$$,$1);}
+        | COMPARACION { copiaStruct(&$$,$1);}
+        | ARROBA { copiaStruct(&$$,$1);}
+        | MENOSMENOS { copiaStruct(&$$,$1);}
+        | PORCENTAJE { copiaStruct(&$$,$1);}
+        | DOBLEPOR { copiaStruct(&$$,$1);}
 %% 
 
 

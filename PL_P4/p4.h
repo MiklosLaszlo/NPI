@@ -110,13 +110,13 @@ void clear(){
     TOPE=0;    
 }
 //copia e2 en e1
-void copiaStruct(struct entradaTS& e1,struct entradaTS e2){
-    e1.dato_lista = e2.dato_lista;
-    e1.dato_referencia = e2.dato_referencia;
-    e1.entrada = e2.entrada;
-    e1.n_parametros = e2.n_parametros;
-    e1.tipo_operador = e2.tipo_operador;
-    strcpy(e1.nombre,e2.nombre);
+void copiaStruct(struct entradaTS *e1,struct entradaTS e2){
+    (*e1).dato_lista = e2.dato_lista;
+    (*e1).dato_referencia = e2.dato_referencia;
+    (*e1).entrada = e2.entrada;
+    (*e1).n_parametros = e2.n_parametros;
+    (*e1).tipo_operador = e2.tipo_operador;
+    strcpy((*e1).nombre,e2.nombre);
 }
 ////////////////////////
 
@@ -140,7 +140,7 @@ struct entradaTS getArg(char* nombre,int arg){
             index = index-TS[index].n_parametros + arg - 1;
             
             if(0 <= index && index < TOPE)
-                copiaStruct(tmp,TS[index]);
+                copiaStruct(&tmp,TS[index]);
         }
         return tmp;
     }
