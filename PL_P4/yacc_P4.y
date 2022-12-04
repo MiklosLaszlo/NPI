@@ -23,15 +23,16 @@
 		less, greater, less_eq, greater_eq,arroba, menosmenos, porcentaje,doblepor} TipoOperador;
 
 	typedef struct  entradaTS{
-   TipoEntrada entrada;      // Indica el tipo de entrada
+   TipoEntrada entrada = indefinido;      // Indica el tipo de entrada
    char nombre[100]; 
    // char valor[50];              // Contendra los caracteres que forman el identificador
-   TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
+   TipoDato dato_referencia = desconocido; // En caso de que entrada sea funcion,variable
                              // o parametro formal indica el tipo de dato al que hace referencia
    TipoDato dato_lista;      //tipo de datos que contiene la lista                    
    unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros 
 	TipoOperador tipo_operador; // En caso de ser operador, qué operador es  
 };
+#endif
 
 void yyerror( char *msg ){
 	//fprintf(stderr, BG_COLOR_YELLOW "YY Error sintáctico"  RESET_COLOR " Línea %d, No se esperaba el lexema \'%s\'\n" ,yylineno, yytext);
@@ -232,9 +233,9 @@ lista_entrada : lista_entrada
         | IDENTIFICADOR  
 
 expresion : PARIZQ expresion PARDCH { $$ = $1; }
-        | OPUNI expresion %prec NOT {  }
-        | expresion OPBIN expresion %prec LOGICOS { $$ = comprobar_bin($1, $2);  }
-        | expresion TER1 expresion ARROBA expresion
+        | OPUNI expresion %prec NOT { $$ = operador_unario($1, $2); }
+        | expresion OPBIN expresion %prec LOGICOS { $$ = operador_binario($2, $1, $3);  }
+        | expresion TER1 expresion ARROBA expresion { $$ = operador_ternario($1,$3,$5);}
         | IDENTIFICADOR 
         | llamar_funcion
         | agregado
@@ -263,20 +264,20 @@ agregado : CORIZQ lista_expresiones CORDCH
 
 lista_expresiones : lista_expresiones COMA expresion 
         | expresion 
-OPUNI : NOT 
-        | SOSTENIDO
-        | INTERROGACION 
-        | MENOS ;
-OPBIN : IGUALDAD
-        | MENOS
-        | LOGICOS
-        | MAS
-        | MULTIPLICATIVO
-        | COMPARACION
-        | ARROBA
-        | MENOSMENOS
-        | PORCENTAJE
-        | DOBLEPOR ;
+OPUNI : NOT { $$ = $1;}
+        | SOSTENIDO { $$ = $1;}
+        | INTERROGACION { $$ = $1;}
+        | MENOS { $$ = $1;}
+OPBIN : IGUALDAD { $$ = $1;}
+        | MENOS { $$ = $1;}
+        | LOGICOS { $$ = $1;}
+        | MAS { $$ = $1;}
+        | MULTIPLICATIVO { $$ = $1;}
+        | COMPARACION { $$ = $1;}
+        | ARROBA { $$ = $1;}
+        | MENOSMENOS { $$ = $1;}
+        | PORCENTAJE { $$ = $1;}
+        | DOBLEPOR { $$ = $1;}
 %% 
 
 
