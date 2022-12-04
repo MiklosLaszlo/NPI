@@ -194,12 +194,12 @@ void EliminarBloque(){
 
 // identificador es el nombre de una variable o de una funcion
 struct entradaTS  search_identificador_marca(char * nom){
-    if(debug) printf("Se procede a buscar si una variable esta dentro del mismo bloque");
+    if(debug) printf("Se procede a buscar si una variable esta dentro del mismo bloque \n");
     struct entradaTS aux=TS[TOPE];
     int i=TOPE-1;
 
     if(strlen(nom)==0){
-        printf(BG_COLOR_PURPLE "ERROR:" RESET_COLOR" Se ha introducido una cadena vacia");
+        printf(BG_COLOR_PURPLE "ERROR:" RESET_COLOR" Se ha introducido una cadena vacia \n");
     }
     //Mientras que no encontremos la marca de inicio de bloque
     // NICO: Ahora mismo hace:lee toda la pila hasta encontrar el nombre mientras sea una funcion o una variable.
@@ -215,12 +215,12 @@ struct entradaTS  search_identificador_marca(char * nom){
 }
 
 struct entradaTS  search_identificador_pila(char * nom){
-    if(debug) printf("Se procede a buscar si una variable esta dentro del mismo bloque");
+    if(debug) printf("Se procede a buscar si una variable esta dentro del mismo bloque \n");
     struct entradaTS aux=TS[TOPE];
     int i=TOPE-1;
 
     if(strlen(nom)==0){
-        printf(BG_COLOR_PURPLE "ERROR:" RESET_COLOR" Se ha introducido una cadena vacia");
+        printf(BG_COLOR_PURPLE "ERROR:" RESET_COLOR" Se ha introducido una cadena vacia \n");
     }
     //Mientras que no encontremos la marca de inicio de bloque
     // NICO: Ahora mismo hace:lee toda la pila hasta encontrar el nombre mientras sea una funcion o una variable.
@@ -283,7 +283,7 @@ void ErrorOperarTipos(struct entradaTS dato1,struct entradaTS dato2){
         else if( dato2.dato_referencia==lista)    
             printf(BG_COLOR_PURPLE " Error semantico :" RESET_COLOR" No se puede operar los tipos %s  y %s de %s \n ", toStringTipoDato(dato1.dato_referencia), toStringTipoDato(dato2.dato_referencia), toStringTipoDato(dato2.dato_lista));
         else 
-            printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" No se pueden operar los tipos %s y %s " , toStringTipoDato(dato1.dato_referencia),toStringTipoDato(dato2.dato_referencia));    
+            printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" No se pueden operar los tipos %s y %s \n" , toStringTipoDato(dato1.dato_referencia),toStringTipoDato(dato2.dato_referencia));    
     }
 }
 
@@ -377,7 +377,7 @@ struct entradaTS operador_binario_aritmetico(struct entradaTS dato1,struct entra
 		salida.dato_referencia = entero;
 	}
 	else{
-		printf("Error semántico: Se esperaban dos reales o dos enteros. Se tienen los tipos %s y %s",
+		printf("Error semántico: Se esperaban dos reales o dos enteros. Se tienen los tipos %s y %s \n",
 		 toStringTipoDato(dato1.dato_referencia),
 		 toStringTipoDato(dato2.dato_referencia));
 	}
@@ -392,7 +392,7 @@ struct entradaTS operador_binario_aritmetico(struct entradaTS dato1,struct entra
 			salida.dato_lista = entero;
 		}
 		else{
-			printf("Error semántico: Una lista de %s debe operarse con un %s. Se tiene %s",
+			printf("Error semántico: Una lista de %s debe operarse con un %s. Se tiene %s \n",
 				toStringTipoDato(dato1.dato_lista),
 				toStringTipoDato(dato1.dato_lista),
 				toStringTipoDato(dato2.dato_referencia));
@@ -409,7 +409,7 @@ struct entradaTS operador_binario_aritmetico(struct entradaTS dato1,struct entra
 			salida.dato_lista = entero;
 		}
 		else {
-			printf("Error semántico: Una lista de %s debe operarse con un %s. Se tiene %s",
+			printf("Error semántico: Una lista de %s debe operarse con un %s. Se tiene %s \n",
 				toStringTipoDato(dato2.dato_lista),
 				toStringTipoDato(dato2.dato_lista),
 				toStringTipoDato(dato1.dato_referencia));
@@ -442,7 +442,7 @@ struct entradaTS operador_binario_lista(struct entradaTS operador, struct entrad
             salida.dato_referencia=dato1.dato_referencia;
         else
             printf(
-					"Error semantico: se esperaba una lista y un real o entero o viceversa pero se obtuvo %s y %s ",
+					"Error semantico: se esperaba una lista y un real o entero o viceversa pero se obtuvo %s y %s \n",
 					toStringTipoDato(dato1.dato_referencia),
 					toStringTipoDato(dato2.dato_referencia));    
         return salida;
@@ -492,7 +492,7 @@ struct entradaTS operador_unario(struct entradaTS dato,struct entradaTS operador
     switch(operador.tipo_operador){
         case negacion:
             if(dato.dato_referencia != booleano){
-                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" El primer operando no es un booleano");
+                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" El primer operando no es un booleano \n");
             }
             else{
                 coso.dato_referencia=booleano;
@@ -501,7 +501,7 @@ struct entradaTS operador_unario(struct entradaTS dato,struct entradaTS operador
         break;
         case sostenido:
             if (dato.dato_referencia != lista){
-                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" El primer operando no es una lista");
+                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" El primer operando no es una lista \n");
             }
             else
                 coso.dato_referencia=entero;
@@ -509,7 +509,7 @@ struct entradaTS operador_unario(struct entradaTS dato,struct entradaTS operador
         
         case interrogacion:
             if (dato.dato_referencia != lista){
-                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" El primer operando no es una lista");
+                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" El primer operando no es una lista \n");
             }
             else
                 coso.dato_referencia=dato.dato_lista;
@@ -519,7 +519,7 @@ struct entradaTS operador_unario(struct entradaTS dato,struct entradaTS operador
             if(dato.dato_referencia==entero || dato.dato_referencia==real)
                 coso.dato_referencia=entero;
             else
-                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" El dato no es entero o real");
+                printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" El dato no es entero o real \n");
         break;
 
         default:
@@ -541,7 +541,7 @@ struct entradaTS search_parametro(char * nom, struct entradaTS param){
     int p=-1;
     bool encontrado=false;
     if(strlen(nom)==0){
-        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" Se ha introducido una cadena vacía");
+        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" Se ha introducido una cadena vacía \n");
     }
     int pos_funcion = pos_identificador(nom);
     int n_arg = TS[pos_funcion].n_parametros;
@@ -561,12 +561,12 @@ struct entradaTS search_parametro(char * nom, struct entradaTS param){
 
 // identificador es el nombre de una variable o de una funcion
 int  pos_identificador(char * nom){
-    if(debug) printf("Se procede a buscar si una variable esta dentro del mismo bloque");
+    if(debug) printf("Se procede a buscar si una variable esta dentro del mismo bloque \n");
     struct entradaTS aux=TS[TOPE];
     int i=TOPE-1;
 
     if(strlen(nom)==0){
-        printf("Error: Se ha introducido una cadena vacia");
+        printf("Error: Se ha introducido una cadena vacia \n");
         exit(-1);
     }
     //Mientras que no encontremos la marca de inicio de bloque
