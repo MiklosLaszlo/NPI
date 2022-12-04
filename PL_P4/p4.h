@@ -25,10 +25,10 @@ int debug=1;
 		less, greater, less_eq, greater_eq,arroba, menosmenos, porcentaje,doblepor} TipoOperador;
 
 	typedef struct  entradaTS{
-   TipoEntrada entrada;      // Indica el tipo de entrada
+   TipoEntrada entrada=indefinido;      // Indica el tipo de entrada
    char nombre[100]; 
    // char valor[50];              // Contendra los caracteres que forman el identificador
-   TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
+   TipoDato dato_referencia=desconocido; // En caso de que entrada sea funcion,variable
                              // o parametro formal indica el tipo de dato al que hace referencia
    TipoDato dato_lista;      //tipo de datos que contiene la lista                    
    unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros 
@@ -73,7 +73,6 @@ void push(struct entradaTS e){
     else{
         TS[TOPE].entrada=e.entrada;
         strcpy(TS[TOPE].nombre,e.nombre);
-        strcpy(TS[TOPE].valor,e.valor);
         TS[TOPE].dato_referencia=e.dato_referencia;
         TS[TOPE].dato_lista=e.dato_lista;
         TS[TOPE].n_parametros=e.n_parametros;
@@ -92,7 +91,6 @@ void push2(struct entradaTS e, TipoEntrada ent){
     else{
         TS[TOPE].entrada=ent;
         strcpy(TS[TOPE].nombre,e.nombre);
-        strcpy(TS[TOPE].valor,e.valor);
         TS[TOPE].dato_referencia=e.dato_referencia;
         TS[TOPE].dato_lista=e.dato_lista;
         TS[TOPE].n_parametros=e.n_parametros;
@@ -158,28 +156,28 @@ void EliminarBloque(){
 //si la encuentra devuelve la posicion util, si no devuelve -1
 
 // identificador es el nombre de una variable o de una funcion
-int  search_identificador(char * nom){
+struct TipoEntrada  search_identificador(char * nom){
     if(debug) printf("Se procede a buscar si una variable esta dentro del mismo bloque");
     struct entradaTS aux=TS[TOPE];
+    struct entradaTS dev;
     int i=TOPE-1;
 
     if(strlen(nom)==0){
         printf("Error: Se ha introducido una cadena vacia");
-        exit(-1);
     }
     //Mientras que no encontremos la marca de inicio de bloque
     // NICO: Ahora mismo hace:lee toda la pila hasta encontrar el nombre mientras sea una funcion o una variable.
     //       si no lo encuentra devuelve -1 
     while(aux.entrada!=marca && (i > -1)){
         if(strcmp(TS[i].nombre,nom)==0 && ((TS[i].entrada==variable) || (TS[i].entrada==funcion)) )
-            return i;
+            return TS[i];
         i--;    
     }
-    return -1;
+    return dev;
 }
 
 
-bool Es_mismoTipo(entradaTS dato1,entradaTS dato2 ){
+bool Es_mismoTipo(struct entradaTS dato1,struct entradaTS dato2 ){
     if(dato1.dato_referencia!=desconocido && dato2.dato_referencia!=desconocido){
         if(dato1.dato_referencia==dato2.dato_referencia==lista)
             if(dato1.dato_lista==dato2.dato_lista)
@@ -206,7 +204,7 @@ void printTS(){
 }
 
 
-void ErrorOperarTipos(entradaTS dato1,entradaTS dato2){
+void ErrorOperarTipos(struct entradaTS dato1,struct entradaTS dato2){
     //En caso de que ambas variables tengan un tipo asignado
     if(dato1.dato_referencia!=desconocido && dato2.dato_referencia!=desconocido) {
         if(dato1.dato_referencia==lista)
