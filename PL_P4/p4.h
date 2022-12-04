@@ -246,7 +246,7 @@ bool Es_mismoTipo(struct entradaTS dato1, struct entradaTS dato2 ){
         if(dato1.dato_referencia==dato2.dato_referencia)
             return true;
     }         
-    return false;           
+    return false;
 }
 
 TipoDato AceptaOperadorBinarioAritmetico(struct entradaTS dato1,struct entradaTS dato2){
@@ -348,44 +348,6 @@ struct entradaTS operador_ternario(struct entradaTS dato1, struct entradaTS dato
 	return salida;
 }
 
-struct entradaTS operador_binario(struct entradaTS operador, struct entradaTS data1, struct entradaTS dato2) {
-	switch (operador.tipo_operador)
-	{
-	case equal:
-	case not_equal:
-	case and:
-	case or:
-	case xor:
-	case less:
-	case greater:
-	case less_eq:
-	case greater_eq:
-		return operador_binario_logico(operador, dato1, dato2);
-		break;
-	
-	case mas:
-	case menos:
-	case por:
-	case entre:
-		return operador_binario_aritmetico(operador, dato1, dato2);
-		break;
-
-	case arroba:
-	case menosmenos:
-	case porcentaje:
-	case doblepor:
-		return operador_binario_lista(operador, dato1, dato2);
-		break;
-
-	default:
-		struct entradaTS salida;
-		salida.dato_referencia = desconocido;
-		salida.entrada = indefinido;
-
-		break;
-	}
-}
-
 struct entradaTS operador_binario_logico(struct entradaTS operador, struct entradaTS dato1, struct entradaTS dato2 ){
 	// Se entiende que el operador es binario less, less_eq, greater,greater_eq,  equal, not_equal
 
@@ -417,8 +379,7 @@ struct entradaTS operador_binario_aritmetico(struct entradaTS dato1,struct entra
 		salida.dato_referencia = entero;
 	}
 	else{
-		printf(stderr,
-		 "Error semántico: Se esperaban dos reales o dos enteros. Se tienen los tipos %s y %s",
+		printf("Error semántico: Se esperaban dos reales o dos enteros. Se tienen los tipos %s y %s",
 		 toStringTipoDato(dato1.dato_referencia),
 		 toStringTipoDato(dato2.dato_referencia));
 	}
@@ -433,8 +394,7 @@ struct entradaTS operador_binario_aritmetico(struct entradaTS dato1,struct entra
 			salida.dato_lista = entero;
 		}
 		else{
-			printf(stderr,
-				"Error semántico: Una lista de %s debe operarse con un %s. Se tiene %s",
+			printf("Error semántico: Una lista de %s debe operarse con un %s. Se tiene %s",
 				toStringTipoDato(dato1.dato_lista),
 				toStringTipoDato(dato1.dato_lista),
 				toStringTipoDato(dato2.dato_referencia));
@@ -451,8 +411,7 @@ struct entradaTS operador_binario_aritmetico(struct entradaTS dato1,struct entra
 			salida.dato_lista = entero;
 		}
 		else {
-			printf(stderr,
-				"Error semántico: Una lista de %s debe operarse con un %s. Se tiene %s",
+			printf("Error semántico: Una lista de %s debe operarse con un %s. Se tiene %s",
 				toStringTipoDato(dato2.dato_lista),
 				toStringTipoDato(dato2.dato_lista),
 				toStringTipoDato(dato1.dato_referencia));
@@ -462,7 +421,71 @@ struct entradaTS operador_binario_aritmetico(struct entradaTS dato1,struct entra
 }
 
 struct entradaTS operador_binario_lista(struct entradaTS operador, struct entradaTS dato1, struct entradaTS dato2){
+    struct entradaTS salida;
+    salida.dato_referencia=indefinido;
+    
+        //Caso l@x
+        if(dato1.dato_referencia==lista && dato2.dato_referencia==entero && operador.tipo_operador==arroba)
+            salida.dato_referencia=entero;
+        //Caso l--x    
+        else if(dato1.dato_referencia==lista && dato2.dato_referencia==entero && operador.tipo_operador==menosmenos)
+            salida.dato_referencia=lista;
+        //Caso l%x    
+        else if(dato1.dato_referencia==lista && dato2.dato_referencia==entero && operador.tipo_operador==porcentaje)  
+            salida.dato_referencia=lista;  
+        //Caso l**l
+        else if(dato1.dato_referencia==lista && dato2.dato_referencia==lista && operador.tipo_operador==doblepor)
+            salida.dato_referencia=lista;
+        //Caso l +x  , l - x , l/x,l*x
+        else if((dato1.dato_referencia==lista && dato1.dato_lista==dato2.dato_referencia) && (dato2.dato_referencia==entero || dato2.dato_referencia==real))
+            salida.dato_referencia=lista;
+        //Caso x +l y x * l
+        else if((dato1.dato_referencia==entero || dato1.dato_referencia==real) && (dato2.dato_referencia==lista && dato2.dato_lista==dato1.dato_referencia))
+            salida.dato_referencia=dato1.dato_referencia;
+        else
+            printf(
+					"Error semantico: se esperaba una lista y un real o entero o viceversa pero se obtuvo %s y %s ",
+					toStringTipoDato(dato1.dato_referencia),
+					toStringTipoDato(dato2.dato_referencia));    
+        return salida;
+}
 
+struct entradaTS operador_binario(struct entradaTS operador, struct entradaTS dato1, struct entradaTS dato2) {
+	switch (operador.tipo_operador)
+	{
+	case equal:
+	case not_equal:
+	case and:
+	case or:
+	case xor:
+	case less:
+	case greater:
+	case less_eq:
+	case greater_eq:
+		return operador_binario_logico(operador, dato1, dato2);
+		break;
+	
+	case mas:
+	case menos:
+	case por:
+	case entre:
+		return operador_binario_aritmetico( dato1, dato2);
+		break;
+
+	case arroba:
+	case menosmenos:
+	case porcentaje:
+	case doblepor:
+		return operador_binario_lista(operador, dato1, dato2);
+		break;
+
+	default:
+		struct entradaTS salida;
+		salida.dato_referencia = desconocido;
+		salida.entrada = indefinido;
+
+		break;
+	}
 }
 
 struct entradaTS operador_unario(struct entradaTS dato,struct entradaTS operador ){
