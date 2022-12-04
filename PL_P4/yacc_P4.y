@@ -209,7 +209,7 @@ lista_entrada : lista_entrada
 
 expresion : PARIZQ expresion PARDCH { $$ = $1; }
         | OPUNI expresion %prec NOT {  }
-        | expresion OPBIN expresion %prec LOGICOS { $$ = comprobar_bin($1, $2);  }
+        | expresion OPBIN expresion %prec LOGICOS { $$ = operador_binario($2, $1, $3);  }
         | expresion TER1 expresion ARROBA expresion
         | OPUNI expresion %prec NOT { $$ = operador_unario($1, $2); }
         | expresion OPBIN expresion %prec LOGICOS { $$ = operador_binario($2, $1, $3);  }
