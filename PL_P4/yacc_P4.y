@@ -42,6 +42,7 @@ void explicacion_error_semantico( char * msg ) {
 	fprintf(stderr, BG_COLOR_PURPLE "Error semántico"  RESET_COLOR " Línea: %d.Error: %s\n" ,yylineno, msg);
 }
 int n_parametros=0;
+TipoDato daton_anterior=desconocido;
 %}
 // TOKENS
 //********************
@@ -232,12 +233,12 @@ lista_argumentos : IDENTIFICADOR
         | lista_argumentos COMA IDENTIFICADOR 
         | lista_argumentos COMA LITERAL 
         | ;
-agregado : CORIZQ lista_expresiones CORDCH
+agregado : CORIZQ lista_expresiones CORDCH {$$.dato_referencia=lista;$$.dato_lista=$1.dato_referencia;}
 		  | CORIZQ error {yyerrok; explicacion_error_sintactico("Error, debe proporcionar una lista de expresiones separadas por comas");}
 		  | CORIZQ lista_expresiones error { yyerrok; explicacion_error_sintactico("Error, debe cerrar el corchete"); }
 
-lista_expresiones : lista_expresiones COMA expresion 
-        | expresion 
+lista_expresiones : lista_expresiones COMA expresion {if (daton_anterior==indefinido) daton_anterior=$3.dato_referencia; if(daton_anterior!=$3.dato_referencia) ErrorTipoInternoLista(daton_anterior,$1.dato_referencia); $$.dato_referencia=daton_anterior;}
+        | expresion {if (daton_anterior==indefinido) daton_anterior=$1.dato_referencia; if(daton_anterior!=$1.dato_referencia) ErrorTipoInternoLista(daton_anterior,$1.dato_referencia); if(daton_anterior==lista) explicacion_error_semantico("No se puede hacer listas de listas"); $$.dato_referencia=daton_anterior;}
 
 OPUNI : NOT { copiaStruct(&$$,$1);}
         | SOSTENIDO { copiaStruct(&$$,$1);}
