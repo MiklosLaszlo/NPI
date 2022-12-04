@@ -309,9 +309,9 @@ void ErrorEnAsignacion(struct entradaTS dato1, struct entradaTS dato2){
         printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. Los tipos que hay en la asignacion %s y %s no coinciden \n",yylineno , toStringTipoDato(dato1.dato_referencia),toStringTipoDato(dato2.dato_referencia));
 }
 
-void ErrorTipoInternoLista(struct entradaTS dato1,struct entradaTS dato2){
-    if (dato1.dato_referencia !=desconocido && dato2.dato_referencia !=desconocido)
-        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. Los tipos %s  y  %s no coinciden \n",yylineno, toStringTipoDato(dato1.dato_lista),toStringTipoDato(dato2.dato_lista) );
+void ErrorTipoInternoLista(TipoDato dato1,TipoDato dato2){
+    if (dato1 !=desconocido && dato2 !=desconocido)
+        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. Los tipos %s  y  %s no coinciden \n",yylineno, toStringTipoDato(dato1),toStringTipoDato(dato2) );
 }
 
 ////

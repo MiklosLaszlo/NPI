@@ -242,8 +242,8 @@ agregado : CORIZQ lista_expresiones CORDCH {$$.dato_referencia=lista;$$.dato_lis
 		  | CORIZQ error {yyerrok; explicacion_error_sintactico("Error, debe proporcionar una lista de expresiones separadas por comas");}
 		  | CORIZQ lista_expresiones error { yyerrok; explicacion_error_sintactico("Error, debe cerrar el corchete"); }
 
-lista_expresiones : lista_expresiones COMA expresion {if (daton_anterior==indefinido) daton_anterior=$3.dato_referencia; if(daton_anterior!=$3.dato_referencia) ErrorTipoInternoLista(); $$.dato_referencia=daton_anterior;}
-        | expresion {if (daton_anterior==indefinido) daton_anterior=$1.dato_referencia; if(daton_anterior!=$1.dato_referencia) ErrorTipoInternoLista(); if(daton_anterior==lista) explicacion_error_semantico("No se puede hacer listas de listas"); $$.dato_referencia=daton_anterior;}
+lista_expresiones : lista_expresiones COMA expresion {if (daton_anterior==indefinido) daton_anterior=$3.dato_referencia; if(daton_anterior!=$3.dato_referencia) ErrorTipoInternoLista(daton_anterior,$1.dato_referencia); $$.dato_referencia=daton_anterior;}
+        | expresion {if (daton_anterior==indefinido) daton_anterior=$1.dato_referencia; if(daton_anterior!=$1.dato_referencia) ErrorTipoInternoLista(daton_anterior,$1.dato_referencia); if(daton_anterior==lista) explicacion_error_semantico("No se puede hacer listas de listas"); $$.dato_referencia=daton_anterior;}
 
 OPUNI : NOT { copiaStruct(&$$,$1);}
         | SOSTENIDO { copiaStruct(&$$,$1);}
