@@ -218,7 +218,7 @@ expresion : PARIZQ expresion PARDCH { $$ = $1; }
         | OPUNI expresion %prec NOT { $$ = operador_unario($1, $2); }
         | expresion OPBIN expresion %prec LOGICOS { $$ = operador_binario($2, $1, $3);}
         | expresion TER1 expresion ARROBA expresion { $$ = operador_ternario($1,$3,$5);}
-        | IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable) ErrorNoDeclarada($$);else $$.entrada =indefinido; }
+        | IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable && $$.entrada!=parametro_formal) ErrorNoDeclarada($$);else $$.entrada =indefinido; }
         | llamar_funcion {$$.dato_referencia=$1.dato_referencia;$$.dato_lista=$1.dato_lista;$$.entrada=variable;}
         | agregado {$$.dato_referencia=lista;$$.dato_lista=$1.dato_referencia;$$.entrada=variable;}
         | LITERAL {copiaStruct(&$$,$1);}

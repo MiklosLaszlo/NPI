@@ -194,7 +194,6 @@ void EliminarBloque(){
 
 // identificador es el nombre de una variable o de una funcion
 struct entradaTS  search_identificador_marca(char * nom){
-    if(debug) printf("Se procede a buscar si una variable esta dentro del mismo bloque \n");
     struct entradaTS aux=TS[TOPE];
     int i=TOPE-1;
 
@@ -215,7 +214,6 @@ struct entradaTS  search_identificador_marca(char * nom){
 }
 
 struct entradaTS  search_identificador_pila(char * nom){
-    if(debug) printf("Se procede a buscar si una variable esta dentro del mismo bloque \n");
     struct entradaTS aux=TS[TOPE];
     int i=TOPE-1;
 
