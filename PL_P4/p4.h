@@ -571,3 +571,41 @@ int  pos_identificador(char * nom){
     }
     return -1;
 }
+
+bool comprobar_for_pascal(struct entradaTS identificador, struct entradaTS dato1, struct entradaTS dato2){
+	bool correcto = true;
+	TipoDato tipo_variable = search_identificador_pila(identificador.nombre).dato_referencia;
+	correcto &= tipo_variable == entero;
+	if(correcto){
+		correcto &= dato1.dato_referencia == entero;
+		if(correcto){
+			correcto &= dato2.dato_referencia == entero;
+			if(!correcto) 
+				printf("Línea %d. Error semántico: el final debe ser un entero. Se tiene %s\n",yylineno, toStringTipoDato(dato2.dato_referencia));
+		}
+		else
+			printf("Línea %d. Error semántico: se esperaba una asignación a entero. Se tiene %s\n",yylineno, toStringTipoDato(dato1.dato_referencia));
+	}
+	else{
+		printf("Línea %d. Error semántico: se esperaba una variable ya declarada de tipo entero. Se tiene %s\n",yylineno, toStringTipoDato(tipo_variable));
+	}
+
+	return correcto;
+}
+
+bool comprobar_asignacion(struct entradaTS identificador, struct entradaTS dato1){
+	bool correcto = true;
+	TipoDato tipo_variable = search_identificador_pila(identificador.nombre).dato_referencia;
+	correcto &= tipo_variable != desconocido;
+	if(correcto){
+		correcto &= dato1.dato_referencia == tipo_variable;
+			if(!correcto) 
+				printf("Línea %d. Error semántico: Los tipos deben coincidir. Se tiene tipo variable: %s, tipo dato: %s\n",yylineno, toStringTipoDato(tipo_variable),toStringTipoDato(dato1.dato_referencia));
+		
+	}
+	else{
+		printf("Línea %d. Error semántico: la variable debe estar declarada. Se tiene %s\n",yylineno, toStringTipoDato(tipo_variable));
+	}
+
+	return correcto;
+}
