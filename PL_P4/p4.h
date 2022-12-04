@@ -25,7 +25,7 @@ int debug=1;
 		less, greater, less_eq, greater_eq,arroba, menosmenos, porcentaje,doblepor} TipoOperador;
 
 	typedef struct  entradaTS{
-   TipoEntrada entrada=indefinido;      // Indica el tipo de entrada
+   TipoEntrada entrada = indefinido;      // Indica el tipo de entrada
    char nombre[100]; 
    // char valor[50];              // Contendra los caracteres que forman el identificador
    TipoDato dato_referencia=desconocido; // En caso de que entrada sea funcion,variable
@@ -169,6 +169,7 @@ struct TipoEntrada  search_identificador(char * nom){
     // NICO: Ahora mismo hace:lee toda la pila hasta encontrar el nombre mientras sea una funcion o una variable.
     //       si no lo encuentra devuelve -1 
     while(aux.entrada!=marca && (i > -1)){
+
         if(strcmp(TS[i].nombre,nom)==0 && ((TS[i].entrada==variable) || (TS[i].entrada==funcion)) )
             return TS[i];
         i--;    
@@ -187,6 +188,18 @@ bool Es_mismoTipo(struct entradaTS dato1,struct entradaTS dato2 ){
     }         
     return false;           
 }
+
+TipoDato AceptaOperadorBinarioAritmetico(struct entradaTS dato1,struct entradaTS dato2){
+    if(Es_mismoTipo(dato1,dato2)){
+        if( dato1.dato_referencia==TipoDato.entero )
+            return TipoDato.entero;
+        if( dato1.dato_referencia==TipoDato.real )
+            return TipoDato.real
+    }   
+    return TipoDato.desconocido;    
+}
+
+
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -215,10 +228,6 @@ void ErrorOperarTipos(struct entradaTS dato1,struct entradaTS dato2){
             printf("Error semantico : No se pueden operar los tipos %s y %s " , toStringTipoDato(dato1.dato_referencia),toStringTipoDato(dato2.dato_referencia));    
     }
 }
-
-
-
-
 
 void ErrorDeclaradaEnBLoque(struct entradaTS dato){
     if(dato.dato_referencia!=desconocido)
@@ -251,5 +260,45 @@ void ErrorTipoInternoLista(struct entradaTS dato1,struct entradaTS dato2){
 
 void comprueba_exp_logica(struct entradaTS dato){
 	if(dato.dato_referencia != booleano)
-		printf("Error semantico: Se esperaba una expresión lógica y se tiene %s \n", toStringTipoDato(dato.dato_lista) );
+		printf("Error semantico: Se esperaba una expresión lógica y se tiene %s \n", toStringTipoDato(dato.dato_referencia) );
+}
+
+
+struct entradaTS operador_ternario(struct entradaTS dato1, struct entradaTS dato2, struct entradaTS dato3){
+	struct entradaTS salida;
+
+	salida.dato_referencia = lista;
+	salida.dato_lista = desconocido;
+
+	if( dato1.dato_referencia == lista ){
+		if( dato1.dato_lista == dato2.dato_referencia){
+			if(dato3.dato_referencia == entero){
+				salida.dato_referencia = lista;
+				salida.dato_lista = dato2.dato_lista;
+			}
+			else
+				printf("Error semántico: La posición debe ser un entero, se tiene %s \n", toStringTipoDato(dato3.dato_referencia));
+		} 
+		else
+			printf("Error semántico: El elemento a insertar debe ser del tipo de la lista. Tipo lista: %s, tipo elemento: %s \n", toStringTipoDato(dato1.dato_lista), toStringTipoDato(dato2.dato_referencia));
+	}
+	else
+		printf("Error semántico: Se esperaba una lista y se tiene %s \n", toStringTipoDato(dato1.dato_referencia));
+	
+	return salida;
+}
+
+struct entradaTS operador_binario_logico(struct entradaTS operador, struct entradaTS dato1, struct entradaTS dato2 ){
+	// Se entiende que el operador es binario less, less_eq, greater,greater_eq,  equal, not_equal
+
+	struct entradaTS salida;
+	salida.dato_referencia = indefinido;
+
+	if (dato1.dato_referencia == booleano && dato2.dato_referencia == booleano){
+		salida.dato_referencia = booleano;
+	}
+	else 
+		printf("Error semántico: El operador solo acepta tipos booleanos. Tipo dato1: %s, Tipo dato2: %s \n", toStringTipoDato(dato1.dato_referencia), toStringTipoDato(dato2.dato_referencia));
+	
+	return salida;
 }
