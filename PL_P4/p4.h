@@ -129,8 +129,6 @@ struct entradaTS getArg(char* nombre,int arg){
         int index = -1;
         bool encontrado=false;
         struct entradaTS tmp;
-
-        inicializarStruct(tmp);
         
         for(int i = TOPE-1; 0 <= i && !encontrado;--i){
             if(strcmp(nombre,TS[i].nombre)==0 && TS[i].entrada == funcion){
