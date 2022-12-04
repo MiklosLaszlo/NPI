@@ -378,6 +378,66 @@ struct entradaTS operador_binario_logico(struct entradaTS operador, struct entra
 	return salida;
 }
 
+struct entradaTS operador_binario_aritmetico(struct entradaTS dato1,struct entradaTS dato2){
+
+	struct entradaTS salida;
+	salida.entrada = indefinido;
+	salida.dato_referencia = desconocido;
+
+	bool lista_1 = dato1.dato_referencia == lista;
+	bool lista_2 = dato2.dato_referencia == lista;
+
+	if(dato1.dato_referencia == real && dato2.dato_referencia == real && !lista_1 && !lista_2){
+		salida.dato_referencia = real;
+	}
+	else if(dato1.dato_referencia == entero && dato2.dato_referencia == entero && !lista_1 && !lista_2){
+		salida.dato_referencia = entero;
+	}
+	else{
+		printf(stderr,
+		 "Error semántico: Se esperaban dos reales o dos enteros. Se tienen los tipos %s y %s",
+		 toStringTipoDato(dato1.dato_referencia),
+		 toStringTipoDato(dato2.dato_referencia));
+	}
+
+	if(lista_1){
+		if(dato1.dato_lista == real && dato2.dato_referencia == real){
+			salida.dato_referencia = lista;
+			salida.dato_lista = real;
+		} 
+		else if(dato1.dato_lista == entero && dato2.dato_referencia == entero){
+			salida.dato_referencia = lista;
+			salida.dato_lista = entero;
+		}
+		else{
+			printf(stderr,
+				"Error semántico: Una lista de %s debe operarse con un %s. Se tiene %s",
+				toStringTipoDato(dato1.dato_lista),
+				toStringTipoDato(dato1.dato_lista),
+				toStringTipoDato(dato2.dato_referencia));
+		}
+	}
+
+	if(lista_2){
+		if(dato1.dato_lista == real && dato2.dato_lista == real){
+			salida.dato_referencia = lista;
+			salida.dato_lista = real;
+		}
+		else if(dato1.dato_lista == entero && dato2.dato_lista == entero){
+			salida.dato_referencia = lista;
+			salida.dato_lista = entero;
+		}
+		else {
+			printf(stderr,
+				"Error semántico: Una lista de %s debe operarse con un %s. Se tiene %s",
+				toStringTipoDato(dato2.dato_lista),
+				toStringTipoDato(dato2.dato_lista),
+				toStringTipoDato(dato1.dato_referencia));
+		}
+	}  
+	return salida;
+}
+
 struct entradaTS operador_binario_lista(struct entradaTS operador, struct entradaTS dato1, struct entradaTS dato2){
 
 }
