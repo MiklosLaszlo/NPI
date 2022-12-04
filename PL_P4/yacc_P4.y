@@ -4,7 +4,7 @@
 #include "p4.h"
 #define RESET_COLOR    "\x1b[0m"
 #define BG_COLOR_YELLOW     "\x1B[43m"
-#define BG_COLOR_GREEN     "\x1B[32m"
+#define BG_COLOR_PURPLE     "\x1B[45m"
 #ifndef ENUM
 #define ENUM
 	typedef enum {marca,funcion,variable,parametro_formal,indefinido,operador} TipoEntrada;
@@ -39,7 +39,7 @@ void explicacion_error_sintactico( char * msg ) {
 	fprintf(stderr, BG_COLOR_YELLOW "Error sintáctico"  RESET_COLOR " Línea %d, No se esperaba \'%s\'. %s\n" ,yylineno, yytext, msg);
 }
 void explicacion_error_semantico( char * msg ) {
-	fprintf(stderr, BG_COLOR_GREEN "Error semántico"  RESET_COLOR " Línea: %d.Error: %s\n" ,yylineno, msg);
+	fprintf(stderr, BG_COLOR_PURPLE "Error semántico"  RESET_COLOR " Línea: %d.Error: %s\n" ,yylineno, msg);
 }
 int n_parametros=0;
 %}
@@ -126,20 +126,20 @@ cuerpo_declar_variables : tipo_basico lista_identificadores
 		  | tipo_basico error { yyerrok; explicacion_error_sintactico("Error, después del tipo básico va una lista de identificadores"); }
 lista_identificadores : lista_identificadores
 		 COMA 			
-		 IDENTIFICADOR  {push2($1,variable);} 
-        | IDENTIFICADOR {push2($1,variable);} 
+		 IDENTIFICADOR  {if(search_identificador_marca($3.nombre).entrada == marca) push2($3,variable); else ErrorDeclaradaEnBLoque($3);} 
+        | IDENTIFICADOR {if(search_identificador_marca($1.nombre).entrada == marca) push2($1,variable); else ErrorDeclaradaEnBLoque($1);} 
 		  // El error de esto lo englobo en el de arriba
 declar_de_subprogs : declar_de_subprogs declarar_funcion
         | ;
 declarar_funcion : tipo_basico 
 				  IDENTIFICADOR 
-				  parametros {$2.n_parametros=n_parametros;push2($2,funcion);n_parametros=0;}
+				  parametros {$2.n_parametros=n_parametros;if(search_identificador_marca($2.nombre).entrada == marca) push2($2,funcion); else ErrorDeclaradaEnBLoque($2); n_parametros=0;}
 				  bloque 
 				  PYC 
 		  | tipo_basico error { yyerrok; explicacion_error_sintactico("Error, al declarar una función tras el tipo básico va el identificador"); }
 		  | tipo_basico IDENTIFICADOR error { yyerrok; explicacion_error_sintactico("Error, en una función tras el identificador vienen los parámetros."); } 
-		  | tipo_basico IDENTIFICADOR parametros {$1.n_parametros=n_parametros;push2($1,funcion);n_parametros=0;} error { yyerrok; explicacion_error_sintactico("Error, en una función tras los parámetros viene un bloque."); }
-		  | tipo_basico IDENTIFICADOR parametros {$1.n_parametros=n_parametros;push2($1,funcion);n_parametros=0;} bloque error { yyerrok; explicacion_error_sintactico("Error, la declaración de funciones acaba en \";\"."); }  
+		  | tipo_basico IDENTIFICADOR parametros {$2.n_parametros=n_parametros;if(search_identificador_marca($2.nombre).entrada == marca) push2($2,funcion); else ErrorDeclaradaEnBLoque($2); ;n_parametros=0;} error { yyerrok; explicacion_error_sintactico("Error, en una función tras los parámetros viene un bloque."); }
+		  | tipo_basico IDENTIFICADOR parametros {$2.n_parametros=n_parametros;if(search_identificador_marca($2.nombre).entrada == marca) push2($2,funcion); else ErrorDeclaradaEnBLoque($2); ;n_parametros=0;} bloque error { yyerrok; explicacion_error_sintactico("Error, la declaración de funciones acaba en \";\"."); }  
 parametros : PARIZQ PARDCH
         | PARIZQ lista_parametros PARDCH 
 		  //| PARIZQ error { yyerrok; explicacion_error_sintactico("Error, debe introducir una lista de parámetros separados por comas"); }
@@ -182,11 +182,11 @@ sentencia_entrada : READ PARIZQ lista_entrada PARDCH PYC
 		  | READ PARIZQ error { yyerrok; explicacion_error_sintactico("Error, debe introducir una lista de identificadores separados por comas"); }
 		  | READ PARIZQ lista_entrada error { yyerrok; explicacion_error_sintactico("Error, debe cerrar el paréntesis de la lista de identificadores"); }
 		  | READ PARIZQ lista_entrada PARDCH error { yyerrok; explicacion_error_sintactico("Error, se esperaba \";\""); }
-sentencia_salida : WRITE PARIZQ lista_expresiones PARDCH PYC
+sentencia_salida : WRITE PARIZQ lista_salida PARDCH PYC
 		  | WRITE error { yyerrok; explicacion_error_sintactico("Error, se esperaba un paréntesis"); }
 		  | WRITE PARIZQ error { yyerrok; explicacion_error_sintactico("Error, debe introducir una lista de expresiones separados por comas"); }
-		  | WRITE PARIZQ lista_expresiones error { yyerrok; explicacion_error_sintactico("Error, debe cerrar el paréntesis de la lista de expresiones"); }
-		  | WRITE PARIZQ lista_expresiones PARDCH error { yyerrok; explicacion_error_sintactico("Error, se esperaba \";\""); }
+		  | WRITE PARIZQ lista_salida error { yyerrok; explicacion_error_sintactico("Error, debe cerrar el paréntesis de la lista de expresiones"); }
+		  | WRITE PARIZQ lista_salida PARDCH error { yyerrok; explicacion_error_sintactico("Error, se esperaba \";\""); }
 sentencia_return : RETURN expresion PYC  
 		  | RETURN error { yyerrok; explicacion_error_sintactico("Error, debe devolverse una expresión"); }
 		  | RETURN expresion error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); }
@@ -203,32 +203,35 @@ sentencia_lista : IDENTIFICADOR MOVLISTA PYC
 		  | PRINCIPIOLISTA error { yyerrok; explicacion_error_sintactico("Error, se esperaba un identificador"); }
 		  | PRINCIPIOLISTA IDENTIFICADOR error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); } */
 lista_entrada : lista_entrada
-		 COMA 			
-		 IDENTIFICADOR 
-        | IDENTIFICADOR  
+		 COMA
+		 IDENTIFICADOR {search_identificador_pila($3);copiaStruct(&$$,$3); if($$.entrada!=variable) ErrorNoDeclarada($$);else $$.entrada =indefinido; }
+        | IDENTIFICADOR  {search_identificador_pila($1);copiaStruct(&$$,$1); if($$.entrada!=variable) ErrorNoDeclarada($$);else $$.entrada =indefinido; }
+
+lista_salida : lista_salida COMA expresion 
+		| expresion 
 
 expresion : PARIZQ expresion PARDCH { $$ = $1; }
         | OPUNI expresion %prec NOT {  }
         | expresion OPBIN expresion %prec LOGICOS { $$ = operador_binario($2, $1, $3);  }
         | expresion TER1 expresion ARROBA expresion
         | OPUNI expresion %prec NOT { $$ = operador_unario($1, $2); }
-        | expresion OPBIN expresion %prec LOGICOS { $$ = operador_binario($2, $1, $3);  }
+        | expresion OPBIN expresion %prec LOGICOS { $$ = operador_binario($2, $1, $3);}
         | expresion TER1 expresion ARROBA expresion { $$ = operador_ternario($1,$3,$5);}
-        | IDENTIFICADOR 
-        | llamar_funcion
-        | agregado
-        | LITERAL 
-		   | PARIZQ error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
+        | IDENTIFICADOR {search_identificador_pila($1);copiaStruct(&$$,$1); if($$.entrada!=variable) ErrorNoDeclarada($$);else $$.entrada =indefinido; }
+        | llamar_funcion {$$.dato_referencia=$1.dato_referencia;$$.dato_lista=$1.dato_lista;$$.entrada=variable;}
+        | agregado {$$.dato_referencia=lista;$$.dato_lista=$1.dato_referencia;$$.entrada=variable;}
+        | LITERAL {copiaStruct(&$$,$1);}
+		| PARIZQ error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
 		//  | PARIZQ expresion error { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el paréntesis"); }
-		  | OPUNI error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
-		  | expresion OPBIN error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
-		  | expresion TER1 error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
-		  | expresion TER1 expresion error { yyerrok; explicacion_error_sintactico("Error, se esperaba \"@\""); }
+		| OPUNI error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
+		| expresion OPBIN error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
+		| expresion TER1 error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
+		| expresion TER1 expresion error { yyerrok; explicacion_error_sintactico("Error, se esperaba \"@\""); }
 		//  | expresion TER1 expresion ARROBA error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); } 
-llamar_funcion : IDENTIFICADOR argumentos ; //{/*Hace falta algo como push funccion*/}
+llamar_funcion : IDENTIFICADOR {search_identificador_pila($1);copiaStruct(&$$,$1); if($$.entrada!=funcion) ErrorNoDeclarada($$);else $$.entrada =indefinido; } argumentos ; //{/*Hace falta algo como push funccion*/}
         
 argumentos : PARIZQ lista_argumentos PARDCH
-		 | PARIZQ lista_argumentos error { yyerrok; explicacion_error_sintactico("Error, la lista de argumentos debe acabar con paréntesis"); }
+		| PARIZQ lista_argumentos error { yyerrok; explicacion_error_sintactico("Error, la lista de argumentos debe acabar con paréntesis"); }
 lista_argumentos : IDENTIFICADOR 
         | LITERAL 
         | lista_argumentos COMA IDENTIFICADOR 
@@ -240,6 +243,7 @@ agregado : CORIZQ lista_expresiones CORDCH
 
 lista_expresiones : lista_expresiones COMA expresion 
         | expresion 
+
 OPUNI : NOT { copiaStruct(&$$,$1);}
         | SOSTENIDO { copiaStruct(&$$,$1);}
         | INTERROGACION { copiaStruct(&$$,$1);}
