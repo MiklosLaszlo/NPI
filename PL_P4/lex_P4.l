@@ -18,10 +18,10 @@
 		less, greater, less_eq, greater_eq,arroba, menosmenos, porcentaje,doblepor} TipoOperador;
 
 	typedef struct  entradaTS{
-   TipoEntrada entrada = indefinido;      // Indica el tipo de entrada
+   TipoEntrada entrada;      // Indica el tipo de entrada
    char nombre[100]; 
    // char valor[50];              // Contendra los caracteres que forman el identificador
-   TipoDato dato_referencia = desconocido; // En caso de que entrada sea funcion,variable
+   TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
                              // o parametro formal indica el tipo de dato al que hace referencia
    TipoDato dato_lista;      //tipo de datos que contiene la lista                    
    unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros 
@@ -401,8 +401,8 @@ otros .
 
 ({letra})({letra}|{numero})* {
 	strcpy(yylval.nombre, yytext);
-   strcpy(atributo, yytext);
-   return(IDENTIFICADOR);
+    strcpy(atributo, yytext);
+    return(IDENTIFICADOR);
  }
 
 {blanco} ;

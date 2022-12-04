@@ -1,14 +1,10 @@
 %{
-
 #define YYSTYPE struct entradaTS
-
 #include "lex.yy.c"
 #include "p4.h"
-
 #define RESET_COLOR    "\x1b[0m"
 #define BG_COLOR_YELLOW     "\x1B[43m"
 #define BG_COLOR_GREEN     "\x1B[32m"
-
 #ifndef ENUM
 #define ENUM
 	typedef enum {marca,funcion,variable,parametro_formal,indefinido,operador} TipoEntrada;
@@ -23,9 +19,11 @@
 		less, greater, less_eq, greater_eq,arroba, menosmenos, porcentaje,doblepor} TipoOperador;
 
 	typedef struct  entradaTS{
+   TipoEntrada entrada;      // Indica el tipo de entrada
    TipoEntrada entrada = indefinido;      // Indica el tipo de entrada
    char nombre[100]; 
    // char valor[50];              // Contendra los caracteres que forman el identificador
+   TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
    TipoDato dato_referencia = desconocido; // En caso de que entrada sea funcion,variable
                              // o parametro formal indica el tipo de dato al que hace referencia
    TipoDato dato_lista;      //tipo de datos que contiene la lista                    
@@ -37,23 +35,15 @@
 void yyerror( char *msg ){
 	//fprintf(stderr, BG_COLOR_YELLOW "YY Error sintáctico"  RESET_COLOR " Línea %d, No se esperaba el lexema \'%s\'\n" ,yylineno, yytext);
 }
-
 void explicacion_error_sintactico( char * msg ) {
 	fprintf(stderr, BG_COLOR_YELLOW "Error sintáctico"  RESET_COLOR " Línea %d, No se esperaba \'%s\'. %s\n" ,yylineno, yytext, msg);
 }
-
 void explicacion_error_semantico( char * msg ) {
 	fprintf(stderr, BG_COLOR_GREEN "Error semántico"  RESET_COLOR " Línea: %d.Error: %s\n" ,yylineno, msg);
 }
-
-struct entradaTS entrada_aux = {indefinido,"","",desconocido,desconocido,0};
-
 int n_parametros=0;
-
 %}
-
 // TOKENS
-
 //********************
 //REVISAR
 %right IGUAL
@@ -62,20 +52,16 @@ int n_parametros=0;
 %left LOGICOS
 //%left EQUAL NOTEQUAL
 %left IGUALDAD
-
 //%left LESS GREATER LESSEQ GREATEREQ
 %left COMPARACION
 %left MAS MENOSMENOS
 //%left POR DIV
 %left MULTIPLICATIVO
-
 // Operados unarios
 %left NOT
-
 // Operado unarios de las listas
 %left SOSTENIDO
 %left INTERROGACION
-
 %nonassoc TER1 
 // Operadores binarios de lista
 %left ARROBA
@@ -93,7 +79,6 @@ int n_parametros=0;
 // Terciario de lista
 //*******************
 %token MAIN
-
 %token TYPE
 %token IF
 %token THEN
@@ -111,14 +96,12 @@ int n_parametros=0;
 %token MOVLISTA
 %token INIVARIABLES
 %token FINVARIABLES
-
 %%
 // Producciones
 // ######################
 programa : MAIN bloque PYC 
 		  | MAIN error { yyerrok; explicacion_error_sintactico("Debe incluir un bloque tras el main"); } 
 		  | MAIN bloque error { yyerrok; explicacion_error_sintactico("El programa debe acabar con \';\'"); }
-
 bloque : LLAVEIZQ	{InsertarMarca();}
         declar_de_variables_locales
         declar_de_subprogs
@@ -132,25 +115,20 @@ bloque : LLAVEIZQ	{InsertarMarca();}
 		//  | LLAVEIZQ declar_de_variables_locales error { yyerrok; explicacion_error_sintactico("Error en el orden del bloque"); } 
 		//  | LLAVEIZQ declar_de_variables_locales declar_de_subprogs error { yyerrok; explicacion_error_sintactico('Error en el orden del bloque'); } 
 		  | LLAVEIZQ {InsertarMarca();} declar_de_variables_locales declar_de_subprogs error { yyerrok; explicacion_error_sintactico("El bloque debe acabar con }"); } 
-
 declar_de_variables_locales : INIVARIABLES variables_locales FINVARIABLES 
         | 
 		| INIVARIABLES error { yyerrok; explicacion_error_sintactico("Error en el bloque de declaración de variables"); } 
 		| INIVARIABLES variables_locales error { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el bloque de declaración de variables"); }
-
 variables_locales : variables_locales cuerpo_declar_variables PYC
         | cuerpo_declar_variables PYC
   		  | cuerpo_declar_variables error { yyerrok; explicacion_error_sintactico("Error, la declaración debe acabar en \";\"");};
-
 cuerpo_declar_variables : tipo_basico lista_identificadores 
 		  | tipo_basico error { yyerrok; explicacion_error_sintactico("Error, después del tipo básico va una lista de identificadores"); }
-
 lista_identificadores : lista_identificadores
 		 COMA 			
 		 IDENTIFICADOR  {push2($1,variable);} 
         | IDENTIFICADOR {push2($1,variable);} 
 		  // El error de esto lo englobo en el de arriba
-
 declar_de_subprogs : declar_de_subprogs declarar_funcion
         | ;
 declarar_funcion : tipo_basico 
@@ -162,7 +140,6 @@ declarar_funcion : tipo_basico
 		  | tipo_basico IDENTIFICADOR error { yyerrok; explicacion_error_sintactico("Error, en una función tras el identificador vienen los parámetros."); } 
 		  | tipo_basico IDENTIFICADOR parametros {$1.n_parametros=n_parametros;push2($1,funcion);n_parametros=0;} error { yyerrok; explicacion_error_sintactico("Error, en una función tras los parámetros viene un bloque."); }
 		  | tipo_basico IDENTIFICADOR parametros {$1.n_parametros=n_parametros;push2($1,funcion);n_parametros=0;} bloque error { yyerrok; explicacion_error_sintactico("Error, la declaración de funciones acaba en \";\"."); }  
-
 parametros : PARIZQ PARDCH
         | PARIZQ lista_parametros PARDCH 
 		  //| PARIZQ error { yyerrok; explicacion_error_sintactico("Error, debe introducir una lista de parámetros separados por comas"); }
@@ -186,7 +163,6 @@ sentencia : sentencia_asignacion
 sentencia_asignacion : IDENTIFICADOR IGUAL expresion PYC 
 		  | IDENTIFICADOR IGUAL error { yyerrok; explicacion_error_sintactico("Error, el identificador debe estar igualada a una expresión");};
 		  | IDENTIFICADOR IGUAL expresion error { yyerrok; explicacion_error_sintactico("Error, la asignación debe acabar en \";\"");}
-
 sentencia_if : IF PARIZQ expresion PARDCH THEN bloque ELSE bloque { comprueba_exp_logica($3); }
         | IF PARIZQ expresion PARDCH THEN bloque { comprueba_exp_logica($3); }
 		  | IF error { yyerrok; explicacion_error_sintactico("Error, tras el if debe introducir la condición entre paréntesis"); }
@@ -226,13 +202,15 @@ sentencia_lista : IDENTIFICADOR MOVLISTA PYC
 		  /* | IDENTIFICADOR MOVLISTA error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); }
 		  | PRINCIPIOLISTA error { yyerrok; explicacion_error_sintactico("Error, se esperaba un identificador"); }
 		  | PRINCIPIOLISTA IDENTIFICADOR error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); } */
-
 lista_entrada : lista_entrada
 		 COMA 			
 		 IDENTIFICADOR 
         | IDENTIFICADOR  
 
 expresion : PARIZQ expresion PARDCH { $$ = $1; }
+        | OPUNI expresion %prec NOT {  }
+        | expresion OPBIN expresion %prec LOGICOS { $$ = comprobar_bin($1, $2);  }
+        | expresion TER1 expresion ARROBA expresion
         | OPUNI expresion %prec NOT { $$ = operador_unario($1, $2); }
         | expresion OPBIN expresion %prec LOGICOS { $$ = operador_binario($2, $1, $3);  }
         | expresion TER1 expresion ARROBA expresion { $$ = operador_ternario($1,$3,$5);}
@@ -247,12 +225,10 @@ expresion : PARIZQ expresion PARDCH { $$ = $1; }
 		  | expresion TER1 error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
 		  | expresion TER1 expresion error { yyerrok; explicacion_error_sintactico("Error, se esperaba \"@\""); }
 		//  | expresion TER1 expresion ARROBA error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); } 
-
 llamar_funcion : IDENTIFICADOR argumentos ; //{/*Hace falta algo como push funccion*/}
         
 argumentos : PARIZQ lista_argumentos PARDCH
 		 | PARIZQ lista_argumentos error { yyerrok; explicacion_error_sintactico("Error, la lista de argumentos debe acabar con paréntesis"); }
-
 lista_argumentos : IDENTIFICADOR 
         | LITERAL 
         | lista_argumentos COMA IDENTIFICADOR 
@@ -264,46 +240,36 @@ agregado : CORIZQ lista_expresiones CORDCH
 
 lista_expresiones : lista_expresiones COMA expresion 
         | expresion 
-OPUNI : NOT { $$ = $1;}
-        | SOSTENIDO { $$ = $1;}
-        | INTERROGACION { $$ = $1;}
-        | MENOS { $$ = $1;}
-OPBIN : IGUALDAD { $$ = $1;}
-        | MENOS { $$ = $1;}
-        | LOGICOS { $$ = $1;}
-        | MAS { $$ = $1;}
-        | MULTIPLICATIVO { $$ = $1;}
-        | COMPARACION { $$ = $1;}
-        | ARROBA { $$ = $1;}
-        | MENOSMENOS { $$ = $1;}
-        | PORCENTAJE { $$ = $1;}
-        | DOBLEPOR { $$ = $1;}
+OPUNI : NOT { $$.entrada = $1.entrada;$$.tipo_operador = $1.tipo_operador;}
+        | SOSTENIDO { $$.entrada = $1.entrada;$$.tipo_operador = $1.tipo_operador;}
+        | INTERROGACION { $$.entrada = $1.entrada;$$.tipo_operador = $1.tipo_operador;}
+        | MENOS { $$.entrada = $1.entrada;$$.tipo_operador = $1.tipo_operador;}
+OPBIN : IGUALDAD { $$.entrada = $1.entrada;$$.tipo_operador = $1.tipo_operador;}
+        | MENOS { $$.entrada = $1.entrada;$$.tipo_operador = $1.tipo_operador;}
+        | LOGICOS { $$.entrada = $1.entrada;$$.tipo_operador = $1.tipo_operador;}
+        | MAS { $$.entrada = $1.entrada;$$.tipo_operador = $1.tipo_operador;}
+        | MULTIPLICATIVO { $$.entrada = $1.entrada;$$.tipo_operador = $1.tipo_operador;}
+        | COMPARACION { $$.entrada = $1.entrada;$$.tipo_operador = $1.tipo_operador;}
+        | ARROBA { $$.entrada = $1.entrada;$$.tipo_operador = $1.tipo_operador;}
+        | MENOSMENOS { $$.entrada = $1.entrada;$$.tipo_operador = $1.tipo_operador;}
+        | PORCENTAJE { $$.entrada = $1.entrada;$$.tipo_operador = $1.tipo_operador;}
+        | DOBLEPOR { $$.entrada = $1.entrada;$$.tipo_operador = $1.tipo_operador;}
 %% 
-
 
 
 int main (int argc, char** argv) {
     // Se comprueba que se recibe 1 argumento (nombre del fichero fuente)
 	if (argc <= 1) {
-
         printf("\nError al ejecutar la aplicación...\n");
         printf("Uso: %s nombre_fichero_fuente\n", argv[0]);
-
 		exit(-1);
-
 	}
-
     // Se abre el fichero recibido por parámetro
     yyin = fopen(argv[1], "r");
-
     // Si "yyin" es nulo no se ha podido abrir el fichero
     if (yyin == NULL) {
-
         printf ("\nError al abrir el fichero %s\n", argv[1]);
-
         exit (-2);
-
     }
-
     yyparse();
 }

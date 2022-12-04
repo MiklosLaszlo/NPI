@@ -25,7 +25,7 @@ int debug=1;
 		less, greater, less_eq, greater_eq,arroba, menosmenos, porcentaje,doblepor} TipoOperador;
 
 	typedef struct  entradaTS{
-   TipoEntrada entrada = indefinido;      // Indica el tipo de entrada
+   TipoEntrada entrada=indefinido;      // Indica el tipo de entrada
    char nombre[100]; 
    // char valor[50];              // Contendra los caracteres que forman el identificador
    TipoDato dato_referencia=desconocido; // En caso de que entrada sea funcion,variable
@@ -156,14 +156,14 @@ void EliminarBloque(){
 //si la encuentra devuelve la posicion util, si no devuelve -1
 
 // identificador es el nombre de una variable o de una funcion
-struct TipoEntrada  search_identificador(char * nom){
+struct entradaTS  search_identificador(char * nom){
     if(debug) printf("Se procede a buscar si una variable esta dentro del mismo bloque");
     struct entradaTS aux=TS[TOPE];
-    struct entradaTS dev;
     int i=TOPE-1;
 
     if(strlen(nom)==0){
         printf("Error: Se ha introducido una cadena vacia");
+        exit(-1);
     }
     //Mientras que no encontremos la marca de inicio de bloque
     // NICO: Ahora mismo hace:lee toda la pila hasta encontrar el nombre mientras sea una funcion o una variable.
@@ -172,13 +172,14 @@ struct TipoEntrada  search_identificador(char * nom){
 
         if(strcmp(TS[i].nombre,nom)==0 && ((TS[i].entrada==variable) || (TS[i].entrada==funcion)) )
             return TS[i];
+        aux.entrada=TS[i].entrada;    
         i--;    
     }
-    return dev;
+    return TS[0];
 }
 
 
-bool Es_mismoTipo(struct entradaTS dato1,struct entradaTS dato2 ){
+bool Es_mismoTipo(struct entradaTS dato1, struct entradaTS dato2 ){
     if(dato1.dato_referencia!=desconocido && dato2.dato_referencia!=desconocido){
         if(dato1.dato_referencia==dato2.dato_referencia==lista)
             if(dato1.dato_lista==dato2.dato_lista)
@@ -191,12 +192,12 @@ bool Es_mismoTipo(struct entradaTS dato1,struct entradaTS dato2 ){
 
 TipoDato AceptaOperadorBinarioAritmetico(struct entradaTS dato1,struct entradaTS dato2){
     if(Es_mismoTipo(dato1,dato2)){
-        if( dato1.dato_referencia==TipoDato.entero )
-            return TipoDato.entero;
-        if( dato1.dato_referencia==TipoDato.real )
-            return TipoDato.real
+        if( dato1.dato_referencia== entero )
+            return entero;
+        if( dato1.dato_referencia== real )
+            return real;
     }   
-    return TipoDato.desconocido;    
+    return desconocido;    
 }
 
 
@@ -284,7 +285,7 @@ struct entradaTS operador_ternario(struct entradaTS dato1, struct entradaTS dato
 	}
 	else
 		printf("Error semántico: Se esperaba una lista y se tiene %s \n", toStringTipoDato(dato1.dato_referencia));
-	
+
 	return salida;
 }
 
@@ -299,6 +300,52 @@ struct entradaTS operador_binario_logico(struct entradaTS operador, struct entra
 	}
 	else 
 		printf("Error semántico: El operador solo acepta tipos booleanos. Tipo dato1: %s, Tipo dato2: %s \n", toStringTipoDato(dato1.dato_referencia), toStringTipoDato(dato2.dato_referencia));
-	
+
 	return salida;
+}
+
+struct entradaTS operador_binario_lista(struct entradaTS operador, struct entradaTS dato1, struct entradaTS dato2){
+
+}
+
+struct entradaTS operador_unario(struct entradaTS dato,struct entradaTS operador ){
+    struct entradaTS coso;
+    switch(operador.tipo_operador){
+        case negacion:
+            if(dato.dato_referencia != booleano){
+                printf("Error semantico: El primer operando no es un booleano");
+            }
+            else{
+                coso.dato_referencia=booleano;
+            }
+
+        break;
+        case sostenido:
+            if (dato.dato_referencia != lista){
+                printf("Error semantico: El primer operando no es una lista");
+            }
+            else
+                coso.dato_referencia=entero;
+        break;
+        
+        case interrogacion:
+            if (dato.dato_referencia != lista){
+                printf("Error semantico: El primer operando no es una lista");
+            }
+            else
+                coso.dato_referencia=dato.dato_lista;
+        break;
+        
+        case menos:
+            if(dato.dato_referencia==entero || dato.dato_referencia==real)
+                coso.dato_referencia=entero;
+            else
+                printf("");
+        break;
+
+        default:
+            coso.dato_referencia = desconocido;  
+        break;
+    };
+    return coso;
 }
