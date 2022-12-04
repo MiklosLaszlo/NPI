@@ -294,7 +294,7 @@ void ErrorDeclaradaEnBLoque(struct entradaTS dato){
 
 void ErrorNoDeclarada(struct entradaTS dato){
     if(dato.dato_referencia!=desconocido){
-        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" La %s %s no ha sido declarada \n" , toStringTipoDato(dato.dato_referencia) , dato.nombre);
+        printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR" La %s %s %s no ha sido declarada \n" , toStringEntrada(dato.entrada), toStringTipoDato(dato.dato_referencia) , dato.nombre);
     }
 }
 
@@ -578,4 +578,8 @@ int  pos_identificador(char * nom){
         i--;
     }
     return -1;
+}
+
+bool comprobar_for_pascal(struct entradaTS dato1, struct entradaTS dato2){
+	
 }
