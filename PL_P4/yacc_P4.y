@@ -206,8 +206,8 @@ sentencia_lista : IDENTIFICADOR MOVLISTA PYC
 		  /* | IDENTIFICADOR MOVLISTA error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); }
 		  | PRINCIPIOLISTA error { yyerrok; explicacion_error_sintactico("Error, se esperaba un identificador"); }
 		  | PRINCIPIOLISTA IDENTIFICADOR error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); } */
-lista_entrada : lista_entrada COMA IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($3.nombre)); if($$.entrada!=variable && $$.entrada!=parametro_formal) {ErrorNoDeclarada($$);}}
-        | IDENTIFICADOR  {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable && $$.entrada!=parametro_formal) {ErrorNoDeclarada($$);}}
+lista_entrada : lista_entrada COMA IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($3.nombre)); if($$.entrada!=variable && $$.entrada!=parametro_formal) {ErrorNoDeclarada($3);}}
+        | IDENTIFICADOR  {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable && $$.entrada!=parametro_formal) {ErrorNoDeclarada($1);}}
 
 lista_salida : lista_salida COMA expresion {copiaStruct(&$$,search_identificador_pila($3.nombre)); if($$.entrada!=variable) {ErrorNoDeclarada($$); $$.entrada=indefinido;} }
 		| expresion {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable) {ErrorNoDeclarada($$); $$.entrada=indefinido;}}
@@ -216,7 +216,7 @@ expresion : PARIZQ expresion PARDCH { copiaStruct(&$$, $2); }
 		| OPUNI expresion %prec NOT { copiaStruct(&$$, operador_unario($2,$1) ); }
 		| expresion OPBIN expresion %prec LOGICOS {copiaStruct(&$$,operador_binario($2, $1, $3));  }
 		| expresion TER1 expresion ARROBA expresion { copiaStruct(&$$,operador_ternario($1,$3,$5)); }
-		| IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable && $$.entrada!=parametro_formal) ErrorNoDeclarada($$);else $$.entrada =indefinido;}
+		| IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable && $$.entrada!=parametro_formal) ErrorNoDeclarada($1);else $$.entrada =indefinido;}
 		| llamar_funcion {copiaStruct(&$$,$1); $$.entrada=variable;}
 		| agregado {$$.dato_referencia=lista;$$.dato_lista=$1.dato_referencia;$$.entrada=variable;}
 		| LITERAL {copiaStruct(&$$,$1);}
@@ -230,8 +230,8 @@ expresion : PARIZQ expresion PARDCH { copiaStruct(&$$, $2); }
 llamar_funcion : IDENTIFICADOR {funcion_analizando++;strcpy(funcion_usandose[funcion_analizando],$1.nombre);}
 		argumentos
 		{copiaStruct(&$$,search_identificador_pila($1.nombre));
-		if($$.entrada!=funcion) {ErrorNoDeclarada($$);$$.entrada =indefinido;} 
-		;if(n_parametros!=$$.n_parametros) explicacion_error_semantico("Numero de argumentos incorrecto"); n_parametros=0;} //{/*Hace falta algo como push funccion*/}
+		if($$.entrada!=funcion) {ErrorNoDeclarada($1);$$.entrada =indefinido;} 
+		if(n_parametros!=$$.n_parametros) explicacion_error_semantico("Numero de argumentos incorrecto"); n_parametros=0;} //{/*Hace falta algo como push funccion*/}
         
 argumentos : PARIZQ lista_argumentos PARDCH {funcion_analizando--;}
 		| PARIZQ lista_argumentos error { yyerrok; explicacion_error_sintactico("Error, la lista de argumentos debe acabar con paréntesis"); }

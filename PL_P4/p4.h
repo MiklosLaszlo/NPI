@@ -353,17 +353,25 @@ bool comprobar_for_pascal(struct entradaTS identificador, struct entradaTS dato1
 
 bool comprobar_asignacion(struct entradaTS identificador, struct entradaTS dato1){
 	bool correcto = true;
-	TipoDato tipo_variable = search_identificador_pila(identificador.nombre).dato_referencia;
-	correcto &= tipo_variable != desconocido;
-	if(correcto){
-		correcto &= dato1.dato_referencia == tipo_variable;
-			if(!correcto) 
-				printf(BG_COLOR_PURPLE "Error semantico." RESET_COLOR "Línea %d. Los tipos deben coincidir. Se tiene tipo variable: %s, tipo dato: %s\n",yylineno, toStringTipoDato(tipo_variable),toStringTipoDato(dato1.dato_referencia));
-		
-	}
-	else{
-		printf(BG_COLOR_PURPLE "Error semantico." RESET_COLOR "Línea %d. La variable debe estar declarada. Se tiene %s\n",yylineno, toStringTipoDato(tipo_variable));
-	}
+    struct entradaTS entradaAux;
+	copiaStruct(&entradaAux,search_identificador_pila(identificador.nombre));
+    TipoDato tipo_variable = entradaAux.dato_referencia;
+    if(entradaAux.entrada != parametro_formal && entradaAux.entrada!= variable){
+        printf(BG_COLOR_PURPLE "Error semantico." RESET_COLOR "Línea %d. %s no ha sido declarada\n",yylineno, identificador.nombre);
+        return false;
+    }
+    else{
+        correcto &= tipo_variable != desconocido;
+        if(correcto){
+            correcto &= dato1.dato_referencia == tipo_variable;
+                if(!correcto) 
+                    printf(BG_COLOR_PURPLE "Error semantico." RESET_COLOR "Línea %d. Los tipos deben coincidir. Se tiene tipo variable: %s, tipo dato: %s\n",yylineno, toStringTipoDato(tipo_variable),toStringTipoDato(dato1.dato_referencia));
+            
+        }
+        else{
+            printf(BG_COLOR_PURPLE "Error semantico." RESET_COLOR "Línea %d. La variable debe estar declarada. Se tiene %s\n",yylineno, toStringTipoDato(tipo_variable));
+        }
+    }
 
 	return correcto;
 }
