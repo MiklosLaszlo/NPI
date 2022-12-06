@@ -1,25 +1,16 @@
 package com.example.drawerappugr;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewOverlay;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -42,7 +33,7 @@ public class ImplementaComedores {
 
 
     public ImplementaComedores(@NonNull Activity activity) {
-        mostrardia = (TextView) activity.findViewById(R.id.dia);
+        mostrardia = (TextView) activity.findViewById(R.id.diaMenu);
         menu1 = new ArrayList<TextView>();
         menu2 = new ArrayList<TextView>();
         menu1.add((TextView) activity.findViewById(R.id.Menu1));
@@ -236,8 +227,8 @@ public class ImplementaComedores {
     }
 
     public void finSeleccion(){
-        tablaMenu1.setBackgroundColor(Color.parseColor("#002FA7"));
-        tablaMenu2.setBackgroundColor(Color.parseColor("#002FA7"));
+        tablaMenu1.setBackgroundColor(Color.parseColor("@color/black"));
+        tablaMenu2.setBackgroundColor(Color.parseColor("@color/black"));
 
     }
 }

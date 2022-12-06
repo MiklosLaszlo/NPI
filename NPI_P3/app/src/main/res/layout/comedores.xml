@@ -54,10 +54,10 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/dia"
+                    android:id="@+id/diaMenu"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:background="#002147"
+                    android:background="@color/marine_blue"
                     android:text="Dia"
                     android:textAlignment="center"
                     android:textSize="34sp"
@@ -71,8 +71,7 @@
                     <TableLayout
                         android:id="@+id/tablaMenu1"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="#002FA7">
+                        android:layout_height="wrap_content">
 
                         <TableRow
                             android:layout_width="match_parent"
@@ -168,12 +167,11 @@
                     <TableLayout
                         android:id="@+id/tablaMenu2"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="#002FA7">
+                        android:layout_height="match_parent">
 
                         <View
                             android:layout_height="10dip"
-                            android:background="#0E0E0E" />
+                            android:background="@color/black"/>
 
                         <TableRow
                             android:layout_width="wrap_content"
