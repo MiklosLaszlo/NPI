@@ -10,6 +10,8 @@
 
         <item android:id="@+id/nav_comedores" android:title="Comedores"
             android:icon="@drawable/ic_restaurant_24" />
+        <item android:id="@+id/scan" android:title="Escanear"
+            android:icon="@drawable/ic_camera_24"/>
     </group>
 
     <group android:checkableBehavior="single">
