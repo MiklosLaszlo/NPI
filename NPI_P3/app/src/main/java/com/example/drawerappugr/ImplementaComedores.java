@@ -77,7 +77,7 @@ public class ImplementaComedores {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     nextDayMenu();
                 }
-                return false;
+                return true;
             }
         });
 
@@ -87,7 +87,7 @@ public class ImplementaComedores {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     prevDayMenu();
                 }
-                return false;
+                return true;
             }
         });
 
