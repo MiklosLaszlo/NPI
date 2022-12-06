@@ -57,7 +57,7 @@ public abstract class GestosNico implements SensorEventListener {
         mSensorManager.unregisterListener(this);
     }
 
-    public boolean gestoGiroManoIzquierda(SensorEvent event){
+    private boolean gestoGiroManoIzquierda(SensorEvent event){
         currenty=(int) event.values[1];
         if (currenty < 0 && Math.abs(Math.abs(currenty)-Math.abs(prevy)) > 8 && Math.abs(Math.abs(currenty)-Math.abs(prevy)) < 15){
             return true;
@@ -65,7 +65,7 @@ public abstract class GestosNico implements SensorEventListener {
         return false;
     }
 
-    public boolean gestoGiroManoDerecha(SensorEvent event){
+    private boolean gestoGiroManoDerecha(SensorEvent event){
         currenty=(int) event.values[1];
         if (currenty > 0 && Math.abs(Math.abs(currenty)-Math.abs(prevy)) > 8 && Math.abs(Math.abs(currenty)-Math.abs(prevy)) < 15){
             return true;
@@ -73,7 +73,7 @@ public abstract class GestosNico implements SensorEventListener {
         return false;
     }
 
-    public boolean gestoParaArriba(SensorEvent event){
+    private boolean gestoParaArriba(SensorEvent event){
         alcurrenty=(int) event.values[1];
         if (alcurrenty > 0 && Math.abs(Math.abs(alcurrenty)-Math.abs(alprevy)) > 5 && Math.abs(Math.abs(alcurrenty)-Math.abs(alprevy)) < 10){
             return true;
@@ -81,12 +81,35 @@ public abstract class GestosNico implements SensorEventListener {
         return false;
     }
 
-    public boolean gestoParaAbajo(SensorEvent event){
+    private boolean gestoParaAbajo(SensorEvent event){
         alcurrenty=(int) event.values[1];
         if (alcurrenty < 0 && Math.abs(Math.abs(alcurrenty)-Math.abs(alprevy)) > 5 && Math.abs(Math.abs(alcurrenty)-Math.abs(alprevy)) < 10){
             return true;
         }
         return false;
+    }
+
+    public GestosAprendidos reconocerGestos(SensorEvent event){
+        switch (event.sensor.getType()) {
+            case Sensor.TYPE_GYROSCOPE:
+                if (gestoGiroManoIzquierda(event)) {
+                    return GestosAprendidos.GIROIZQUIERDA;
+                }
+                else if (gestoGiroManoDerecha(event)) {
+                    return GestosAprendidos.GIRODERECHA;
+                }
+                break;
+            case Sensor.TYPE_LINEAR_ACCELERATION:
+                if (gestoParaArriba(event)){
+                    return GestosAprendidos.ARRIBA;
+                }
+                else if(gestoParaAbajo(event)){
+                    return GestosAprendidos.ABAJO;
+                }
+
+                break;
+        }
+        return GestosAprendidos.DESCONOCIDO;
     }
 
     @Override

@@ -1,15 +1,5 @@
 package com.example.drawerappugr;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.widget.Toolbar;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,9 +12,6 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MenuItem;
@@ -34,22 +21,30 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.Locale;
-import android.widget.RelativeLayout;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class MainActivity extends AppCompatActivity {
+public class MainActivity2_gestosNicoImplementados_menu extends AppCompatActivity {
     // Multi menús
     DrawerLayout drawerLayout;
     NavigationView navigationView;
@@ -93,12 +88,7 @@ public class MainActivity extends AppCompatActivity {
     private GestosNico gestosNico;
     private boolean listening;
     private boolean second_listening;
-    private boolean left_done;
-    private boolean right_done;
-    private boolean double_left_done;
-    private boolean double_right_done;
-    private boolean up_done;
-    private boolean down_done;
+    private GestosAprendidos gestoReconozido;
     private CountDownTimer contador;
     private int contando;
 
@@ -194,18 +184,13 @@ public class MainActivity extends AppCompatActivity {
         // Multi menús
         listening = true;
         second_listening = false;
-        left_done = false;
-        right_done = false;
-        double_left_done = false;
-        double_right_done = false;
-        down_done = false;
-        up_done = false;
+        gestoReconozido = GestosAprendidos.DESCONOCIDO;
         contando=0;
         implementaComedores = new ImplementaComedores(this);
         contador =  new CountDownTimer(1000,500) {
             @Override
             public void onTick(long l) {
-                if( (left_done || right_done) && (contando != 0)){
+                if( (gestoReconozido == GestosAprendidos.GIRODERECHA || gestoReconozido == GestosAprendidos.GIROIZQUIERDA) && (contando != 0)){
                     second_listening=true;
                 }
                 contando=contando+1;
@@ -213,38 +198,34 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                if(left_done) {
-                    implementaComedores.prevDayMenu();
-                    Log.e("Gesto","Uno izquierda");
-                }
-                if(right_done) {
-                    implementaComedores.nextDayMenu();
-                    Log.e("Gesto","Uno dereca");
-                }
-                if(double_left_done) {
-                    Log.e("Gesto","dos izquierda");
-
-                }
-                if(double_right_done) {
-                    Log.e("Gesto","dos derecha");
-                }
-                if(up_done) {
-                    implementaComedores.menuSelecionado(1);
-                    Log.e("Gesto","arriba");
-                }
-                if(down_done) {
-                    implementaComedores.menuSelecionado(2);
-                    Log.e("Gesto","abajo");
+                switch (gestoReconozido){
+                    case GIROIZQUIERDA:
+                        implementaComedores.nextDayMenu();
+                        Log.e("Gesto","Uno izquierda");
+                        break;
+                    case GIRODERECHA:
+                        implementaComedores.prevDayMenu();
+                        Log.e("Gesto","Uno derecha");
+                        break;
+                    case DOSGIROIZQUIERDA:
+                        Log.e("Gesto","dos izquierda");
+                        break;
+                    case DOSGIRODERECHA:
+                        Log.e("Gesto","dos derecha");
+                        break;
+                    case ARRIBA:
+                        implementaComedores.menuSelecionado(1);
+                        Log.e("Gesto","arriba");
+                        break;
+                    case ABAJO:
+                        implementaComedores.menuSelecionado(2);
+                        Log.e("Gesto","abajo");
+                        break;
                 }
                 contando=0;
                 listening = true;
                 second_listening = false;
-                left_done = false;
-                right_done = false;
-                double_left_done = false;
-                double_right_done = false;
-                down_done = false;
-                up_done = false;
+                gestoReconozido = GestosAprendidos.DESCONOCIDO;
             }
         };
 
@@ -252,48 +233,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSensorChanged(SensorEvent event) {
                 if(listening) {
-                    switch (event.sensor.getType()) {
-                        case Sensor.TYPE_GYROSCOPE:
-                            if (gestoGiroManoIzquierda(event)) {
-                                contador.start();
-                                listening = false;
-                                left_done=true;
-                            }
-                            else if (gestoGiroManoDerecha(event)) {
-                                contador.start();
-                                listening = false;
-                                right_done=true;
-                            }
-                            break;
-                        case Sensor.TYPE_LINEAR_ACCELERATION:
-                            if (gestoParaArriba(event)){
-                                contador.start();
-                                up_done = true;
-                                listening = false;
-                            }
-                            else if(gestoParaAbajo(event)){
-                                contador.start();
-                                down_done = true;
-                                listening = false;
-                            }
-
-                            break;
+                    gestoReconozido = reconocerGestos(event);
+                    if(gestoReconozido != GestosAprendidos.DESCONOCIDO) {
+                        contador.start();
+                        listening=false;
                     }
-
                 }
 
                 else if(second_listening){
-                    switch (event.sensor.getType()) {
-                        case Sensor.TYPE_GYROSCOPE:
-                            if (gestoGiroManoIzquierda(event) && left_done) {
-                                double_left_done = true;
-                                left_done=false;
-                            }
-                            else if (gestoGiroManoDerecha(event) && right_done) {
-                                double_right_done = true;
-                                right_done=false;
-                            }
-                            second_listening=false;
+                    switch (reconocerGestos(event)) {
+                        case GIROIZQUIERDA:
+                            if(gestoReconozido==GestosAprendidos.GIROIZQUIERDA)
+                                gestoReconozido = GestosAprendidos.DOSGIROIZQUIERDA;
+                            break;
+                        case GIRODERECHA:
+                            if(gestoReconozido==GestosAprendidos.GIRODERECHA)
+                                gestoReconozido = GestosAprendidos.DOSGIRODERECHA;
                             break;
                     }
                 }
