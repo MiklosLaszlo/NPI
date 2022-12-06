@@ -1,2 +1,18 @@
-package com.example.drawerappugr;public enum GestosAprendidos {
+package com.example.drawerappugr;
+
+public enum GestosAprendidos {
+    GIRODERECHA,
+    GIROIZQUIERDA,
+    DOSGIRODERECHA,
+    DOSGIROIZQUIERDA,
+    ARRIBA,
+    ABAJO,
+    ACEPTAR,
+    CANCELAR,
+    PROXIMIDAD,
+    SWIPEIZQUIERDA,
+    SWIPEDERECHA,
+    DOSSWIPEIZQUIERDA,
+    DOSSWIPEDERECHA,
+    DESCONOCIDO
 }
