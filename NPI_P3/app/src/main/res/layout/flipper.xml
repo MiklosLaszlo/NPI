@@ -14,6 +14,8 @@
 
         <include layout="@layout/informacion" />
 
+        <include layout="@layout/scan"/>
+
     </ViewFlipper>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
