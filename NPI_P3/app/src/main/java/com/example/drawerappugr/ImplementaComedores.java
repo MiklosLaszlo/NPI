@@ -3,14 +3,18 @@ package com.example.drawerappugr;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewOverlay;
 import android.widget.Button;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,10 +34,14 @@ public class ImplementaComedores {
     private DayOfWeek diaSemana;
     private Button siguienteButton;
     private Button anteriorButton;
-    private Context context;
+    private TableLayout tablaMenu1;
+    private TableLayout tablaMenu2;
+    private View.OnTouchListener escuchaMenus1;
+    private View.OnTouchListener escuchaMenus2;
 
 
-    public ImplementaComedores(Activity activity) {
+
+    public ImplementaComedores(@NonNull Activity activity) {
         mostrardia = (TextView) activity.findViewById(R.id.dia);
         menu1 = new ArrayList<TextView>();
         menu2 = new ArrayList<TextView>();
@@ -53,6 +61,9 @@ public class ImplementaComedores {
 
         siguienteButton= (Button) activity.findViewById(R.id.botonMenuSiguiente);
         anteriorButton= (Button) activity.findViewById(R.id.botonMenuAnterior);
+
+        tablaMenu1 = (TableLayout) activity.findViewById(R.id.tablaMenu1);
+        tablaMenu2 = (TableLayout) activity.findViewById(R.id.tablaMenu2);
 
         emptyContent();
         diaSemana = LocalDateTime.now().getDayOfWeek();
@@ -79,6 +90,35 @@ public class ImplementaComedores {
                 return false;
             }
         });
+
+        escuchaMenus1 = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                menuSelecionado(1);
+                return true;
+            }
+        };
+
+        escuchaMenus2 = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                menuSelecionado(2);
+                return true;
+            }
+        };
+
+        for(TextView texto : menu1){
+            texto.setOnTouchListener(escuchaMenus1);
+        }
+
+        for(TextView texto : menu2){
+            texto.setOnTouchListener(escuchaMenus2);
+        }
+
+        tablaMenu1.setOnTouchListener(escuchaMenus1);
+
+        tablaMenu2.setOnTouchListener(escuchaMenus2);
+
     }
 
     public void nextDayMenu(){
@@ -138,12 +178,10 @@ public class ImplementaComedores {
     }
 
     private void setTextMenus(int i){
+        finSeleccion();
         StructComedores auxComida = comedor.get(i,1);
         menu1.get(0).setText(auxComida.menu);
-        Log.e("Dia", String.valueOf(i));
         for(int j=0;j<auxComida.comidas.size();j++){
-            Log.e("Cantidad", String.valueOf(j));
-            Log.e("Comida", auxComida.comidas.get(j));
             menu1.get(j+1).setText(auxComida.comidas.get(j));
         }
 
@@ -183,5 +221,23 @@ public class ImplementaComedores {
                 mostrardia.setText("ERROR CON LA SELECCION DEL DIA");
                 break;
         }
+    }
+
+    public void menuSelecionado(int i){
+        finSeleccion();
+        switch (i){
+            case 1:
+                tablaMenu1.setBackgroundColor(Color.parseColor("#85BB65"));
+                break;
+            case 2:
+                tablaMenu2.setBackgroundColor(Color.parseColor("#85BB65"));
+                break;
+        }
+    }
+
+    public void finSeleccion(){
+        tablaMenu1.setBackgroundColor(Color.parseColor("#002FA7"));
+        tablaMenu2.setBackgroundColor(Color.parseColor("#002FA7"));
+
     }
 }

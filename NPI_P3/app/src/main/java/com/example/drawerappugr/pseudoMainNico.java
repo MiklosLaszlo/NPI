@@ -1,4 +1,4 @@
-package com.example.drawerappugr;
+/*package com.example.drawerappugr;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -149,4 +149,4 @@ public class pseudoMainNico extends AppCompatActivity {
         super.onPause();
         gestoGiroscopio.unregisterListener();
     }
-}
+}*/
