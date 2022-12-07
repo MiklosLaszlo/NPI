@@ -1,7 +1,7 @@
 package com.example.drawerappugr;
 
 import android.annotation.SuppressLint;
-import android.hardware.SensorEvent;
+import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 
-public class Navegador extends AppCompatActivity {
+public class Cursor{
     //private SceneView sceneView;
     private SceneView backgroundSceneView;
 
@@ -31,23 +31,19 @@ public class Navegador extends AppCompatActivity {
     private float rx_antiguo = 0;   // En grados
     private float ry_antiguo = 0;   // En grados
 
+
+
     @SuppressLint("ClickableViewAccessibility")
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public Cursor(Activity activity) {
 
-        setContentView(R.layout.navegacion);
-        backgroundSceneView = findViewById(R.id.scene_view);
+        backgroundSceneView = activity.findViewById(R.id.scene_view);
 
-        loadModels();
+        loadModels(activity);
 
-        gestoSensor = new GestosSensor(this, false, false, true, false) {
+        gestoSensor = new GestosSensor(activity, false, false, true, false) {
             @Override
             public void rotationCallback(float rotx, float roty, float rotz) {
                 float heading = 0;
-                Log.e("GRADOS", "X: " + Math.toDegrees(Math.asin(rotx)) +
-                        " Y: "  + Math.toDegrees(2*Math.asin(roty)) +
-                        " Z: " + Math.toDegrees(2*Math.asin(rotz)) );
 
                 float rx = (float) Math.toDegrees(2*Math.asin(roty));
                 float ry = (float) Math.toDegrees(2*Math.asin(rotz));
@@ -65,9 +61,8 @@ public class Navegador extends AppCompatActivity {
         };
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    public void onResume() {
+        Log.e("Flecha", "Que esta pasando");
         try {
             backgroundSceneView.resume();
         } catch (CameraNotAvailableException e) {
@@ -79,24 +74,19 @@ public class Navegador extends AppCompatActivity {
 
          gestoSensor.registerListener();
     }
-
-    @Override
     public void onPause() {
-        super.onPause();
         backgroundSceneView.pause();
         gestoSensor.unregisterListener();
     }
 
-    @Override
     public void onDestroy() {
-        super.onDestroy();
         backgroundSceneView.destroy();
     }
 
-    public void loadModels() {
+    public void loadModels(Activity activity) {
         CompletableFuture<ModelRenderable> cursor = ModelRenderable
                 .builder()
-                .setSource(this, Uri.parse("models/Cursor.glb"))
+                .setSource(activity, Uri.parse("models/Cursor.glb"))
                 .setIsFilamentGltf(true)
                 .setAsyncLoadEnabled(true)
                 .build();

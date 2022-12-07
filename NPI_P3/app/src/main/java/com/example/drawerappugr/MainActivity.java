@@ -14,6 +14,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -32,11 +34,15 @@ public class MainActivity extends AppCompatActivity {
     RelativeLayout relativeLayout;
     TextView textView;
 
+    private Spinner spinnerOrigen;
+    private Spinner spinnerDestino;
+
     // Sistema Horarios
     public static final Integer RecordAudioRequestCode = 1;
 
     // Comedor
     ImplementaComedores implementaComedores;
+    Navegacion navegacion;
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -83,6 +89,11 @@ public class MainActivity extends AppCompatActivity {
                         drawerLayout.closeDrawer(GravityCompat.START);
                         viewFlipper.setDisplayedChild(2);
                         break;
+                    case R.id.nav_navigation:
+                        Log.i("MENU_DRAWER_TAG","Navegacion item is clicked");
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        viewFlipper.setDisplayedChild(4);
+                        break;
 
                     case R.id.nav_info:
                         Log.i("MENU_DRAWER_TAG","Info item is clicked");
@@ -101,12 +112,26 @@ public class MainActivity extends AppCompatActivity {
         }
 
         implementaComedores = new ImplementaComedores(this);
+
+        navegacion = new Navegacion(this);
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        navegacion.onResume();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        navegacion.onPause();
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        navegacion.onDestroy();
     }
 
     private void checkPermission() {
