@@ -51,10 +51,11 @@ dependencies {
     //implementation 'com.google.android.filament:gltfio-android:1.6.0'
 
     implementation "com.gorisse.thomas.sceneform:sceneform:1.21.0" // Librería AR
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0' // Librería para lector QR
 
 
     def room_version = "2.4.2"
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
-    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+
 }
