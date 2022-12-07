@@ -4,58 +4,78 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-public abstract class GestosPantalla implements View.OnTouchListener{
+public class GestosPantalla implements View.OnTouchListener{
+
+    final private boolean doble_swipe_active, swipe_active, touch_active;
+    private final static int UMBRAL_MILIS = 500;
+    private float last_t;
+
+    public GestosPantalla(boolean doble_swipe, boolean swipe, boolean touch){
+        //super();
+        doble_swipe_active = doble_swipe;
+        swipe_active = swipe;
+        touch_active = touch;
+    }
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent){
-        doubleSwipe(motionEvent);
-        swipe(motionEvent);
-        touch(motionEvent);
+        boolean consumido = false;
 
-        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) return true;
+        if(motionEvent.getEventTime() - last_t > UMBRAL_MILIS) {
+            if (!consumido && doble_swipe_active) consumido = doubleSwipe(motionEvent);
+            if (!consumido && swipe_active) consumido = swipe(motionEvent);
+            if (!consumido && touch_active) touch(motionEvent);
+        }
+
+        // if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) return true;
         return true;
     }
 
-    // Gesto pantalla TOUCH
+    // region TOUCH
 
-    public abstract void touchUpCallback();
-    public abstract void touchDownCallback();
+    public void touchUpCallback(){}
+    public void touchDownCallback(){}
 
-    public void touch(MotionEvent motionEvent) {
+    private boolean touch(MotionEvent motionEvent) {
 
         int eventType = motionEvent.getActionMasked();
+        boolean aceptado = false;
 
         switch(eventType)
         {
             case MotionEvent.ACTION_DOWN:
-                touchDownCallback();//Log.i("SensorEvents","Action Down");
+                touchDownCallback(); Log.i("SensorEvents","Action Down");
+                aceptado=true;
                 break;
 
             case MotionEvent.ACTION_UP:
-                touchUpCallback(); //Log.i("SensorEvents","Action Up");
+                touchUpCallback(); Log.i("SensorEvents","Action Up");
+                aceptado = true;
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                Log.i("SensorEvents","Action Move");
+                //Log.i("SensorEvents","Action Move");
                 break;
 
             //multitouch
 
             case MotionEvent.ACTION_POINTER_DOWN:
-                Log.i("SensorEvents","Action Pointer Down " + motionEvent.getPointerCount());
+                //Log.i("SensorEvents","Action Pointer Down " + motionEvent.getPointerCount());
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
-                Log.i("SensorEvents","Action Pointer Up " + motionEvent.getPointerCount());
+                //Log.i("SensorEvents","Action Pointer Up " + motionEvent.getPointerCount());
                 break;
         }
+        return aceptado;
     }
 
-    // Gesto pantalla DOBLE SWIPE
+    //endregion
 
-    public abstract void doubleSwipeCallback(direction dir);
-
+    // region DOBLE SWIPE
     public enum direction {ARRIBA, ABAJO, IZQUIERDA, DERECHA, QUIETO}
+
+    public void doubleSwipeCallback(direction dir){}
 
     private static final float UMBRAL_VELOCIDAD_SWIPE = (float) 600;
 
@@ -86,10 +106,12 @@ public abstract class GestosPantalla implements View.OnTouchListener{
         return salida;
     }
 
-    private void doubleSwipe(MotionEvent ev) {
+    private boolean doubleSwipe(MotionEvent ev) {
         direction dir = direction.QUIETO;
+        boolean aceptado = false;
 
         if (ev.getPointerCount() == 2) {
+            aceptado = true;
             if (ev.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN && t_ds == -1) { // Se clava el segundo dedo
                 //Log.i("Doble Swipe", "Se clava");
                 x1 = ev.getX(0);
@@ -109,13 +131,17 @@ public abstract class GestosPantalla implements View.OnTouchListener{
                         ev.getEventTime() - t_ds);
                 doubleSwipeCallback(dir);
                 t_ds = -1;
+                last_t = ev.getEventTime();
             }
         }
+        return aceptado;
     }
 
-    // Gesto swipe simple
+    //endregion
 
-    public abstract void swipeCallback(direction dir);
+    // region SIMPLE SWIPE
+
+    public void swipeCallback(direction dir){}
 
     int threshold = 100;
     int velocity_threshold=100;
@@ -124,18 +150,24 @@ public abstract class GestosPantalla implements View.OnTouchListener{
     float y = -1;
     float t = -1;
 
-    private void swipe(MotionEvent ev) {
+    private boolean swipe(MotionEvent ev) {
+        boolean aceptado = false;
         if(ev.getPointerCount() == 1) {
             if(ev.getActionMasked() == MotionEvent.ACTION_DOWN && t == -1){
+                aceptado = true;
                 x = ev.getX();
                 y = ev.getY();
                 t = ev.getEventTime();
             }
             if(ev.getActionMasked() == MotionEvent.ACTION_UP && t != -1){
+                aceptado = true;
                 float xDiff = ev.getX() - x;
                 float YDiff = ev.getY() - y;
-                float velocityX = xDiff / (ev.getEventTime() - t);
-                float velocityY = YDiff / (ev.getEventTime() - t);
+                float dt = (ev.getEventTime() - t) / 100;
+                float velocityX = xDiff / dt;
+                float velocityY = YDiff / dt;
+                // Log.i("Swipe", "vx " + velocityX + " vy " + velocityY + " t " +dt);
+
                 direction dir = direction.QUIETO;
 
                 if(Math.abs(xDiff)> Math.abs(YDiff)){
@@ -156,13 +188,15 @@ public abstract class GestosPantalla implements View.OnTouchListener{
                         }
                     }
                 }
-
                 swipeCallback(dir);
                 t=-1;
+                last_t = ev.getEventTime();
             }
         }
-
+        return aceptado;
     }
+
+    //endregion
 
 }
 

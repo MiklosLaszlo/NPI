@@ -41,9 +41,9 @@ public class Navegador extends AppCompatActivity {
 
         loadModels();
 
-        gestoSensor = new GestosSensor(this) {
+        gestoSensor = new GestosSensor(this, false, false, true, false) {
             @Override
-            void rotationCallback(float rotx, float roty, float rotz) {
+            public void rotationCallback(float rotx, float roty, float rotz) {
                 float heading = 0;
                 Log.e("GRADOS", "X: " + Math.toDegrees(Math.asin(rotx)) +
                         " Y: "  + Math.toDegrees(2*Math.asin(roty)) +
@@ -62,20 +62,6 @@ public class Navegador extends AppCompatActivity {
 
                 nodoCursor.setLocalRotation(rotacion);
             }
-            @Override
-            public void gestoAceptarCallback() {}
-
-            @Override
-            public void giroManoIzquierdaCallback() {}
-
-            @Override
-            public void giroManoDerechaCallback() {}
-
-            @Override
-            public void gestoArribaCallback() {}
-
-            @Override
-            public void gestoAbajoCallback() {}
         };
     }
 
@@ -91,8 +77,7 @@ public class Navegador extends AppCompatActivity {
             Log.e("Flecha", "No deberia pasar");
         }
 
-        if(gestoSensor.hasGiroscopeSensor())
-            gestoSensor.registerListener();
+         gestoSensor.registerListener();
     }
 
     @Override

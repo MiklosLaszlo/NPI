@@ -3,6 +3,8 @@ package com.example.drawerappugr;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,19 +18,16 @@ public class GestosPruebas extends AppCompatActivity {
     private TextView text2;
     private TextView text3;
 
-
-    GestosPantalla gestoPantalla = new GestosPantalla() {
-        @Override
-        public void touchUpCallback() {}
-        @Override
-        public void touchDownCallback() {}
+    GestosPantalla gestoPantalla = new GestosPantalla(true, true,false) {
         @Override
         public void doubleSwipeCallback(direction dir) {
-            Log.e("cb",dir.toString());
+            // Log.e("cb",dir.toString());
             text1.setText(dir.toString());
         }
         @Override
-        public void swipeCallback(direction dir) {}
+        public void swipeCallback(direction dir) {
+            text2.setText(dir.toString());
+        }
     };
 
     GestosSensor gestoSensor;
@@ -45,19 +44,21 @@ public class GestosPruebas extends AppCompatActivity {
 
         layout.setOnTouchListener( gestoPantalla );
 
-        gestoSensor = new GestosSensor(this) {
+        gestoSensor = new GestosSensor(this, true, true, false, false) {
             @Override
-            void rotationCallback(float rx, float ry, float rz) {}
+            public void gestoAceptarCallback() {text3.setText("ACEPTAR");}
             @Override
-            public void gestoAceptarCallback() {text2.setText("HECHO");}
+            public void giroManoIzquierdaCallback() {text3.setText("IZQUIERDA");}
             @Override
-            public void giroManoIzquierdaCallback() {}
+            public void dobleGiroManoIzquierdaCallback() {text3.setText("DOBLE IZQUIERDA");}
             @Override
-            public void giroManoDerechaCallback() {}
+            public void giroManoDerechaCallback() {text3.setText("DERECHA");}
             @Override
-            public void gestoArribaCallback() {}
+            public void dobleGiroManoDerechaCallback() {text3.setText("DOBLE DERECHA");}
             @Override
-            public void gestoAbajoCallback() {}
+            public void gestoArribaCallback() {text3.setText("ARRIBA");}
+            @Override
+            public void gestoAbajoCallback() {text3.setText("ABAJO");}
         };
         gestoSensor.registerListener();
     }
