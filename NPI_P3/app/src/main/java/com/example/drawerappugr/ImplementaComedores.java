@@ -1,8 +1,10 @@
 package com.example.drawerappugr;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Build;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -30,7 +32,8 @@ public class ImplementaComedores {
     private View.OnTouchListener escuchaMenus1;
     private View.OnTouchListener escuchaMenus2;
 
-
+    private int seleccionado = 0;
+    private MenuAceptarComedor menuAceptarComedor;
 
     public ImplementaComedores(@NonNull Activity activity) {
         mostrardia = (TextView) activity.findViewById(R.id.diaMenu);
@@ -55,6 +58,10 @@ public class ImplementaComedores {
 
         tablaMenu1 = (TableLayout) activity.findViewById(R.id.tablaMenu1);
         tablaMenu2 = (TableLayout) activity.findViewById(R.id.tablaMenu2);
+
+        Button btn = activity.findViewById(R.id.btnAceptarCompra);
+
+        menuAceptarComedor = new MenuAceptarComedor(activity);
 
         emptyContent();
         diaSemana = LocalDateTime.now().getDayOfWeek();
@@ -85,7 +92,7 @@ public class ImplementaComedores {
         escuchaMenus1 = new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                menuSelecionado(1);
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) menuSelecionado(1);
                 return true;
             }
         };
@@ -93,7 +100,7 @@ public class ImplementaComedores {
         escuchaMenus2 = new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                menuSelecionado(2);
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) menuSelecionado(2);
                 return true;
             }
         };
@@ -132,6 +139,7 @@ public class ImplementaComedores {
                 diaSemana=DayOfWeek.MONDAY;
                 break;
         }
+        seleccionado = 0;
         setTextDay(diaSemana);
     }
 
@@ -155,6 +163,7 @@ public class ImplementaComedores {
                 diaSemana=DayOfWeek.THURSDAY;
                 break;
         }
+        seleccionado = 0;
         setTextDay(diaSemana);
     }
 
@@ -224,11 +233,12 @@ public class ImplementaComedores {
                 tablaMenu2.setBackgroundColor(Color.parseColor("#85BB65"));
                 break;
         }
+        if(seleccionado == i) menuAceptarComedor.aparecer(mostrardia.getText().toString(), i == 1? "no vegano" : "vegano");
+        seleccionado = i;
     }
 
     public void finSeleccion(){
-        tablaMenu1.setBackgroundColor(Color.parseColor("@color/black"));
-        tablaMenu2.setBackgroundColor(Color.parseColor("@color/black"));
-
+        tablaMenu1.setBackgroundColor(Color.parseColor("#FF000000"));//"@color/black"));
+        tablaMenu2.setBackgroundColor(Color.parseColor("#FF000000"));//"@color/black"));
     }
 }

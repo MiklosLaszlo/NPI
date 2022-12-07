@@ -171,7 +171,7 @@
 
                         <View
                             android:layout_height="10dip"
-                            android:background="@color/black"/>
+                            android:background="@color/black" />
 
                         <TableRow
                             android:layout_width="wrap_content"
@@ -297,5 +297,9 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <include
+        android:id="@+id/Confimacion"
+        layout="@layout/aceptar_comedores" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
