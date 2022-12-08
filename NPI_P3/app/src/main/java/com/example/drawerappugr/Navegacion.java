@@ -18,12 +18,15 @@ import com.journeyapps.barcodescanner.ScanOptions;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+
 @SuppressLint("ClickableViewAccessibility")
 public class Navegacion {
 
     private GestosSensor gestosSensor;
-    private MainActivity activity;
-    private LinearLayout linearLayout;
+    private final MainActivity activity;
+    private final LinearLayout linearLayout;
+    private final Horarios h = new Horarios();
 
     private Spinner spinnerOrigen;
     private Spinner spinnerDestino;
@@ -31,6 +34,7 @@ public class Navegacion {
 
     private Button scannerButton;
     private Button initNavButton;
+    private final Button siguienteBtn;
     private Button nextNode;
     private Button prevNode;
     private Button cancelNavButton;
@@ -58,6 +62,7 @@ public class Navegacion {
         spinnerDestino = (Spinner) activity.findViewById(R.id.menuNavegacionDestino);
         scannerButton = (Button) activity.findViewById(R.id.scanbuttonav);
         initNavButton = (Button) activity.findViewById(R.id.inicarNav);
+        siguienteBtn = activity.findViewById(R.id.siguienteClase);
         cancelNavButton = (Button) activity.findViewById(R.id.cancelarNavegacion);
         prevNode = (Button) activity.findViewById(R.id.PrevNode);
         nextNode = (Button) activity.findViewById(R.id.NextNode);
@@ -143,6 +148,11 @@ public class Navegacion {
             cancelNav();
         });
 
+        siguienteBtn.setOnTouchListener(new GestosPantalla(false, false, true){
+            @Override
+            public void touchDownCallback() {siguienteClase();}
+        });
+
         creaGestosGenerales();
 
     }
@@ -215,4 +225,28 @@ public class Navegacion {
 
     public void cargar(){ gestosSensor.registerListener(); }
     public void descargar(){ gestosSensor.unregisterListener(); }
+
+    private static ArrayList<String> sitios = new ArrayList<String>();
+    static {
+        sitios.add("Entrada Principal");
+        sitios.add("Comedor");
+        sitios.add("1.2");
+        sitios.add("3.3");
+        sitios.add("3.9");
+    }
+
+    private void siguienteClase(){
+        String actual = h.getAula();
+        String siguiente = h.getNextAula();
+
+        origen = actual == null ? "Entrada" : actual;
+        destino = siguiente == null ? "Entrada" : siguiente;
+
+        Log.i("a", sitios.indexOf(origen) + " " + destino);
+
+        spinnerOrigen.setSelection(sitios.indexOf(origen));
+        spinnerDestino.setSelection(sitios.indexOf(destino));
+        textOrigen.setText(origen);
+        textDestino.setText(destino);
+    }
 }
