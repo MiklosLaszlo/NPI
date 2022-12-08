@@ -28,23 +28,29 @@ public class Lugares{
         //ENTRADA PRINCIPAL
         ArrayList<Node> tmp = new ArrayList<Node>();
         ArrayList<Float> coord=new ArrayList<>();
+        ArrayList<String> dir = new ArrayList<>();
         tmp.add(this.lugares.get(1));
         //Conexion entre entrada y bancos rojos
         coord.add(10.0F);
+        dir.add("Cruza la puerta y ve a los bancos rojos");
         tmp.add(this.lugares.get(13));
+        dir.add("Ve hasta la entrada del edificio principal, subiendo la escalinata");
         coord.add(320F);
         this.lugares.get(0).setAdyacentes(tmp);
         this.lugares.get(0).setCoordenadas(coord);
+        this.lugares.get(0).setDirecciones(dir);
 
         //SECRETARÍA
         tmp = new ArrayList<Node>();
         coord=new ArrayList<>();
-
+        dir=new ArrayList<>();
         tmp.add(this.lugares.get(0));
         coord.add(320F-180F);
+        dir.add("Sal por la puerta, al lado de secretaría");
         //tmp.add(this.lugares.get(14));
         this.lugares.get(13).setAdyacentes(tmp);
         this.lugares.get(13).setCoordenadas(coord);
+        this.lugares.get(13).setDirecciones(dir);
 
         //ESCALERAS BAJA COMEDOR
         /*
@@ -56,124 +62,165 @@ public class Lugares{
         //Bancos Rojos / FUTBOLÍN
         tmp = new ArrayList<Node>();
         coord=new ArrayList<>();
-
+        dir=new ArrayList<>();
         tmp.add(this.lugares.get(0));
         //90-180+360=270
         coord.add(270F);
+        dir.add("Cruza la puerta roja");
         tmp.add(this.lugares.get(2));
         coord.add(210F);
+        dir.add("Baje por las escaleras");
         tmp.add(this.lugares.get(4));
+        dir.add("Suba por la rampa hasta llegar a los bancos");
         coord.add(30F);
         this.lugares.get(1).setAdyacentes(tmp);
         this.lugares.get(1).setCoordenadas(coord);
+        this.lugares.get(1).setDirecciones(dir);
         //ESCALERAS EXTERIORES
         tmp = new ArrayList<Node>();
         coord=new ArrayList<>();
+        dir=new ArrayList<>();
 
         tmp.add(this.lugares.get(1));
         //210-180
         coord.add(30F);
+        dir.add("Suba las escaleras");
         tmp.add(this.lugares.get(3));
+        dir.add("Cruce la puerta y encontrara el comedor");
         //135-180+360
         coord.add(315F);
         this.lugares.get(2).setAdyacentes(tmp);
         this.lugares.get(2).setCoordenadas(coord);
+        this.lugares.get(2).setDirecciones(dir);
         //COMEDOR
         tmp = new ArrayList<Node>();
         coord=new ArrayList<>();
-
+        dir=new ArrayList<>();
         tmp.add(this.lugares.get(2));
         coord.add(135F);
+        dir.add("Cruce la puerta, hasta llegar a las escaleras");
         //tmp.add(this.lugares.get(14));
         this.lugares.get(3).setAdyacentes(tmp);
         this.lugares.get(3).setCoordenadas(coord);
+        this.lugares.get(3).setDirecciones(dir);
 
         //FUENTE / BANCO CON TECHO
         tmp = new ArrayList<Node>();
         coord=new ArrayList<>();
+        dir=new ArrayList<>();
         tmp.add(this.lugares.get(1));
         coord.add(220F);
+        dir.add("Ve hacia los bancos rojos");
         tmp.add(this.lugares.get(5));
         coord.add(34F);
+        dir.add("Siga al cursor hasta entrar la entrada del edificio");
         this.lugares.get(4).setAdyacentes(tmp);
         this.lugares.get(4).setCoordenadas(coord);
+        this.lugares.get(4).setDirecciones(dir);
         //ENTRADA EDIFICIO B
         tmp = new ArrayList<Node>();
         coord=new ArrayList<>();
+        dir=new ArrayList<>();
         tmp.add(this.lugares.get(4));
+        dir.add("Ve hacia los bancos de madera");
         coord.add(224F);
         tmp.add(this.lugares.get(6));
         //290-180
+        dir.add("Entre al edificio");
         coord.add(110F);
         this.lugares.get(5).setAdyacentes(tmp);
         this.lugares.get(5).setCoordenadas(coord);
+        this.lugares.get(5).setDirecciones(dir);
         //AULA 0.X
         tmp = new ArrayList<Node>();
         coord=new ArrayList<>();
+        dir=new ArrayList<>();
         tmp.add(this.lugares.get(5));
         coord.add(290F);
+        dir.add("Salga del edificio por conserjería");
         tmp.add(this.lugares.get(7));
         coord.add(110F);
+        dir.add("Ve hacia las escaleras en frente de los baños");
         this.lugares.get(6).setAdyacentes(tmp);
         this.lugares.get(6).setCoordenadas(coord);
+        this.lugares.get(6).setDirecciones(dir);
         //ESCALERAS 0-1
         tmp = new ArrayList<Node>();
         coord=new ArrayList<>();
+        dir=new ArrayList<>();
         tmp.add(this.lugares.get(6));
         coord.add(290F);
+        dir.add("Baje las escaleras");
         tmp.add(this.lugares.get(8));
+        dir.add("Suba las escaleras");
         coord.add(110F);
         this.lugares.get(7).setAdyacentes(tmp);
         this.lugares.get(7).setCoordenadas(coord);
+        this.lugares.get(7).setDirecciones(dir);
         //AULA 1.X
         tmp = new ArrayList<Node>();
         coord=new ArrayList<>();
+        dir=new ArrayList<>();
         tmp.add(this.lugares.get(7));
         coord.add(290F);
+        dir.add("Ve a las escaleras de bajada en frente de los baños");
         tmp.add(this.lugares.get(9));
         coord.add(110F);
+        dir.add("Ve a las escaleras de subida en frente de los baños");
         this.lugares.get(8).setAdyacentes(tmp);
         this.lugares.get(8).setCoordenadas(coord);
-
+        this.lugares.get(8).setDirecciones(dir);
         //ESCALERAS 1-2
         tmp = new ArrayList<Node>();
         coord=new ArrayList<>();
+        dir=new ArrayList<>();
         tmp.add(this.lugares.get(8));
         coord.add(290F);
+        dir.add("Baje las escaleras");
         tmp.add(this.lugares.get(10));
         coord.add(110F);
+        dir.add("Suba las escaleras");
         this.lugares.get(9).setAdyacentes(tmp);
         this.lugares.get(9).setCoordenadas(coord);
+        this.lugares.get(9).setDirecciones(dir);
 
         //AULA 2.X
         tmp = new ArrayList<Node>();
         coord=new ArrayList<>();
+        dir=new ArrayList<>();
         tmp.add(this.lugares.get(9));
         coord.add(290F);
+        dir.add("Ve hacia las escaleras de bajada frente a los baños");
         tmp.add(this.lugares.get(11));
+        dir.add("Ve a las escaleras de subida en frente de los baños");
         coord.add(110F);
         this.lugares.get(10).setAdyacentes(tmp);
         this.lugares.get(10).setCoordenadas(coord);
-
+        this.lugares.get(10).setDirecciones(dir);
         //ESCALERAS 2-3
         tmp = new ArrayList<Node>();
         coord=new ArrayList<>();
+        dir=new ArrayList<>();
         tmp.add(this.lugares.get(10));
         coord.add(290F);
+        dir.add("Baje las escaleras");
         tmp.add(this.lugares.get(12));
         coord.add(110F);
+        dir.add("Suba las escaleras");
         this.lugares.get(11).setAdyacentes(tmp);
         this.lugares.get(11).setCoordenadas(coord);
-
+        this.lugares.get(11).setDirecciones(dir);
 
         //AULA 3.X
         tmp = new ArrayList<Node>();
         coord=new ArrayList<>();
+        dir=new ArrayList<>();
         tmp.add(this.lugares.get(11));
         coord.add(112F);
+        dir.add("Ve a las escaleras de bajada frente a los baños");
         this.lugares.get(12).setAdyacentes(tmp);
         this.lugares.get(12).setCoordenadas(coord);
-
+        this.lugares.get(12).setDirecciones(dir);
     }
 
     public Lugares(String s){
