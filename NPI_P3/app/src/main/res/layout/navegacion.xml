@@ -9,6 +9,7 @@
         android:id="@+id/navegacion_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="15dp"
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="1dp">
@@ -91,6 +92,25 @@
                     app:layout_constraintTop_toBottomOf="@+id/textoNavegacionDestino"
                     tools:layout_editor_absoluteX="1dp" />
             </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2" />
+
+            <TextView
+                android:id="@+id/tvLlegada"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Ha llegado a su destino"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+                android:visibility="invisible" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="3" />
 
             <Button
                 android:id="@+id/siguienteClase"

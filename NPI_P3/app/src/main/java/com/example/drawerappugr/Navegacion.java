@@ -28,6 +28,8 @@ public class Navegacion {
     private final LinearLayout linearLayout;
     private final Horarios h = new Horarios();
 
+    private ArrayList<Node> camino;
+
     private Spinner spinnerOrigen;
     private Spinner spinnerDestino;
     private Cursor cursor;
@@ -44,11 +46,13 @@ public class Navegacion {
     private TextView textInstrucionesPaso;
     private TextView textOrigen;
     private TextView textDestino;
+    private final TextView haLlegado;
 
     private View viewCursor;
     private View viewOpNav;
 
     private Lugares lugares;
+    private int pos_actual;
 
     private ActivityResultLauncher<ScanOptions> barLauncher;
 
@@ -72,6 +76,7 @@ public class Navegacion {
         textInstrucionesPaso = (TextView) activity.findViewById(R.id.tvDestino);
         textOrigen = (TextView) activity.findViewById(R.id.textOrigen);
         textDestino = (TextView) activity.findViewById(R.id.textDestino);
+        haLlegado = activity.findViewById(R.id.tvLlegada);
 
         viewCursor = (View) activity.findViewById(R.id.viewCursor);
         viewOpNav = (View) activity.findViewById(R.id.viewOpcionesNav);
@@ -85,7 +90,7 @@ public class Navegacion {
 
         lugares = new Lugares();
 
-        lugares.printCamino("Entrada Principal","Aulas 3.x");
+        // lugares.printCamino("Entrada Principal","Aulas 3.x");
 
         // Si eligen algo cargo el origen y el destino
         spinnerOrigen.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -142,13 +147,13 @@ public class Navegacion {
         // Boton anterior paso Navegación
         prevNode.setOnTouchListener(new GestosPantalla(false,false, true){
             @Override
-            public void touchDownCallback() {;}
+            public void touchDownCallback() {ponerPaso(pos_actual-1);}
         });
 
         // Boton siguiente paso Navegacion
         nextNode.setOnTouchListener(new GestosPantalla(false,false, true){
             @Override
-            public void touchDownCallback() {;}
+            public void touchDownCallback() {ponerPaso(pos_actual-1);}
         });
 
         // Boton cancelar navegacion
@@ -169,7 +174,6 @@ public class Navegacion {
     private void cancelNav() {
         viewOpNav.setVisibility(View.VISIBLE);
         viewCursor.setVisibility(View.GONE);
-
     }
 
     public void onResume() {
@@ -193,6 +197,13 @@ public class Navegacion {
     }
 
     private void initNav(){
+        haLlegado.setVisibility(View.INVISIBLE);
+        pos_actual = 0;
+        if(camino.equals(destino))
+            camino = new ArrayList<Node>();
+        else
+            camino = lugares.printCamino(origen, destino);
+
         viewOpNav.setVisibility(View.GONE);
         viewCursor.setVisibility(View.VISIBLE);
         // Llamar funciones para iniciar navegación
@@ -201,26 +212,33 @@ public class Navegacion {
     private void creaGestosGenerales(){
         linearLayout.setOnTouchListener(new GestosPantalla(true, true, false){
             @Override
-            public void swipeCallback(direction dir) {
-                switch (dir){
-                    case IZQUIERDA:
-                        break;
-                    case DERECHA:
-                        break;
-                }
-            }
-            @Override
             public void doubleSwipeCallback(direction dir) {
                 switch (dir) {
                     case ARRIBA:
                     case IZQUIERDA:
+                        cancelNav();
                         activity.muestraSiguiente(); break;
                     case ABAJO:
                     case DERECHA:
+                        cancelNav();
                         activity.muestraAnterior(); break;
                 }
             }
         });
+
+        viewCursor.setOnTouchListener(new GestosPantalla(true, true, false){
+            @Override
+            public void swipeCallback(direction dir) {
+                switch (dir) {
+                    case IZQUIERDA:
+                        ponerPaso(pos_actual+1);
+                    case DERECHA:
+                        ponerPaso(pos_actual-1);
+                }
+            }
+        });
+
+
 
         gestosSensor = new GestosSensor(activity.getApplicationContext(), true, true, false, true, false){
             @Override
@@ -255,5 +273,36 @@ public class Navegacion {
         spinnerDestino.setSelection(sitios.indexOf(destino));
         textOrigen.setText(origen);
         textDestino.setText(destino);
+    }
+
+    private float orientacionSiguiente(Node n1, Node n2){
+        return n1.getCoordenadas().get( n1.getAdyacentes().indexOf( n2 ) );
+    }
+
+    private String direccionesSiguiente(Node n1, Node n2){
+        return n1.getDirecciones().get( n1.getAdyacentes().indexOf( n2 ) );
+    }
+
+    private void ponerPaso(int pos){
+        if(pos < 0){
+            pos_actual = 0;
+        }
+        else if(pos > camino.size() - 1){
+            pos_actual = camino.size();
+            llegadaAlDestino();
+        }
+        else{
+            pos = pos_actual;
+            Node actual = camino.get(pos);
+            Node siguiente = camino.get(pos + 1);
+
+            cursor.headTo(orientacionSiguiente(actual, siguiente));
+            textInstrucionesPaso.setText(direccionesSiguiente(actual, siguiente));
+        }
+    }
+
+    private void llegadaAlDestino(){
+        cancelNav();
+        haLlegado.setVisibility(View.VISIBLE);
     }
 }

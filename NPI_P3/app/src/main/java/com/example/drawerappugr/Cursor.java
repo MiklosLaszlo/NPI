@@ -31,7 +31,7 @@ public class Cursor{
     private float rx_antiguo = 0;   // En grados
     private float ry_antiguo = 0;   // En grados
 
-    float heading = 0f;
+    private float heading = 0f;
 
     @SuppressLint("ClickableViewAccessibility")
     public Cursor(Activity activity) {
