@@ -38,7 +38,6 @@ public class Navegacion {
     private Button nextNode;
     private Button prevNode;
     private Button cancelNavButton;
-    private Button navClases;
 
     private String origen = new String();
     private String destino = new String();
@@ -69,7 +68,6 @@ public class Navegacion {
         cancelNavButton = (Button) activity.findViewById(R.id.cancelarNavegacion);
         prevNode = (Button) activity.findViewById(R.id.PrevNode);
         nextNode = (Button) activity.findViewById(R.id.NextNode);
-        navClases = (Button) activity.findViewById(R.id.siguienteClase);
 
         textInstrucionesPaso = (TextView) activity.findViewById(R.id.tvDestino);
         textOrigen = (TextView) activity.findViewById(R.id.textOrigen);
@@ -127,43 +125,39 @@ public class Navegacion {
             if(result.getContents() != null){
                 // GUARDA EL TEXTO LEIDO AQUI
                 origen=result.getContents();
+                spinnerOrigen.setSelection(sitios.indexOf(origen));
                 textOrigen.setText(origen);
             }
-        });
-
-        navClases.setOnTouchListener(new GestosPantalla(false,false, true){
-            @Override
-            public void touchUpCallback() {;}
         });
 
         // Boton inicia escaner
         scannerButton.setOnTouchListener(new GestosPantalla(false,false, true){
             @Override
-            public void touchUpCallback() {scanCode();}
+            public void touchDownCallback() {scanCode();}
         });
 
         // Boton inicia navegacion
         initNavButton.setOnTouchListener(new GestosPantalla(false,false, true){
             @Override
-            public void touchUpCallback() {initNav();}
+            public void touchDownCallback() {initNav();}
         });
 
         // Boton anterior paso Navegación
         prevNode.setOnTouchListener(new GestosPantalla(false,false, true){
             @Override
-            public void touchUpCallback() {;}
+            public void touchDownCallback() {;}
         });
 
         // Boton siguiente paso Navegacion
         nextNode.setOnTouchListener(new GestosPantalla(false,false, true){
             @Override
-            public void touchUpCallback() {;}
+            public void touchDownCallback() {;}
         });
 
         // Boton cancelar navegacion
         cancelNavButton.setOnTouchListener(new GestosPantalla(false,false, true){
             @Override
-            public void touchUpCallback()  {cancelNav();}
+            public void touchDownCallback()  {cancelNav();}
         });
 
         siguienteBtn.setOnTouchListener(new GestosPantalla(false, false, true){
