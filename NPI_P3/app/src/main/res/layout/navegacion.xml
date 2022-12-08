@@ -7,12 +7,15 @@
 
     <LinearLayout
         android:id="@+id/navegacion_layout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_margin="15dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
         android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="1dp">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/viewOpcionesNav"
@@ -49,12 +52,13 @@
                 <Spinner
                     android:id="@+id/menuNavegacionOrigen"
                     android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="0dp"
                     android:spinnerMode="dialog"
                     android:textAlignment="center"
                     app:layout_constraintTop_toBottomOf="@+id/preungtaOrigenNavegación"
                     tools:layout_editor_absoluteX="1dp" />
+
             </LinearLayout>
 
             <TextView
@@ -76,8 +80,9 @@
                 <TextView
                     android:id="@+id/textDestino"
                     android:layout_width="wrap_content"
-                    android:layout_height="48dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:layout_marginTop="13dp"
                     android:text="TextView"
                     android:textAlignment="center"
                     android:textSize="16sp" />
@@ -86,7 +91,7 @@
                     android:id="@+id/menuNavegacionDestino"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="0dp"
                     android:spinnerMode="dialog"
                     android:textAlignment="center"
                     app:layout_constraintTop_toBottomOf="@+id/textoNavegacionDestino"
@@ -138,11 +143,12 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:visibility="gone">
-
             <include
                 layout="@layout/cursor"
                 android:layout_width="match_parent"
                 android:visibility="visible"></include>
+
+
         </LinearLayout>
 
 

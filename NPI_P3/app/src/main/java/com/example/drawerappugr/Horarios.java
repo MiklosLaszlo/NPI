@@ -81,7 +81,7 @@ public class Horarios {
         // DESCOMENTAR PARA HORA ACTUAL !!!!!
         // SimpleDateFormat sdfHour = new SimpleDateFormat("hh:mm");
         // String now = sdfHour.format(c.getTime());
-        String now= "12:30";
+        String now= "10:30";
 
         for(int i=0;i<h.get(day).size() && !enClase;++i){
             enClase = (now.compareTo(h.get(day).get(i).inicio) >= 0)
@@ -115,7 +115,7 @@ public class Horarios {
         // DESCOMENTAR PARA HORA ACTUAL !!!!!
         //SimpleDateFormat sdfHour = new SimpleDateFormat("hh:mm");
         //String now = sdfHour.format(c.getTime());
-        String now= "12:30";
+        String now= "10:30";
         int j=-1;
         for(int i=0;i<h.get(day).size() && !enClase;++i){
             enClase = (now.compareTo(h.get(day).get(i).inicio) >= 0)
