@@ -2,4 +2,11 @@
     <string name="app_name">Aplicación UGR</string>
     <string name="menu_open">Open</string>
     <string name="menu_close">Close</string>
+    <string-array name="lugares">
+        <item>Entrada</item>
+        <item>Comedor</item>
+        <item>Aula 1.2</item>
+        <item>Aula 3.3</item>
+        <item>Aula 3.9</item>
+    </string-array>
 </resources>

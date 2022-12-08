@@ -8,36 +8,72 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="1dp">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/preungtaOrigenNavegación"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginTop="16dp"
+            android:spinnerMode="dropdown"
+            android:text="¿Dónde estás?"
+            android:textAlignment="center"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="16dp" />
 
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/tvDestino"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Vaya hacia "
-                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-        </LinearLayout>
-
-        <com.google.ar.sceneform.SceneView
-            android:id="@+id/scene_view"
+        <Spinner
+            android:id="@+id/menuNavegacionOrigen"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:spinnerMode="dropdown"
+            android:textAlignment="center"
+            app:layout_constraintTop_toBottomOf="@+id/preungtaOrigenNavegación"
+            tools:layout_editor_absoluteX="1dp" />
 
+        <TextView
+            android:id="@+id/textoNavegacionDestino"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="¿A dónde quieres ir?"
+            android:textAlignment="center"
+            app:layout_constraintTop_toBottomOf="@+id/menuNavegacionOrigen"
+            tools:layout_editor_absoluteX="122dp" />
+
+        <Spinner
+            android:id="@+id/menuNavegacionDestino"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:spinnerMode="dropdown"
+            android:textAlignment="center"
+            app:layout_constraintTop_toBottomOf="@+id/textoNavegacionDestino"
+            tools:layout_editor_absoluteX="1dp" />
+
+        <Button
+            android:id="@+id/scanbuttonav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Busca QR para localizarte" />
+
+        <Button
+            android:id="@+id/inicarNav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Iniciar Navegación" />
+
+
+        <include
+            android:id="@+id/layoiutCursor"
+            layout="@layout/cursor"
+            android:layout_width="match_parent"
+            android:visibility="gone"></include>
+
+
+
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

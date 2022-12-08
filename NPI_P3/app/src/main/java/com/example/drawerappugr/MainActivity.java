@@ -16,6 +16,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -30,9 +32,14 @@ public class MainActivity extends AppCompatActivity {
     ViewFlipper viewFlipper;
     ConstraintLayout constraintLayout;
 
+    private Spinner spinnerOrigen;
+    private Spinner spinnerDestino;
+
+    // Sistema Horarios
     public static final Integer RecordAudioRequestCode = 1;
 
     ImplementaComedores implementaComedores;
+    Navegacion navegacion;
     Horarios_bonitos horarios_bonitos;
 
     GestosSensor gestosSensor;
@@ -77,7 +84,13 @@ public class MainActivity extends AppCompatActivity {
 
                     case R.id.nav_comedores:
                         Log.i("MENU_DRAWER_TAG","Comedores item is clicked");
-                        mostrarPantalla(2);
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        viewFlipper.setDisplayedChild(2);
+                        break;
+                    case R.id.nav_navigation:
+                        Log.i("MENU_DRAWER_TAG","Navegacion item is clicked");
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        viewFlipper.setDisplayedChild(4);
                         break;
 
                     case R.id.nav_info:
@@ -96,7 +109,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         implementaComedores = new ImplementaComedores(this);
-        horarios_bonitos = new Horarios_bonitos(this);
+        navegacion = new Navegacion(this)
+		  horarios_bonitos = new Horarios_bonitos(this);
     }
 
     public void muestraAnterior(){
@@ -119,33 +133,21 @@ public class MainActivity extends AppCompatActivity {
         gestosSensor.unregisterListener();
         horarios_bonitos.descargar();
         implementaComedores.descargar();
+
+        navegacion = new Navegacion(this);
     }
 
-    private void creaGestosGenerales(){
-        gestosSensor = new GestosSensor(this, true, false, false, false, false){
-            @Override
-            public void dobleGiroManoIzquierdaCallback() {muestraAnterior();}
-            @Override
-            public void dobleGiroManoDerechaCallback() {muestraSiguiente();}
-        };
-        gestosSensor.registerListener();
-
-        drawerLayout.setOnTouchListener(new GestosPantalla(true,false,false){
-            @Override
-            public void doubleSwipeCallback(direction dir) {
-                if(dir == direction.DERECHA || dir==direction.ABAJO){
-                    muestraAnterior();
-                }
-                if(dir == direction.IZQUIERDA || dir==direction.ARRIBA){
-                    muestraSiguiente();
-                }
-            }
-        });
+    @Override
+    public void onResume(){
+        super.onResume();
+        navegacion.onResume();
     }
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        navegacion.onDestroy();
     }
 
     private void checkPermission() {
