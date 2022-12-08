@@ -93,6 +93,12 @@
             </LinearLayout>
 
             <Button
+                android:id="@+id/siguienteClase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ir a la siguiente clase" />
+
+            <Button
                 android:id="@+id/scanbuttonav"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -113,10 +119,7 @@
             android:orientation="vertical"
             android:visibility="gone">
 
-            <include
-                layout="@layout/cursor"
-                android:layout_width="match_parent"
-                android:visibility="visible"></include>
+
         </LinearLayout>
 
 

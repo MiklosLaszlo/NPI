@@ -44,7 +44,7 @@ public class Horarios {
         h.add(Jueves);
 
         Viernes.add(new StructHorarios("08:30","09:30","3.3","NPI (practicas)"));
-        Viernes.add(new StructHorarios("10:30","11:30","3.3","NPI (practicas)"));
+        Viernes.add(new StructHorarios("09:30","10:30","3.3","NPI (practicas)"));
         Viernes.add(new StructHorarios("10:30","11:30","1.2","NPI"));
         Viernes.add(new StructHorarios("11:30","12:30","1.2","NPI"));
         Viernes.add(new StructHorarios("12:30","13:30","3.9","PL (practicas)"));
@@ -70,8 +70,8 @@ public class Horarios {
         Calendar c = Calendar.getInstance(timeZone);
 
         //Para poner day entre 0 y 6 en vez de 2 y 8
-        int day = c.get(Calendar.DAY_OF_WEEK) - CACA;
-
+        //int day = c.get(Calendar.DAY_OF_WEEK) - CACA;
+        int day = 4;
         if( day < 0 && 4 < day){
             // Log.e("Lugares ","Entra day fuera rango");
             return null;
@@ -91,6 +91,41 @@ public class Horarios {
             //Log.e("Lugares h",""+ now.compareTo(h.get(day).get(i).fin));
             if(enClase){
                 return h.get(day).get(i).aula;
+            }
+        }
+
+        return null;
+    }
+
+    public String getNextAula() {
+        //final int CACA = 2;
+        TimeZone timeZone = TimeZone.getTimeZone("UTC");
+        Calendar c = Calendar.getInstance(timeZone);
+
+        //Para poner day entre 0 y 6 en vez de 2 y 8
+        //int day = c.get(Calendar.DAY_OF_WEEK) - CACA;
+        int day = 4;
+
+        if( day < 0 && 4 < day){
+            // Log.e("Lugares ","Entra day fuera rango");
+            return null;
+        }
+
+        boolean enClase=false;
+        // DESCOMENTAR PARA HORA ACTUAL !!!!!
+        SimpleDateFormat sdfHour = new SimpleDateFormat("hh:mm");
+        String now = sdfHour.format(c.getTime());
+        //String now= "12:30";
+        int j=-1;
+        for(int i=0;i<h.get(day).size() && !enClase;++i){
+            enClase = (now.compareTo(h.get(day).get(i).inicio) >= 0)
+                    && (now.compareTo(h.get(day).get(i).fin) <= 0);
+            //Log.e("Lugares día inicio",""+ h.get(day).get(i).inicio + h.get(day).get(i).fin);
+            //Log.e("Lugares h",""+ now.compareTo(h.get(day).get(i).inicio));
+            //Log.e("Lugares h",""+ now.compareTo(h.get(day).get(i).fin));
+            if(enClase){
+                if(i<h.get(day).size()-1)
+                    return h.get(day).get(i+1).aula;
             }
         }
 

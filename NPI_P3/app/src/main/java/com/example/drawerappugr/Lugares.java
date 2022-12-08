@@ -242,7 +242,7 @@ public class Lugares{
     }
 
     //imprime el mejor camino
-    public String printCamino(String s_inicio, String s_final){
+    public ArrayList<Node> printCamino(String s_inicio, String s_final){
         //Crear array de visitados
         ArrayList<Boolean> visitados = new ArrayList<Boolean>();
         for(int i =0; i < this.lugares.size(); ++i){
@@ -267,9 +267,9 @@ public class Lugares{
         }
 
         for(int i=0;i < tmp.size();++i){
-            ruta = ruta + " --> " + tmp.get(i).getString();
+            Log.i("Salida",)
         }
-        return ruta;
+        return tmp;
     }
 
 

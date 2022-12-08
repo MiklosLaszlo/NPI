@@ -3,7 +3,7 @@
     <string name="menu_open">Open</string>
     <string name="menu_close">Close</string>
     <string-array name="lugares">
-        <item>Entrada</item>
+        <item>Entrada Principal</item>
         <item>Comedor</item>
         <item>Aula 1.2</item>
         <item>Aula 3.3</item>
