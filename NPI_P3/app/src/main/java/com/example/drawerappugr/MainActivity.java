@@ -109,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         implementaComedores = new ImplementaComedores(this);
-        navegacion = new Navegacion(this)
-		  horarios_bonitos = new Horarios_bonitos(this);
+        navegacion = new Navegacion(this);
+        horarios_bonitos = new Horarios_bonitos(this);
     }
 
     public void muestraAnterior(){
@@ -118,6 +118,45 @@ public class MainActivity extends AppCompatActivity {
     }
     public void muestraSiguiente(){
         mostrarPantalla( (viewFlipper.getDisplayedChild() + 1) % viewFlipper.getChildCount() );
+    }
+
+    private void mostrarPantalla(int i){
+        drawerLayout.closeDrawer(GravityCompat.START);
+        viewFlipper.setDisplayedChild(i);
+
+        horarios_bonitos.descargar();
+        implementaComedores.descargar();
+
+        switch (i) {
+            case 1:
+                horarios_bonitos.cargar(); break;
+            case 2:
+                implementaComedores.cargar(); break;
+            default:
+                break;
+        }
+    }
+
+    private void creaGestosGenerales(){
+        gestosSensor = new GestosSensor(this, true, false, false, false, false){
+            @Override
+            public void dobleGiroManoIzquierdaCallback() {muestraAnterior();}
+            @Override
+            public void dobleGiroManoDerechaCallback() {muestraSiguiente();}
+        };
+        gestosSensor.registerListener();
+
+        drawerLayout.setOnTouchListener(new GestosPantalla(true,false,false){
+            @Override
+            public void doubleSwipeCallback(direction dir) {
+                if(dir == direction.DERECHA || dir==direction.ABAJO){
+                    muestraAnterior();
+                }
+                if(dir == direction.IZQUIERDA || dir==direction.ARRIBA){
+                    muestraSiguiente();
+                }
+            }
+        });
     }
 
     public void cargar(){
@@ -135,19 +174,6 @@ public class MainActivity extends AppCompatActivity {
         implementaComedores.descargar();
 
         navegacion = new Navegacion(this);
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-        navegacion.onResume();
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        navegacion.onDestroy();
     }
 
     private void checkPermission() {
@@ -168,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
+        navegacion.onResume();
         cargar();
     }
 
@@ -177,20 +204,10 @@ public class MainActivity extends AppCompatActivity {
         descargar();
     }
 
-    private void mostrarPantalla(int i){
-        drawerLayout.closeDrawer(GravityCompat.START);
-        viewFlipper.setDisplayedChild(i);
-
-        horarios_bonitos.descargar();
-        implementaComedores.descargar();
-
-        switch (i) {
-            case 1:
-                horarios_bonitos.cargar(); break;
-            case 2:
-                implementaComedores.cargar(); break;
-            default:
-                break;
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        navegacion.onDestroy();
     }
+
 }
