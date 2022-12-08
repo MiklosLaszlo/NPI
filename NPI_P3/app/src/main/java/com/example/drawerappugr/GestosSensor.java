@@ -255,7 +255,7 @@ public class GestosSensor implements SensorEventListener {
     public void proximidadCallback() {}
 
     private boolean gestoProximidad(SensorEvent sensorEvent) {
-        return !(sensorEvent.values[0] > 0);
+        return (sensorEvent.values[0] < 3);
     }
 
     //endregion
