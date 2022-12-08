@@ -53,7 +53,7 @@ public class Lugares{
         tmp.add(this.lugares.get(3));
         this.lugares.get(14).setAdyacentes(tmp);*/
 
-        //FUTBOLÍN
+        //Bancos Rojos / FUTBOLÍN
         tmp = new ArrayList<Node>();
         coord=new ArrayList<>();
 
@@ -267,7 +267,9 @@ public class Lugares{
         }
 
         for(int i=0;i < tmp.size();++i){
-            Log.i("Salida",)
+            Log.i("Salida",tmp.get(i).getString());
+            if(i+1<tmp.size())
+                Log.i("Salida",String.valueOf( tmp.get(i).getCoordenadas().get( tmp.get(i).getAdyacentes().indexOf( tmp.get(i+1) ) ) ) );
         }
         return tmp;
     }

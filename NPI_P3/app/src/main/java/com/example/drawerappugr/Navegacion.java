@@ -38,6 +38,7 @@ public class Navegacion {
     private Button nextNode;
     private Button prevNode;
     private Button cancelNavButton;
+    private Button navClases;
 
     private String origen = new String();
     private String destino = new String();
@@ -47,6 +48,8 @@ public class Navegacion {
 
     private View viewCursor;
     private View viewOpNav;
+
+    private Lugares lugares;
 
     private ActivityResultLauncher<ScanOptions> barLauncher;
 
@@ -66,6 +69,7 @@ public class Navegacion {
         cancelNavButton = (Button) activity.findViewById(R.id.cancelarNavegacion);
         prevNode = (Button) activity.findViewById(R.id.PrevNode);
         nextNode = (Button) activity.findViewById(R.id.NextNode);
+        navClases = (Button) activity.findViewById(R.id.siguienteClase);
 
         textInstrucionesPaso = (TextView) activity.findViewById(R.id.tvDestino);
         textOrigen = (TextView) activity.findViewById(R.id.textOrigen);
@@ -75,14 +79,18 @@ public class Navegacion {
         viewOpNav = (View) activity.findViewById(R.id.viewOpcionesNav);
 
         // Destino y Origen por defecto
-        origen="Entrada";
-        destino="Entrada";
+        origen="Entrada Principal";
+        destino="Entrada Principal";
         textOrigen.setText(origen);
         textDestino.setText(destino);
 
         // Creo el menu desplegable
         spinnerDestino.setAdapter(adapter);
         spinnerOrigen.setAdapter(adapter);
+
+        lugares = new Lugares();
+
+        lugares.printCamino("Entrada Principal","Aulas 3.x");
 
         // Si eligen algo cargo el origen y el destino
         spinnerOrigen.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -123,29 +131,39 @@ public class Navegacion {
             }
         });
 
+        navClases.setOnTouchListener(new GestosPantalla(false,false, true){
+            @Override
+            public void touchUpCallback() {;}
+        });
+
         // Boton inicia escaner
-        scannerButton.setOnClickListener(v->{
-            scanCode();
+        scannerButton.setOnTouchListener(new GestosPantalla(false,false, true){
+            @Override
+            public void touchUpCallback() {scanCode();}
         });
 
         // Boton inicia navegacion
-        initNavButton.setOnClickListener(v ->{
-            initNav();
+        initNavButton.setOnTouchListener(new GestosPantalla(false,false, true){
+            @Override
+            public void touchUpCallback() {initNav();}
         });
 
         // Boton anterior paso Navegación
-        prevNode.setOnClickListener(v->{
-            //
+        prevNode.setOnTouchListener(new GestosPantalla(false,false, true){
+            @Override
+            public void touchUpCallback() {;}
         });
 
         // Boton siguiente paso Navegacion
-        nextNode.setOnClickListener(v->{
-            //
+        nextNode.setOnTouchListener(new GestosPantalla(false,false, true){
+            @Override
+            public void touchUpCallback() {;}
         });
 
         // Boton cancelar navegacion
-        cancelNavButton.setOnClickListener(v -> {
-            cancelNav();
+        cancelNavButton.setOnTouchListener(new GestosPantalla(false,false, true){
+            @Override
+            public void touchUpCallback()  {cancelNav();}
         });
 
         siguienteBtn.setOnTouchListener(new GestosPantalla(false, false, true){
