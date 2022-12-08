@@ -117,7 +117,7 @@ public class MenuAceptarComedor {
         layout.setVisibility(View.VISIBLE);
 
         // Para añadir delay
-        new CountDownTimer(300, 300){
+        new CountDownTimer(800, 300){
             @Override
             public void onTick(long l) {}
             @Override
