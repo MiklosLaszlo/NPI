@@ -169,8 +169,6 @@ public class MainActivity extends AppCompatActivity {
         gestosSensor.unregisterListener();
         horarios_bonitos.descargar();
         implementaComedores.descargar();
-
-        navegacion = new Navegacion(this);
     }
 
     private void checkPermission() {
