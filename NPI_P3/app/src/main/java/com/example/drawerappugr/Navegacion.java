@@ -251,8 +251,6 @@ public class Navegacion {
         origen = actual == null ? "Entrada" : actual;
         destino = siguiente == null ? "Entrada" : siguiente;
 
-        Log.i("a", sitios.indexOf(origen) + " " + destino);
-
         spinnerOrigen.setSelection(sitios.indexOf(origen));
         spinnerDestino.setSelection(sitios.indexOf(destino));
         textOrigen.setText(origen);
