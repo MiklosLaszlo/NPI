@@ -6,8 +6,9 @@ import java.util.ArrayList;
 
 public class Node {
     public String data;
-    private ArrayList<Node> adyacentes;
+    public ArrayList<Node> adyacentes;
     public ArrayList<Float> coordenadas;
+    public ArrayList<String> direcciones;
 
 
     public Node(){
@@ -31,8 +32,14 @@ public class Node {
         this.coordenadas=coord;
     }
 
+    public void setDirecciones(ArrayList<String> dir){this.direcciones=dir;}
+
     public ArrayList<Node> getAdyacentes(){
         return this.adyacentes;
+    }
+
+    public ArrayList<String> getDirecciones(){
+        return this.direcciones;
     }
 
     public ArrayList<Float> getCoordenadas(){return  this.coordenadas;}
