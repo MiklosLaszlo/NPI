@@ -119,7 +119,10 @@
             android:orientation="vertical"
             android:visibility="gone">
 
-
+            <include
+                layout="@layout/cursor"
+                android:layout_width="match_parent"
+                android:visibility="visible"></include>
         </LinearLayout>
 
 
