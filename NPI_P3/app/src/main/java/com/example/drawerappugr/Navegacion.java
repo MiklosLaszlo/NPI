@@ -90,7 +90,8 @@ public class Navegacion {
 
         lugares = new Lugares();
 
-        // lugares.printCamino("Entrada Principal","Aulas 3.x");
+        //Node algo = lugares.printCamino("Entrada Principal","Aulas 3.x").get(0);
+        //Log.e("PRUEBA A AA A" , algo.getString());
 
         // Si eligen algo cargo el origen y el destino
         spinnerOrigen.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -153,7 +154,7 @@ public class Navegacion {
         // Boton siguiente paso Navegacion
         nextNode.setOnTouchListener(new GestosPantalla(false,false, true){
             @Override
-            public void touchDownCallback() {ponerPaso(pos_actual-1);}
+            public void touchDownCallback() {ponerPaso(pos_actual+1);}
         });
 
         // Boton cancelar navegacion
@@ -199,13 +200,18 @@ public class Navegacion {
     private void initNav(){
         haLlegado.setVisibility(View.INVISIBLE);
         pos_actual = 0;
-        if(camino.equals(destino))
+
+        // Log.e("INITNAV", pasarAString(origen) +"|"+pasarAString(destino));
+
+        if(origen.equals(destino))
             camino = new ArrayList<Node>();
         else
-            camino = lugares.printCamino(origen, destino);
+            camino = lugares.printCamino(pasarAString(origen), pasarAString(destino)); //"Aulas 1.x", "Entrada Principal");
 
         viewOpNav.setVisibility(View.GONE);
         viewCursor.setVisibility(View.VISIBLE);
+
+        ponerPaso(0);
         // Llamar funciones para iniciar navegación
     }
 
@@ -238,8 +244,6 @@ public class Navegacion {
             }
         });
 
-
-
         gestosSensor = new GestosSensor(activity.getApplicationContext(), true, true, false, true, false){
             @Override
             public void giroManoIzquierdaCallback() {}
@@ -255,7 +259,7 @@ public class Navegacion {
 
     private static ArrayList<String> sitios = new ArrayList<String>();
     static {
-        sitios.add("Entrada Principal");
+        sitios.add("Entrada");
         sitios.add("Comedor");
         sitios.add("1.2");
         sitios.add("3.3");
@@ -275,6 +279,26 @@ public class Navegacion {
         textDestino.setText(destino);
     }
 
+    private String pasarAString(String cosa) { // La entrada es por ejemplo 0.1 o 2.8 o entrada.
+        Log.e("Pasar", cosa + " " +cosa.length());
+        if(cosa.equals("Entrada"))
+            return "Entrada Principal";
+        else if(cosa.length()==3 ){
+            char planta = cosa.charAt(0);
+            return ("Aulas " + planta + ".x").toString();
+        }
+        else if(cosa.length() == 8){
+            char planta = cosa.charAt(5);
+            return ("Aulas " + planta + ".x").toString();
+        }
+        else
+            return cosa;
+    }
+
+    private boolean aulaAIzquierda(String aula){
+        return Character.valueOf(aula.charAt(2)) >=8;
+    }
+
     private float orientacionSiguiente(Node n1, Node n2){
         return n1.getCoordenadas().get( n1.getAdyacentes().indexOf( n2 ) );
     }
@@ -284,15 +308,16 @@ public class Navegacion {
     }
 
     private void ponerPaso(int pos){
+        Log.i("Poner paso", pos+"");
         if(pos < 0){
             pos_actual = 0;
         }
-        else if(pos > camino.size() - 1){
+        else if(pos >= camino.size() - 1){
             pos_actual = camino.size();
             llegadaAlDestino();
         }
         else{
-            pos = pos_actual;
+            pos_actual = pos;
             Node actual = camino.get(pos);
             Node siguiente = camino.get(pos + 1);
 

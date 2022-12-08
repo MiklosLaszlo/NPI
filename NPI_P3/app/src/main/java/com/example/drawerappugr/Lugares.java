@@ -242,7 +242,7 @@ public class Lugares{
         int pos=-1;
 
         for(int i=0;i<this.lugares.size() && !encontrado ;++i){
-            if(this.lugares.get(i).getString()==s){
+            if(this.lugares.get(i).getString().equals(s)){
                 pos=i;
                 encontrado=true;
             }
