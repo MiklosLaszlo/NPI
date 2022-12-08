@@ -13,12 +13,19 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <Space
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/cancelarNavegacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cancelar navegación"
+                android:visibility="visible" />
 
             <LinearLayout
                 android:id="@+id/pasosNav"
@@ -44,9 +51,10 @@
 
             <TextView
                 android:id="@+id/tvDestino"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textAlignment="center"
                 android:text="Vaya hacia"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 

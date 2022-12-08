@@ -12,67 +12,111 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="1dp">
 
-        <TextView
-            android:id="@+id/preungtaOrigenNavegación"
+        <LinearLayout
+            android:id="@+id/viewOpcionesNav"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:spinnerMode="dropdown"
-            android:text="¿Dónde estás?"
-            android:textAlignment="center"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="16dp" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <Spinner
-            android:id="@+id/menuNavegacionOrigen"
+            <TextView
+                android:id="@+id/preungtaOrigenNavegación"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:spinnerMode="dropdown"
+                android:text="¿Dónde estás?"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="16dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textOrigen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="TextView"
+                    android:textAlignment="center"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/menuNavegacionOrigen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="10dp"
+                    android:spinnerMode="dialog"
+                    android:textAlignment="center"
+                    app:layout_constraintTop_toBottomOf="@+id/preungtaOrigenNavegación"
+                    tools:layout_editor_absoluteX="1dp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textoNavegacionDestino"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="¿A dónde quieres ir?"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                app:layout_constraintTop_toBottomOf="@+id/menuNavegacionOrigen"
+                tools:layout_editor_absoluteX="122dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textDestino"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="TextView"
+                    android:textAlignment="center"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/menuNavegacionDestino"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="10dp"
+                    android:spinnerMode="dialog"
+                    android:textAlignment="center"
+                    app:layout_constraintTop_toBottomOf="@+id/textoNavegacionDestino"
+                    tools:layout_editor_absoluteX="1dp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/scanbuttonav"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Busca QR para localizarte" />
+
+            <Button
+                android:id="@+id/inicarNav"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Iniciar Navegación" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/viewCursor"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="10dp"
-            android:spinnerMode="dropdown"
-            android:textAlignment="center"
-            app:layout_constraintTop_toBottomOf="@+id/preungtaOrigenNavegación"
-            tools:layout_editor_absoluteX="1dp" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
 
-        <TextView
-            android:id="@+id/textoNavegacionDestino"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="¿A dónde quieres ir?"
-            android:textAlignment="center"
-            app:layout_constraintTop_toBottomOf="@+id/menuNavegacionOrigen"
-            tools:layout_editor_absoluteX="122dp" />
-
-        <Spinner
-            android:id="@+id/menuNavegacionDestino"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="10dp"
-            android:spinnerMode="dropdown"
-            android:textAlignment="center"
-            app:layout_constraintTop_toBottomOf="@+id/textoNavegacionDestino"
-            tools:layout_editor_absoluteX="1dp" />
-
-        <Button
-            android:id="@+id/scanbuttonav"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Busca QR para localizarte" />
-
-        <Button
-            android:id="@+id/inicarNav"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Iniciar Navegación" />
-
-
-        <include
-            android:id="@+id/layoiutCursor"
-            layout="@layout/cursor"
-            android:layout_width="match_parent"
-            android:visibility="gone"></include>
-
-
+            <include
+                layout="@layout/cursor"
+                android:layout_width="match_parent"
+                android:visibility="visible"></include>
+        </LinearLayout>
 
 
     </LinearLayout>

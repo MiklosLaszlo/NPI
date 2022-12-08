@@ -292,7 +292,7 @@ public class ImplementaComedores {
     }
 
     public void finSeleccion(){
-        tablaMenu1.setBackgroundColor(Color.parseColor("#FF000000"));//"@color/black"));
-        tablaMenu2.setBackgroundColor(Color.parseColor("#FF000000"));//"@color/black"));
+        tablaMenu1.setBackgroundColor(0x00000000);//"@color/black"));
+        tablaMenu2.setBackgroundColor(0x00000000);//"@color/black"));
     }
 }
