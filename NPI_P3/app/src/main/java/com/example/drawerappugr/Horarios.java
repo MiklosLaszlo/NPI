@@ -113,9 +113,9 @@ public class Horarios {
 
         boolean enClase=false;
         // DESCOMENTAR PARA HORA ACTUAL !!!!!
-        SimpleDateFormat sdfHour = new SimpleDateFormat("hh:mm");
-        String now = sdfHour.format(c.getTime());
-        //String now= "12:30";
+        //SimpleDateFormat sdfHour = new SimpleDateFormat("hh:mm");
+        //String now = sdfHour.format(c.getTime());
+        String now= "12:30";
         int j=-1;
         for(int i=0;i<h.get(day).size() && !enClase;++i){
             enClase = (now.compareTo(h.get(day).get(i).inicio) >= 0)
