@@ -15,6 +15,7 @@ public class Node {
         this.data = null;
         this.adyacentes= new ArrayList<>();
         this.coordenadas = new ArrayList<>();
+        this.direcciones = new ArrayList<>();
     }
 
     public Node(String s){

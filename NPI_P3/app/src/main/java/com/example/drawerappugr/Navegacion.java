@@ -24,11 +24,12 @@ import java.util.ArrayList;
 public class Navegacion {
 
     private GestosSensor gestosSensor;
+    // private GestosSensor gestosSensorNavega;
     private final MainActivity activity;
     private final LinearLayout linearLayout;
     private final Horarios h = new Horarios();
 
-    private ArrayList<Node> camino;
+    private ArrayList<Node> camino = new ArrayList<Node>();;
 
     private Spinner spinnerOrigen;
     private Spinner spinnerDestino;
@@ -175,6 +176,7 @@ public class Navegacion {
     private void cancelNav() {
         viewOpNav.setVisibility(View.VISIBLE);
         viewCursor.setVisibility(View.GONE);
+        camino = new ArrayList<Node>();
     }
 
     public void onResume() {
@@ -203,10 +205,12 @@ public class Navegacion {
 
         // Log.e("INITNAV", pasarAString(origen) +"|"+pasarAString(destino));
 
-        if(origen.equals(destino))
+        if(origen.equals(destino)) {
             camino = new ArrayList<Node>();
-        else
+        }
+        else {
             camino = lugares.printCamino(pasarAString(origen), pasarAString(destino)); //"Aulas 1.x", "Entrada Principal");
+        }
 
         viewOpNav.setVisibility(View.GONE);
         viewCursor.setVisibility(View.VISIBLE);
@@ -230,6 +234,16 @@ public class Navegacion {
                         activity.muestraAnterior(); break;
                 }
             }
+
+            @Override
+            public void swipeCallback(direction dir) {
+                switch (dir) {
+                    case IZQUIERDA:
+                        if(!camino.isEmpty()) ponerPaso(pos_actual + 1);
+                    case DERECHA:
+                        if(!camino.isEmpty()) ponerPaso(pos_actual - 1);
+                }
+            }
         });
 
         viewCursor.setOnTouchListener(new GestosPantalla(true, true, false){
@@ -246,11 +260,21 @@ public class Navegacion {
 
         gestosSensor = new GestosSensor(activity.getApplicationContext(), true, true, false, true, false){
             @Override
-            public void giroManoIzquierdaCallback() {}
+            public void giroManoIzquierdaCallback() {
+                if(!camino.isEmpty()){ponerPaso(pos_actual-1);}
+            }
             @Override
-            public void giroManoDerechaCallback() {}
+            public void giroManoDerechaCallback() {ponerPaso(pos_actual+1);}
             @Override
             public void proximidadCallback() {cancelNav();}
+            @Override
+            public void gestoAceptarCallback() {
+                if(camino.isEmpty()){initNav();}
+            }
+            @Override
+            public void gestoRechazarCallback() {
+                if(!camino.isEmpty()){cancelNav();}
+            }
         };
     }
 
@@ -295,12 +319,18 @@ public class Navegacion {
             return cosa;
     }
 
-    private boolean aulaAIzquierda(String aula){
-        return Character.valueOf(aula.charAt(2)) >=8;
+    private float aulaAIzquierda(String nombre){
+        float extra = 0;
+        if(nombre.length() == "Aulas 0.x".length()){ // Es tipo aula
+            extra = (Character.valueOf(nombre.charAt(7)) <= 8) ? 180 : 0;
+        }
+        return extra;
     }
 
     private float orientacionSiguiente(Node n1, Node n2){
-        return n1.getCoordenadas().get( n1.getAdyacentes().indexOf( n2 ) );
+        float grados = n1.getCoordenadas().get( n1.getAdyacentes().indexOf( n2 ) ) + aulaAIzquierda(n1.data) + aulaAIzquierda(n2.data);
+
+        return grados;
     }
 
     private String direccionesSiguiente(Node n1, Node n2){
@@ -308,9 +338,12 @@ public class Navegacion {
     }
 
     private void ponerPaso(int pos){
-        Log.i("Poner paso", pos+"");
+        Log.i("Poner paso", camino.size()+"");
         if(pos < 0){
             pos_actual = 0;
+        }
+        else if(camino.size() == 1){
+            mismoPasillo();
         }
         else if(pos >= camino.size() - 1){
             pos_actual = camino.size();
@@ -326,8 +359,15 @@ public class Navegacion {
         }
     }
 
+    private void mismoPasillo(){
+        cancelNav();
+        haLlegado.setText("Está en la misma planta. Recorra el pasillo hasta el aula.");
+        haLlegado.setVisibility(View.VISIBLE);
+    }
+
     private void llegadaAlDestino(){
         cancelNav();
+        haLlegado.setText("Ha llegado a su destino");
         haLlegado.setVisibility(View.VISIBLE);
     }
 }
