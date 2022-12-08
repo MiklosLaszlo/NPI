@@ -77,10 +77,7 @@ public class Navegacion {
         viewOpNav = (View) activity.findViewById(R.id.viewOpcionesNav);
 
         // Destino y Origen por defecto
-        origen="Entrada Principal";
-        destino="Entrada Principal";
-        textOrigen.setText(origen);
-        textDestino.setText(destino);
+        siguienteClase();
 
         // Creo el menu desplegable
         spinnerDestino.setAdapter(adapter);
