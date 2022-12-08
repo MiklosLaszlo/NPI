@@ -10,6 +10,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * Main alternativo para probar que los gestos se realizan correctamente.
+ * Para activarlo cambiar el parámetro android:name=".MainActivity" a  android:name=".GestosPruebas"
+ * en el archivo AndroidManifest.xml
+ */
+
 public class GestosPruebas extends AppCompatActivity {
 
     private LinearLayout layout;

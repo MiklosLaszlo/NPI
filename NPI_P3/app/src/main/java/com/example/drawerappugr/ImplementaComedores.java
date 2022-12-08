@@ -134,8 +134,10 @@ public class ImplementaComedores {
             @Override
             public void doubleSwipeCallback(direction dir) {
                 switch (dir) {
+                    case ARRIBA:
                     case IZQUIERDA:
                         activity.muestraSiguiente(); break;
+                    case ABAJO:
                     case DERECHA:
                         activity.muestraAnterior(); break;
                 }

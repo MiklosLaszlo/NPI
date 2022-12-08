@@ -69,6 +69,7 @@ public class MenuAceptarComedor {
         btn_aceptar.setVisibility(View.GONE);
         btn_cancelar.setVisibility(View.GONE);
         tvDescripcion.setText("Reserva realizada");
+
         gestosSensor.unregisterListener();
 
         contador = new CountDownTimer(1500, 1) {
@@ -79,6 +80,7 @@ public class MenuAceptarComedor {
             public void onFinish() {
                 layout.setVisibility(View.GONE);
                 scrollView.setVisibility(View.VISIBLE);
+
                 implementaComedores.cargar();
             }
         };
@@ -105,12 +107,21 @@ public class MenuAceptarComedor {
     }
     public void aparecer(String dia_, String vegano_){
         dia = dia_; vegano = vegano_;
+
         implementaComedores.descargar();
+
         btn_aceptar.setVisibility(View.VISIBLE);
         btn_cancelar.setVisibility(View.VISIBLE);
         tvDescripcion.setText("¿Seguro que quiere encargar el menú " + vegano + "\npara el día " + dia + "?");
         scrollView.setVisibility(View.GONE);
         layout.setVisibility(View.VISIBLE);
-        gestosSensor.registerListener();
+
+        // Para añadir delay
+        new CountDownTimer(300, 300){
+            @Override
+            public void onTick(long l) {}
+            @Override
+            public void onFinish() {gestosSensor.registerListener();}
+            }.start();
     }
 }

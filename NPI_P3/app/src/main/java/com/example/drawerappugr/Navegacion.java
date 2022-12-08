@@ -1,10 +1,12 @@
 package com.example.drawerappugr;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -16,7 +18,12 @@ import com.journeyapps.barcodescanner.ScanOptions;
 
 import org.w3c.dom.Text;
 
+@SuppressLint("ClickableViewAccessibility")
 public class Navegacion {
+
+    private GestosSensor gestosSensor;
+    private MainActivity activity;
+    private LinearLayout linearLayout;
 
     private Spinner spinnerOrigen;
     private Spinner spinnerDestino;
@@ -39,7 +46,9 @@ public class Navegacion {
 
     private ActivityResultLauncher<ScanOptions> barLauncher;
 
-    public Navegacion(AppCompatActivity activity){
+    public Navegacion(MainActivity activity){
+        this.activity = activity;
+        linearLayout = activity.findViewById(R.id.navegacion_layout);
         // Opciones del spinner (menu desplegable)
         ArrayAdapter<CharSequence> adapter=ArrayAdapter.createFromResource(activity, R.array.lugares, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
@@ -168,4 +177,41 @@ public class Navegacion {
         viewCursor.setVisibility(View.VISIBLE);
         // Llamar funciones para iniciar navegación
     }
+
+    private void creaGestosGenerales(){
+        linearLayout.setOnTouchListener(new GestosPantalla(true, true, false){
+            @Override
+            public void swipeCallback(direction dir) {
+                switch (dir){
+                    case IZQUIERDA:
+                        break;
+                    case DERECHA:
+                        break;
+                }
+            }
+            @Override
+            public void doubleSwipeCallback(direction dir) {
+                switch (dir) {
+                    case ARRIBA:
+                    case IZQUIERDA:
+                        activity.muestraSiguiente(); break;
+                    case ABAJO:
+                    case DERECHA:
+                        activity.muestraAnterior(); break;
+                }
+            }
+        });
+
+        gestosSensor = new GestosSensor(activity.getApplicationContext(), true, true, false, true, false){
+            @Override
+            public void giroManoIzquierdaCallback() {}
+            @Override
+            public void giroManoDerechaCallback() {}
+            @Override
+            public void proximidadCallback() {cancelNav();}
+        };
+    }
+
+    public void cargar(){ gestosSensor.registerListener(); }
+    public void descargar(){ gestosSensor.unregisterListener(); }
 }
