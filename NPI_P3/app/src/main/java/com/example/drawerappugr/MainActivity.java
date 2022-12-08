@@ -140,13 +140,13 @@ public class MainActivity extends AppCompatActivity {
     private void creaGestosGenerales(){
         gestosSensor = new GestosSensor(this, true, false, false, false, true){
             @Override
-            public void dobleGiroManoIzquierdaCallback() {muestraAnterior();}
+            public void dobleGiroManoIzquierdaCallback() {muestraSiguiente();}
             @Override
-            public void dobleGiroManoDerechaCallback() {muestraSiguiente();}
+            public void dobleGiroManoDerechaCallback() {muestraAnterior();}
             @Override
-            public void acceleIzqCallback() {muestraAnterior();}
+            public void acceleIzqCallback() {muestraSiguiente();}
             @Override
-            public void acceleDerCallback() {muestraSiguiente();}
+            public void acceleDerCallback() {muestraAnterior();}
         };
         gestosSensor.registerListener();
 
