@@ -12,11 +12,9 @@
 
         <include layout="@layout/comedores"/>
 
-        <include layout="@layout/informacion" />
-
         <include layout="@layout/navegacion"/>
 
-        <include layout="@layout/scan"/>
+        <include layout="@layout/informacion" />
 
     </ViewFlipper>
 

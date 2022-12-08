@@ -81,19 +81,19 @@ public class MainActivity extends AppCompatActivity {
 
                     case R.id.nav_comedores:
                         Log.i("MENU_DRAWER_TAG","Comedores item is clicked");
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        viewFlipper.setDisplayedChild(2);
+                        mostrarPantalla(2);
                         break;
+
                     case R.id.nav_navigation:
                         Log.i("MENU_DRAWER_TAG","Navegacion item is clicked");
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        viewFlipper.setDisplayedChild(4);
+                        mostrarPantalla(3);
                         break;
 
                     case R.id.nav_info:
                         Log.i("MENU_DRAWER_TAG","Info item is clicked");
-                        mostrarPantalla(3);
+                        mostrarPantalla(4);
                         break;
+
                 }
                 return true;
             }
@@ -198,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onPause(){
         super.onPause();
+        navegacion.onPause();
         descargar();
     }
 
