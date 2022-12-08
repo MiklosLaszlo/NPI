@@ -143,6 +143,7 @@ public class Navegacion {
             cancelNav();
         });
 
+        creaGestosGenerales();
 
     }
 

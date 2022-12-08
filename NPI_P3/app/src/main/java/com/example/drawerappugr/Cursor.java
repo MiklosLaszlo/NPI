@@ -52,7 +52,7 @@ public class Cursor{
 
                 Quaternion rotacion_x, rotacion_y, rotacion;
                 rotacion_x = Quaternion.axisAngle(new Vector3(1f,0f,0f), (rx + 90) );
-                rotacion_y = Quaternion.axisAngle(new Vector3(0f,1f,0f), -1*ry + heading );
+                rotacion_y = Quaternion.axisAngle(new Vector3(0f,1f,0f), -1*ry - heading );
                 rotacion = Quaternion.multiply(rotacion_x, rotacion_y);
 
                 nodoCursor.setLocalRotation(rotacion);

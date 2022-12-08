@@ -123,12 +123,15 @@ public class MainActivity extends AppCompatActivity {
 
         horarios_bonitos.descargar();
         implementaComedores.descargar();
+        navegacion.descargar();
 
         switch (i) {
             case 1:
                 horarios_bonitos.cargar(); break;
             case 2:
                 implementaComedores.cargar(); break;
+            case 3:
+                navegacion.cargar(); break;
             default:
                 break;
         }
@@ -162,13 +165,16 @@ public class MainActivity extends AppCompatActivity {
             case 1:
                 horarios_bonitos.cargar(); break;
             case 2:
-                implementaComedores.cargar();
+                implementaComedores.cargar(); break;
+            case 3:
+                navegacion.cargar(); break;
         }
     }
     public void descargar(){
         gestosSensor.unregisterListener();
         horarios_bonitos.descargar();
         implementaComedores.descargar();
+        navegacion.descargar();
     }
 
     private void checkPermission() {
