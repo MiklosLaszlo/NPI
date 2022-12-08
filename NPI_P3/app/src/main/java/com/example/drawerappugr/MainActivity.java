@@ -3,12 +3,14 @@ package com.example.drawerappugr;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.widget.Toolbar;
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,23 +22,20 @@ import android.widget.ViewFlipper;
 import com.google.android.material.navigation.NavigationView;
 import android.widget.RelativeLayout;
 
+@SuppressLint("ClickableViewAccessibility")
 public class MainActivity extends AppCompatActivity {
-    // Multi menús
     DrawerLayout drawerLayout;
     NavigationView navigationView;
-    Toolbar toolbar;
     ActionBarDrawerToggle actionBarDrawerToggle;
     ViewFlipper viewFlipper;
+    ConstraintLayout constraintLayout;
 
-    // Mis variables //
-    RelativeLayout relativeLayout;
-    TextView textView;
-
-    // Sistema Horarios
     public static final Integer RecordAudioRequestCode = 1;
 
-    // Comedor
     ImplementaComedores implementaComedores;
+    Horarios_bonitos horarios_bonitos;
+
+    GestosSensor gestosSensor;
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -52,9 +51,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Multi menús
-
         drawerLayout = findViewById(R.id.drawer_layout);
+        constraintLayout = findViewById(R.id.base_layout);
         navigationView  = findViewById(R.id.navigationView);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,R.string.menu_open,R.string.menu_close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
@@ -62,47 +60,88 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         viewFlipper = findViewById(R.id.flipper);
         viewFlipper.setDisplayedChild(0);
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.nav_inicio:
                         Log.i("MENU_DRAWER_TAG","Home item is clicked");
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        viewFlipper.setDisplayedChild(0);
+                        mostrarPantalla(0);
                         break;
 
                     case R.id.nav_horarios:
                         Log.i("MENU_DRAWER_TAG","Horarios item is clicked");
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        viewFlipper.setDisplayedChild(1);
+                        mostrarPantalla(1);
                         break;
 
                     case R.id.nav_comedores:
                         Log.i("MENU_DRAWER_TAG","Comedores item is clicked");
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        viewFlipper.setDisplayedChild(2);
+                        mostrarPantalla(2);
                         break;
 
                     case R.id.nav_info:
                         Log.i("MENU_DRAWER_TAG","Info item is clicked");
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        viewFlipper.setDisplayedChild(3);
+                        mostrarPantalla(3);
                         break;
                 }
-
                 return true;
             }
         });
 
-        // Empieza la app
+        creaGestosGenerales();
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             checkPermission();
         }
 
         implementaComedores = new ImplementaComedores(this);
+        horarios_bonitos = new Horarios_bonitos(this);
     }
 
+    public void muestraAnterior(){
+        mostrarPantalla((viewFlipper.getDisplayedChild() - 1) % viewFlipper.getChildCount());
+    }
+    public void muestraSiguiente(){
+        mostrarPantalla( (viewFlipper.getDisplayedChild() + 1) % viewFlipper.getChildCount() );
+    }
+
+    public void cargar(){
+        gestosSensor.registerListener();
+        switch (viewFlipper.getDisplayedChild()){
+            case 1:
+                horarios_bonitos.cargar(); break;
+            case 2:
+                implementaComedores.cargar();
+        }
+    }
+    public void descargar(){
+        gestosSensor.unregisterListener();
+        horarios_bonitos.descargar();
+        implementaComedores.descargar();
+    }
+
+    private void creaGestosGenerales(){
+        gestosSensor = new GestosSensor(this, true, false, false, false, false){
+            @Override
+            public void dobleGiroManoIzquierdaCallback() {muestraAnterior();}
+            @Override
+            public void dobleGiroManoDerechaCallback() {muestraSiguiente();}
+        };
+        gestosSensor.registerListener();
+
+        drawerLayout.setOnTouchListener(new GestosPantalla(true,false,false){
+            @Override
+            public void doubleSwipeCallback(direction dir) {
+                if(dir == direction.DERECHA || dir==direction.ABAJO){
+                    muestraAnterior();
+                }
+                if(dir == direction.IZQUIERDA || dir==direction.ARRIBA){
+                    muestraSiguiente();
+                }
+            }
+        });
+    }
 
     @Override
     protected void onDestroy() {
@@ -121,6 +160,35 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == RecordAudioRequestCode && grantResults.length > 0 ){
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 Toast.makeText(this,"Permission Granted",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        cargar();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        descargar();
+    }
+
+    private void mostrarPantalla(int i){
+        drawerLayout.closeDrawer(GravityCompat.START);
+        viewFlipper.setDisplayedChild(i);
+
+        horarios_bonitos.descargar();
+        implementaComedores.descargar();
+
+        switch (i) {
+            case 1:
+                horarios_bonitos.cargar(); break;
+            case 2:
+                implementaComedores.cargar(); break;
+            default:
+                break;
         }
     }
 }

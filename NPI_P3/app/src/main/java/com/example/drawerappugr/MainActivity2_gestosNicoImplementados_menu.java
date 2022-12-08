@@ -1,4 +1,4 @@
-package com.example.drawerappugr;
+/*package com.example.drawerappugr;
 
 import android.Manifest;
 import android.content.Intent;
@@ -575,4 +575,4 @@ public class MainActivity2_gestosNicoImplementados_menu extends AppCompatActivit
         }
     }
 
-}
+}*/

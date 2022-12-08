@@ -8,7 +8,7 @@ import android.hardware.SensorManager;
 import android.os.CountDownTimer;
 import android.util.Log;
 
-public class GestosSensor implements SensorEventListener{
+public class GestosSensor implements SensorEventListener {
 
     //region COMUN
 
@@ -17,64 +17,100 @@ public class GestosSensor implements SensorEventListener{
     private final Sensor mLinearAcelerometer;
     private final Sensor mRotation;
     private final Sensor mProximity;
+    private final Sensor mAccelerometer;
 
     private final CountDownTimer count;
-    private GestosAprendidos gestoReconozido = GestosAprendidos.DESCONOCIDO;
+    private GestosAprendidos gestoReconocido = GestosAprendidos.DESCONOCIDO;
     private boolean listening = true;
     private boolean second_listening = false;
-    private int contando = 0;
 
-    // private final Context context;
+    private boolean directo = true;
 
-    public GestosSensor(Context context, boolean giroscope, boolean linear, boolean rotation, boolean proximity) {
-        prevy=0;
+    public GestosSensor(Context context, boolean giroscope, boolean linear, boolean rotation, boolean proximity, boolean accelerometer) {
         // this.context = context;
-        mSensorManager = (SensorManager) context.getSystemService (Context.SENSOR_SERVICE);
-        if(giroscope) mGiroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE); else mGiroscope = null;
-        if(linear) mLinearAcelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION); else mLinearAcelerometer = null;
-        if(rotation) mRotation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR); else mRotation = null;
-        if(proximity) mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY); else mProximity = null;
+        mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        if (giroscope)
+            mGiroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        else
+            mGiroscope = null;
 
-        count = new CountDownTimer(1000, 500) {
+        if (linear)
+            mLinearAcelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        else
+            mLinearAcelerometer = null;
+
+        if (rotation)
+            mRotation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        else
+            mRotation = null;
+
+        if (proximity)
+            mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        else
+            mProximity = null;
+
+        if (accelerometer)
+            mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        else
+            mAccelerometer = null;
+
+        count = new CountDownTimer(1000, 1000) {
             @Override
             public void onTick(long l) {
-                if( (gestoReconozido == GestosAprendidos.GIRODERECHA || gestoReconozido == GestosAprendidos.GIROIZQUIERDA) && (contando != 0)){
-                    second_listening=true;
+                /*if ((gestoReconocido == GestosAprendidos.GIRODERECHA || gestoReconocido == GestosAprendidos.GIROIZQUIERDA) && (contando != 0)) {
+                    second_listening = true;
                 }
-                contando=contando+1;
+                contando = contando + 1;*/
             }
 
             @Override
             public void onFinish() {
-                ejecutarGesto();
+                if(!directo)
+                    ejecutarGesto();
                 listening = true;
                 second_listening = false;
-                gestoReconozido = GestosAprendidos.DESCONOCIDO;
-                contando = 0;
+                gestoReconocido = GestosAprendidos.DESCONOCIDO;
+                Log.i("CONTADOR", "Finalizado");
             }
         };
     }
 
-    private boolean hasGiroscopeSensor(){return mGiroscope != null;}
-
-    private boolean hasLinearAcelerometerSensor(){return mLinearAcelerometer != null;}
-
-    private boolean hasRotationSensor(){return mRotation != null;}
-
-    private boolean hasProximitySensor(){return mProximity != null;}
-
-    public void registerListener(){
-        if(hasGiroscopeSensor())
-            mSensorManager.registerListener(this,mGiroscope,SensorManager.SENSOR_DELAY_NORMAL);
-        if(hasLinearAcelerometerSensor())
-            mSensorManager.registerListener(this,mLinearAcelerometer,SensorManager.SENSOR_DELAY_NORMAL );
-        if(hasRotationSensor())
-            mSensorManager.registerListener(this,mRotation,SensorManager.SENSOR_DELAY_NORMAL );
-        if(hasProximitySensor())
-            mSensorManager.registerListener(this, mProximity, SensorManager.SENSOR_DELAY_NORMAL);
+    private boolean hasGiroscopeSensor() {
+        return mGiroscope != null;
     }
 
-    public void unregisterListener(){mSensorManager.unregisterListener(this);}
+    private boolean hasLinearAcelerometerSensor() {
+        return mLinearAcelerometer != null;
+    }
+
+    private boolean hasRotationSensor() {
+        return mRotation != null;
+    }
+
+    private boolean hasProximitySensor() {
+        return mProximity != null;
+    }
+
+    private boolean hasAccelerometerSensor() {
+        return mAccelerometer != null;
+    }
+
+    public void registerListener() {
+        if (hasGiroscopeSensor())
+            mSensorManager.registerListener(this, mGiroscope, SensorManager.SENSOR_DELAY_NORMAL);
+        if (hasLinearAcelerometerSensor())
+            mSensorManager.registerListener(this, mLinearAcelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        if (hasRotationSensor())
+            mSensorManager.registerListener(this, mRotation, SensorManager.SENSOR_DELAY_NORMAL);
+        if (hasProximitySensor())
+            mSensorManager.registerListener(this, mProximity, SensorManager.SENSOR_DELAY_NORMAL);
+        if (hasAccelerometerSensor())
+            mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    public void unregisterListener() {
+        mSensorManager.unregisterListener(this);
+    }
 
     private GestosAprendidos reconocerGestos(SensorEvent event) {
         GestosAprendidos gesto = GestosAprendidos.DESCONOCIDO;
@@ -82,92 +118,126 @@ public class GestosSensor implements SensorEventListener{
             case Sensor.TYPE_GYROSCOPE:
                 if (gestoAceptar(event))
                     gesto = GestosAprendidos.ACEPTAR;
+                else if (gestoRechazar(event))
+                    gesto = GestosAprendidos.CANCELAR;
                 else if (gestoGiroManoIzquierda(event))
                     gesto = GestosAprendidos.GIROIZQUIERDA;
                 else if (gestoGiroManoDerecha(event))
                     gesto = GestosAprendidos.GIRODERECHA;
 
-                // Log.i("giroscopo", gesto.toString());
-
+                actualizaValoresGiros(event.values[1]);
                 break;
+
             case Sensor.TYPE_LINEAR_ACCELERATION:
                 if (gestoParaArriba(event))
                     gesto = GestosAprendidos.ARRIBA;
                 else if (gestoParaAbajo(event))
                     gesto = GestosAprendidos.ABAJO;
+
+                actualizaValoresLin(event.values[1]);
+                break;
+            case Sensor.TYPE_ACCELEROMETER:
+                if (gestoAcceleDer(event))
+                    gesto = GestosAprendidos.ACCELEDER;
+                else if (gestoAcceleIzq(event))
+                    gesto = GestosAprendidos.ACCELEIZQ;
+                break;
+            case Sensor.TYPE_PROXIMITY:
+                if(gestoProximidad(event))
+                    gesto = GestosAprendidos.PROXIMIDAD;
                 break;
         }
+
         return gesto;
+    }
+
+    private boolean esDoble(GestosAprendidos g1){
+        return g1 == GestosAprendidos.GIROIZQUIERDA || g1==GestosAprendidos.GIRODERECHA;
     }
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
+        if (listening) {
+            gestoReconocido = reconocerGestos(sensorEvent);
+            if (gestoReconocido != GestosAprendidos.DESCONOCIDO) {
+                listening = false;
+                directo = !esDoble(gestoReconocido);
+                if(directo) {
+                    Log.e("directo", "es directo");
+                    ejecutarGesto();
+                }
+                else
+                    second_listening = true;
 
-        if(listening) {
-            gestoReconozido = reconocerGestos(sensorEvent);
-            if(gestoReconozido != GestosAprendidos.DESCONOCIDO) {
                 count.start();
-                listening=false;
+
             }
-        }
-        else if(second_listening){
+        } else if (second_listening) {
             switch (reconocerGestos(sensorEvent)) {
                 case GIROIZQUIERDA:
-                    if(gestoReconozido==GestosAprendidos.GIROIZQUIERDA)
-                        gestoReconozido = GestosAprendidos.DOSGIROIZQUIERDA;
+                    if (gestoReconocido == GestosAprendidos.GIROIZQUIERDA)
+                        gestoReconocido = GestosAprendidos.DOSGIROIZQUIERDA;
                     break;
                 case GIRODERECHA:
-                    if(gestoReconozido==GestosAprendidos.GIRODERECHA)
-                        gestoReconozido = GestosAprendidos.DOSGIRODERECHA;
+                    if (gestoReconocido == GestosAprendidos.GIRODERECHA)
+                        gestoReconocido = GestosAprendidos.DOSGIRODERECHA;
                     break;
             }
         }
 
-        switch (sensorEvent.sensor.getType()){
-            case Sensor.TYPE_ROTATION_VECTOR:
-                rotationCallback(sensorEvent.values[0], sensorEvent.values[1], sensorEvent.values[2]);
-                break;
-            case Sensor.TYPE_PROXIMITY:
-                eventoProximidad(sensorEvent);
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+            rotationCallback(sensorEvent.values[0], sensorEvent.values[1], sensorEvent.values[2]);
         }
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy){};
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
-    private void ejecutarGesto(){
-        switch (gestoReconozido){
+    private void ejecutarGesto() {
+        switch (gestoReconocido) {
             case GIROIZQUIERDA:
-                Log.e("Gesto","Uno izquierda");
+                Log.i("Gesto", "Uno izquierda");
                 giroManoIzquierdaCallback();
                 break;
             case GIRODERECHA:
-                Log.e("Gesto","Uno derecha");
+                Log.i("Gesto", "Uno derecha");
                 giroManoDerechaCallback();
                 break;
             case DOSGIROIZQUIERDA:
-                Log.e("Gesto","dos izquierda");
+                Log.i("Gesto", "dos izquierda");
                 dobleGiroManoIzquierdaCallback();
                 break;
             case DOSGIRODERECHA:
                 dobleGiroManoDerechaCallback();
-                Log.e("Gesto","dos derecha");
+                Log.i("Gesto", "dos derecha");
                 break;
             case ARRIBA:
                 gestoArribaCallback();
-                Log.e("Gesto","arriba");
+                Log.i("Gesto", "arriba");
                 break;
             case ABAJO:
                 gestoAbajoCallback();
-                Log.e("Gesto","abajo");
+                Log.i("Gesto", "abajo");
                 break;
             case ACEPTAR:
                 gestoAceptarCallback();
-                Log.e("Gesto","aceptar");
+                Log.i("Gesto", "aceptar");
                 break;
             case CANCELAR:
-                Log.e("Gesto","cancelar");
+                gestoRechazarCallback();
+                Log.i("Gesto", "cancelar");
                 break;
+            case ACCELEIZQ:
+                Log.i("Gesto", "ACCELEIZQ");
+                acceleIzqCallback();
+                break;
+            case ACCELEDER:
+                Log.i("Gesto", "ACCELEDER");
+                acceleDerCallback();
+                break;
+            case PROXIMIDAD:
+                Log.i("Gesto", "PROXIMIDAD");
+                proximidadCallback();
         }
     }
 
@@ -175,39 +245,29 @@ public class GestosSensor implements SensorEventListener{
 
     //region Rotacion
 
-    public void rotationCallback(float rx, float ry, float rz){}
+    public void rotationCallback(float rx, float ry, float rz) {
+    }
 
     //endregion
 
     //region Proximidad
 
-    public void eventoProximidadCallback(boolean cerca){}
+    public void proximidadCallback() {}
 
-    private void eventoProximidad(SensorEvent sensorEvent){
-        if (sensorEvent.sensor.getType()==Sensor.TYPE_PROXIMITY){
-            if (sensorEvent.values[0] > 0){
-                Log.i("SensorEvents","FAR: " + sensorEvent.values[0]);
-                eventoProximidadCallback(true);
-            }
-            else{
-                Log.i("SensorEvents","NEAR: " + sensorEvent.values[0]);
-                eventoProximidadCallback(false);
-            }
-        }
+    private boolean gestoProximidad(SensorEvent sensorEvent) {
+        return !(sensorEvent.values[0] > 0);
     }
 
     //endregion
 
     //region Giroscopio
 
-    // region Gesto aceptar giroscopio
+    // region Gesto aceptar y rechazar
 
-    private static final float UMBRAL_GIROSCOPIO = 5;
-
-    private long t_girosc = -1;
-    private double last_x = -1;
-    private double last_y = -1;
-    private double last_z = -1;
+    private long t_girosc_a = -1;
+    private double last_x_a = -1;
+    private double last_y_a = -1;
+    private double last_z_a = -1;
 
     private boolean anterior = false;
 
@@ -216,17 +276,17 @@ public class GestosSensor implements SensorEventListener{
     private static final float U_ACEPTAR_Y = 70;
     private static final float U_ACEPTAR_Z = 70;
 
-    public void gestoAceptarCallback(){}
+    public void gestoAceptarCallback() {    }
 
-    private boolean haceGesto(double dx, double dy, double dz, float time) {
+    private boolean haceGestoAceptar(double dx, double dy, double dz, float time) {
         boolean aceptar_x, aceptar_y, aceptar_z;
 
         aceptar_y = Math.abs(dy) < U_ACEPTAR_Y;
         aceptar_z = Math.abs(dz) < U_ACEPTAR_Z;
-        aceptar_x = /*dx > 0 &&*/ U_ACEPTAR_X_INF < dx  && dx < U_ACEPTAR_X_SUP;
+        aceptar_x = /*dx > 0 &&*/ U_ACEPTAR_X_INF < dx && dx < U_ACEPTAR_X_SUP;
 
-        Log.e("aceptar", "dx " + dx + " dy " + Math.abs(dy ) + " dz " + Math.abs(dz));
-        Log.e("aceptar", "x " + aceptar_x + " dy " + aceptar_y + " dz " + aceptar_z + ((aceptar_x && aceptar_y && aceptar_z) ? " TRUE" : " FALSE"));
+        //Log.e("aceptar", "dx " + dx + " dy " + Math.abs(dy ) + " dz " + Math.abs(dz));
+        //Log.e("aceptar", "x " + aceptar_x + " dy " + aceptar_y + " dz " + aceptar_z + ((aceptar_x && aceptar_y && aceptar_z) ? " TRUE" : " FALSE"));
         //Log.i("aceptar", (aceptar_x && aceptar_y && aceptar_z) ? "TRUE" : "FALSE");
 
         return aceptar_x && aceptar_y && aceptar_z;
@@ -234,22 +294,73 @@ public class GestosSensor implements SensorEventListener{
 
     private boolean gestoAceptar(SensorEvent ev) {
         boolean hecho = false;
-        if (last_x != -1) {
-            boolean gesto = haceGesto(
-                    Math.toDegrees(ev.values[0]) - last_x,
-                    Math.toDegrees(ev.values[1]) - last_y,
-                    Math.toDegrees(ev.values[2]) - last_z,
-                    ev.timestamp - t_girosc
+        if (last_x_a != -1) {
+            boolean gesto = haceGestoAceptar(
+                    Math.toDegrees(ev.values[0]) - last_x_a,
+                    Math.toDegrees(ev.values[1]) - last_y_a,
+                    Math.toDegrees(ev.values[2]) - last_z_a,
+                    ev.timestamp - t_girosc_a
             );
 
             if (!gesto && anterior) anterior = false;
             hecho = gesto && !anterior;
         }
 
-        last_x = Math.toDegrees(ev.values[0]);
-        last_y = Math.toDegrees(ev.values[1]);
-        last_z = Math.toDegrees(ev.values[2]);
-        t_girosc = ev.timestamp;
+        last_x_a = Math.toDegrees(ev.values[0]);
+        last_y_a = Math.toDegrees(ev.values[1]);
+        last_z_a = Math.toDegrees(ev.values[2]);
+        t_girosc_a = ev.timestamp;
+
+        return hecho;
+    }
+
+    //Rechazar
+    private long t_girosc_r = -1;
+    private double last_x_r = -1;
+    private double last_y_r = -1;
+    private double last_z_r = -1;
+
+    private boolean anterior_r = false;
+
+    private static final float U_RECHAZAR_X_INF = 150;
+    private static final float U_RECHAZAR_X_SUP = 250;
+    private static final float U_RECHAZAR_Y = 70;
+    private static final float U_RECHAZAR_Z = 70;
+
+    public void gestoRechazarCallback() {    }
+
+    private boolean haceGestoRechazar(double dx, double dy, double dz, float time) {
+        boolean aceptar_x, aceptar_y, aceptar_z;
+
+        aceptar_y = Math.abs(dy) < U_RECHAZAR_Y;
+        aceptar_z = Math.abs(dz) < U_RECHAZAR_Z;
+        aceptar_x = dx < 0 && U_RECHAZAR_X_INF < Math.abs(dx) && Math.abs(dx) < U_RECHAZAR_X_SUP;
+
+        //Log.e("aceptar", "dx " + dx + " dy " + Math.abs(dy ) + " dz " + Math.abs(dz));
+        //Log.e("aceptar", "x " + aceptar_x + " dy " + aceptar_y + " dz " + aceptar_z + ((aceptar_x && aceptar_y && aceptar_z) ? " TRUE" : " FALSE"));
+        //Log.i("aceptar", (aceptar_x && aceptar_y && aceptar_z) ? "TRUE" : "FALSE");
+
+        return aceptar_x && aceptar_y && aceptar_z;
+    }
+
+    private boolean gestoRechazar(SensorEvent ev) {
+        boolean hecho = false;
+        if (last_x_r != -1) {
+            boolean gesto = haceGestoRechazar(
+                    Math.toDegrees(ev.values[0]) - last_x_r,
+                    Math.toDegrees(ev.values[1]) - last_y_r,
+                    Math.toDegrees(ev.values[2]) - last_z_r,
+                    ev.timestamp - t_girosc_a
+            );
+
+            if (!gesto && anterior_r) anterior_r = false;
+            hecho = gesto && !anterior_r;
+        }
+
+        last_x_r = Math.toDegrees(ev.values[0]);
+        last_y_r = Math.toDegrees(ev.values[1]);
+        last_z_r = Math.toDegrees(ev.values[2]);
+        t_girosc_a = ev.timestamp;
 
         return hecho;
     }
@@ -258,29 +369,44 @@ public class GestosSensor implements SensorEventListener{
 
     //region giros
 
-    private int currenty;
-    private int prevy;
+    private void actualizaValoresGiros(float y){
+        prevy = (int) y;
+    }
+
+    private int currenty = 0;
+    private int prevy = 0;
 
     //private float currentVel;
     //private float prevVel;
 
-    public void giroManoIzquierdaCallback(){}
-    public void dobleGiroManoIzquierdaCallback(){}
-    private boolean gestoGiroManoIzquierda(SensorEvent event){
-        currenty=(int) event.values[1];
-        if (currenty < 0 && Math.abs(Math.abs(currenty)-Math.abs(prevy)) > 8 && Math.abs(Math.abs(currenty)-Math.abs(prevy)) < 15){
-            giroManoIzquierdaCallback();
+    public void giroManoIzquierdaCallback() {
+    }
+
+    public void dobleGiroManoIzquierdaCallback() {
+    }
+
+    private boolean gestoGiroManoIzquierda(SensorEvent event) {
+        currenty = (int) event.values[1];
+        //Log.i("GiroIzq", currenty + " | " +Math.abs(Math.abs(currenty) - Math.abs(prevy)) + " -> "
+        //       + (currenty < 0) + " "+(Math.abs(Math.abs(currenty) - Math.abs(prevy)) >= 3) + " "+(Math.abs(Math.abs(currenty) - Math.abs(prevy)) < 15) + " ");
+        // He cambiado > 5 por >= 4
+        if (currenty < 0 && Math.abs(Math.abs(currenty) - Math.abs(prevy)) >= 3 && Math.abs(Math.abs(currenty) - Math.abs(prevy)) < 15) {
+            Log.e("GiroIzq", "aceptado");
             return true;
         }
         return false;
     }
 
-    public void giroManoDerechaCallback(){}
-    public void dobleGiroManoDerechaCallback(){}
-    private boolean gestoGiroManoDerecha(SensorEvent event){
-        currenty=(int) event.values[1];
-        if (currenty > 0 && Math.abs(Math.abs(currenty)-Math.abs(prevy)) > 8 && Math.abs(Math.abs(currenty)-Math.abs(prevy)) < 15){
-            giroManoDerechaCallback();
+    public void giroManoDerechaCallback() {
+    }
+
+    public void dobleGiroManoDerechaCallback() {
+    }
+
+    private boolean gestoGiroManoDerecha(SensorEvent event) {
+        currenty = (int) event.values[1];
+        if (currenty > 0 && Math.abs(Math.abs(currenty) - Math.abs(prevy)) >= 3 && Math.abs(Math.abs(currenty) - Math.abs(prevy)) < 15) {
+            //giroManoDerechaCallback();
             return true;
         }
         return false;
@@ -292,28 +418,60 @@ public class GestosSensor implements SensorEventListener{
 
     //region Linear
 
-    private int alcurrenty;
-    private int alprevy;
+    private int alcurrenty = 0;
+    private int alprevy = 0;
 
-    public void gestoArribaCallback(){}
-    private boolean gestoParaArriba(SensorEvent event){
-        alcurrenty=(int) event.values[1];
-        if (alcurrenty > 0 && Math.abs(Math.abs(alcurrenty)-Math.abs(alprevy)) > 5 && Math.abs(Math.abs(alcurrenty)-Math.abs(alprevy)) < 10){
-            gestoArribaCallback();
+    private void actualizaValoresLin(float y){
+        alprevy = (int) y;
+    }
+
+    public void gestoArribaCallback() {
+    }
+
+    private boolean gestoParaArriba(SensorEvent event) {
+        alcurrenty = (int) event.values[1];
+        //Log.i("Arriba", alcurrenty + " | " +Math.abs(Math.abs(alcurrenty) - Math.abs(alprevy)) + " -> "
+        //        + (alcurrenty > 0) + " "+(Math.abs(Math.abs(alcurrenty) - Math.abs(alprevy)) >= 4) + " "+(Math.abs(Math.abs(alcurrenty) - Math.abs(alprevy)) < 10) + " ");
+        // Donde pone >= 4 antes era > 5
+        if (alcurrenty > 0 && Math.abs(Math.abs(alcurrenty) - Math.abs(alprevy)) >= 4 && Math.abs(Math.abs(alcurrenty) - Math.abs(alprevy)) < 10) {
             return true;
         }
         return false;
     }
 
-    public void gestoAbajoCallback(){}
-    private boolean gestoParaAbajo(SensorEvent event){
-        alcurrenty=(int) event.values[1];
-        if (alcurrenty < 0 && Math.abs(Math.abs(alcurrenty)-Math.abs(alprevy)) > 5 && Math.abs(Math.abs(alcurrenty)-Math.abs(alprevy)) < 10){
-            gestoAbajoCallback();
+    public void gestoAbajoCallback() {
+    }
+
+    private boolean gestoParaAbajo(SensorEvent event) {
+        alcurrenty = (int) event.values[1];
+        if (alcurrenty < 0 && Math.abs(Math.abs(alcurrenty) - Math.abs(alprevy)) >= 4 && Math.abs(Math.abs(alcurrenty) - Math.abs(alprevy)) < 10) {
+            //gestoAbajoCallback();
             return true;
         }
         return false;
     }
+    //endregion
+
+    //region Acelerometro
+
+    public void acceleIzqCallback(){}
+    private boolean gestoAcceleIzq(SensorEvent sensorEvent){
+        float x=sensorEvent.values[0];
+        float y=sensorEvent.values[1];
+        float z=sensorEvent.values[2];
+        //Moviendo el movil hacia la derecha
+        return x< -10;
+    }
+
+    public void acceleDerCallback(){}
+    private boolean gestoAcceleDer(SensorEvent sensorEvent){
+        float x=sensorEvent.values[0];
+        float y=sensorEvent.values[1];
+        float z=sensorEvent.values[2];
+        //Moviendo el movil hacia la derecha
+        return x > 10;
+    }
+
     //endregion
 }
 

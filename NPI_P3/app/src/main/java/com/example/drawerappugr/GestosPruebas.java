@@ -21,7 +21,7 @@ public class GestosPruebas extends AppCompatActivity {
     GestosPantalla gestoPantalla = new GestosPantalla(true, true,false) {
         @Override
         public void doubleSwipeCallback(direction dir) {
-            // Log.e("cb",dir.toString());
+            //Log.e("cb",dir.toString());
             text1.setText(dir.toString());
         }
         @Override
@@ -44,9 +44,11 @@ public class GestosPruebas extends AppCompatActivity {
 
         layout.setOnTouchListener( gestoPantalla );
 
-        gestoSensor = new GestosSensor(this, true, true, false, false) {
+        gestoSensor = new GestosSensor(this, true, true, false, true, false) {
             @Override
             public void gestoAceptarCallback() {text3.setText("ACEPTAR");}
+            @Override
+            public void gestoRechazarCallback() {text3.setText("CANCELAR");}
             @Override
             public void giroManoIzquierdaCallback() {text3.setText("IZQUIERDA");}
             @Override
@@ -59,6 +61,12 @@ public class GestosPruebas extends AppCompatActivity {
             public void gestoArribaCallback() {text3.setText("ARRIBA");}
             @Override
             public void gestoAbajoCallback() {text3.setText("ABAJO");}
+            @Override
+            public void acceleIzqCallback() {text3.setText("ACCELE IZQ");}
+            @Override
+            public void acceleDerCallback() {text3.setText("ACCELE DER");}
+            @Override
+            public void proximidadCallback() {text3.setText("PROXIMIDAD");}
         };
         gestoSensor.registerListener();
     }

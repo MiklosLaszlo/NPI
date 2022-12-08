@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -18,8 +19,10 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-@RequiresApi(api = Build.VERSION_CODES.O)
+@SuppressLint("ClickableViewAccessibility")
 public class ImplementaComedores {
+    private MainActivity activity;
+    private ScrollView scrollView;
     private TextView mostrardia;
     private ArrayList<TextView> menu1;
     private ArrayList<TextView> menu2;
@@ -29,13 +32,18 @@ public class ImplementaComedores {
     private Button anteriorButton;
     private TableLayout tablaMenu1;
     private TableLayout tablaMenu2;
-    private View.OnTouchListener escuchaMenus1;
-    private View.OnTouchListener escuchaMenus2;
 
     private int seleccionado = 0;
-    private MenuAceptarComedor menuAceptarComedor;
+    private final MenuAceptarComedor menuAceptarComedor;
 
-    public ImplementaComedores(@NonNull Activity activity) {
+    private GestosSensor gestosSensor;
+
+    @SuppressLint("ClickableViewAccessibility")
+    public ImplementaComedores(@NonNull MainActivity ac) {
+        activity = ac;
+        //activity.activaGestos();
+
+        scrollView = activity.findViewById(R.id.Comedores);
         mostrardia = (TextView) activity.findViewById(R.id.diaMenu);
         menu1 = new ArrayList<TextView>();
         menu2 = new ArrayList<TextView>();
@@ -61,7 +69,7 @@ public class ImplementaComedores {
 
         Button btn = activity.findViewById(R.id.btnAceptarCompra);
 
-        menuAceptarComedor = new MenuAceptarComedor(activity);
+        menuAceptarComedor = new MenuAceptarComedor(activity, this);
 
         emptyContent();
         diaSemana = LocalDateTime.now().getDayOfWeek();
@@ -69,39 +77,27 @@ public class ImplementaComedores {
             diaSemana = DayOfWeek.MONDAY;
         setTextDay(diaSemana);
 
-        siguienteButton.setOnTouchListener(new View.OnTouchListener() {
+        siguienteButton.setOnTouchListener(new GestosPantalla(false,false, true){
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    nextDayMenu();
-                }
-                return true;
-            }
+            public void touchUpCallback() {nextDayMenu();}
         });
 
-        anteriorButton.setOnTouchListener(new View.OnTouchListener() {
+        anteriorButton.setOnTouchListener(new GestosPantalla(false,false, true){
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    prevDayMenu();
-                }
-                return true;
-            }
+            public void touchUpCallback() {prevDayMenu();}
         });
 
-        escuchaMenus1 = new View.OnTouchListener() {
+        View.OnTouchListener escuchaMenus1 = new GestosPantalla(false, false, true) {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) menuSelecionado(1);
-                return true;
+            public void touchUpCallback() {
+                menuSelecionado(1);
             }
         };
 
-        escuchaMenus2 = new View.OnTouchListener() {
+        View.OnTouchListener escuchaMenus2 = new GestosPantalla(false, false, true) {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) menuSelecionado(2);
-                return true;
+            public void touchUpCallback() {
+                menuSelecionado(2);
             }
         };
 
@@ -114,9 +110,62 @@ public class ImplementaComedores {
         }
 
         tablaMenu1.setOnTouchListener(escuchaMenus1);
-
         tablaMenu2.setOnTouchListener(escuchaMenus2);
 
+        creaGestosGenerales();
+    }
+
+    public void cargar(){gestosSensor.registerListener();}
+    public void descargar(){gestosSensor.unregisterListener();}
+
+    private void creaGestosGenerales(){
+        scrollView.setOnTouchListener(new GestosPantalla(true, true, false){
+            @Override
+            public void swipeCallback(direction dir) {
+                switch (dir){
+                    case IZQUIERDA:
+                        nextDayMenu();
+                        break;
+                    case DERECHA:
+                        prevDayMenu();
+                        break;
+                }
+            }
+            @Override
+            public void doubleSwipeCallback(direction dir) {
+                switch (dir) {
+                    case IZQUIERDA:
+                        activity.muestraSiguiente(); break;
+                    case DERECHA:
+                        activity.muestraAnterior(); break;
+                }
+            }
+        });
+
+        gestosSensor = new GestosSensor(activity.getApplicationContext(), true, true, false, false, false){
+            @Override
+            public void giroManoIzquierdaCallback() {prevDayMenu();}
+            @Override
+            public void giroManoDerechaCallback() {nextDayMenu();}
+
+            @Override
+            public void gestoArribaCallback() {
+                menuSelecionado(1);
+            }
+
+            @Override
+            public void gestoAbajoCallback() {
+                menuSelecionado(2);
+            }
+
+            @Override
+            public void gestoAceptarCallback() {
+                if(seleccionado!=0){
+                    menuAceptarComedor.aparecer(mostrardia.getText().toString(), ((seleccionado == 1) ? "no vegano" : "vegano"));
+                    finSeleccion();
+                }
+            }
+        };
     }
 
     public void nextDayMenu(){
@@ -233,8 +282,13 @@ public class ImplementaComedores {
                 tablaMenu2.setBackgroundColor(Color.parseColor("#85BB65"));
                 break;
         }
-        if(seleccionado == i) menuAceptarComedor.aparecer(mostrardia.getText().toString(), i == 1? "no vegano" : "vegano");
-        seleccionado = i;
+        if(seleccionado == i) {
+            finSeleccion();
+            menuAceptarComedor.aparecer(mostrardia.getText().toString(), i == 1 ? "no vegano" : "vegano");
+            seleccionado = 0;
+        }
+        else
+            seleccionado = i;
     }
 
     public void finSeleccion(){

@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordlayout_horarios"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="252dp"
+        android:layout_marginBottom="16dp"
+        android:text="Siguiente"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Anterior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <RelativeLayout
+        android:id="@+id/scrollView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#3d455b"
+
+        android:visibility="visible"
+        tools:ignore="MissingConstraints"
+        tools:visibility="visible">
+
+        <HorizontalScrollView
+            android:id="@+id/hscrll1"
+            android:layout_width="450dp"
+            android:layout_height="1800dp">
+
+            <RelativeLayout
+                android:id="@+id/HORARIOSSS"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+
+
+                android:orientation="vertical">
+
+                <TableLayout
+                    android:id="@+id/table_main"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+
+                    android:stretchColumns="*">
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/inutil"
+                            android:layout_width="116dp"
+                            android:layout_height="62dp"
+
+                            android:text=""
+                            android:textAlignment="center"
+                            android:textColor="@android:color/white" />
+
+
+                        <TextView
+                            android:id="@+id/dia"
+                            android:layout_width="match_parent"
+                            android:layout_height="62dp"
+
+                            android:text="Lunes"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/white"
+                            android:textSize="24sp" />
+
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/titulo1"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+
+                            android:text="Horas"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/white" />
+
+
+                        <TextView
+                            android:id="@+id/titulo2"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+
+                            android:text="Asignaturas"
+                            android:textAlignment="center"
+                            android:textColor="@color/white"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/titulo3"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+
+                            android:text="Clase"
+                            android:textAlignment="center"
+                            android:textColor="@color/white"
+                            android:textSize="15sp" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/hora1"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+                            android:text="TextView"
+
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/Asignatura1"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+
+                            android:text="TextView"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/clase1"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+
+
+                            android:text="TextView"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/hora2"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+                            android:text="TextView"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/Asignatura2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="TextView"
+
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/clase2"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+                            android:text="TextView"
+
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright"
+                            android:textSize="15sp" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/hora3"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+                            android:text="TextView"
+
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/Asignatura3"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+                            android:text="TextView"
+
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/clase3"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+                            android:text="TextView"
+
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright"
+                            android:textSize="15sp" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/hora4"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+                            android:text="TextView"
+
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/Asignatura4"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+                            android:text="TextView"
+
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/clase4"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+                            android:text="TextView"
+
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright"
+                            android:textSize="15sp" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/hora5"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+                            android:text="TextView"
+
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/Asignatura5"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+                            android:text="TextView"
+
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/clase5"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+                            android:text="TextView"
+
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright"
+                            android:textSize="15sp" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/hora6"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+                            android:text="TextView"
+
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/Asignatura6"
+                            android:layout_width="120dp"
+                            android:layout_height="62dp"
+                            android:text="TextView"
+
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/clase6"
+                            android:layout_width="120dp"
+                            android:layout_height="match_parent"
+                            android:text="TextView"
+
+                            android:textAlignment="center"
+                            android:textColor="@android:color/holo_blue_bright"
+                            android:textSize="15sp" />
+                    </TableRow>
+                </TableLayout>
+            </RelativeLayout>
+        </HorizontalScrollView>
+
+    </RelativeLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

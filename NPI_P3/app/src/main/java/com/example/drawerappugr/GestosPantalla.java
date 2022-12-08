@@ -1,5 +1,6 @@
 package com.example.drawerappugr;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,18 +18,18 @@ public class GestosPantalla implements View.OnTouchListener{
         touch_active = touch;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent){
         boolean consumido = false;
 
         if(motionEvent.getEventTime() - last_t > UMBRAL_MILIS) {
-            if (!consumido && doble_swipe_active) consumido = doubleSwipe(motionEvent);
+            if (doble_swipe_active) consumido = doubleSwipe(motionEvent);
             if (!consumido && swipe_active) consumido = swipe(motionEvent);
-            if (!consumido && touch_active) touch(motionEvent);
+            if (!consumido && touch_active) consumido = touch(motionEvent);
         }
 
-        // if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) return true;
-        return true;
+        return consumido || motionEvent.getActionMasked() == MotionEvent.ACTION_DOWN || motionEvent.getActionMasked() == MotionEvent.ACTION_MOVE;
     }
 
     // region TOUCH
@@ -44,12 +45,12 @@ public class GestosPantalla implements View.OnTouchListener{
         switch(eventType)
         {
             case MotionEvent.ACTION_DOWN:
-                touchDownCallback(); Log.i("SensorEvents","Action Down");
+                touchDownCallback(); Log.i("touch","Action Down");
                 aceptado=true;
                 break;
 
             case MotionEvent.ACTION_UP:
-                touchUpCallback(); Log.i("SensorEvents","Action Up");
+                touchUpCallback(); Log.i("touch","Action Up");
                 aceptado = true;
                 break;
 
@@ -107,11 +108,10 @@ public class GestosPantalla implements View.OnTouchListener{
     }
 
     private boolean doubleSwipe(MotionEvent ev) {
-        direction dir = direction.QUIETO;
+        direction dir;
         boolean aceptado = false;
 
         if (ev.getPointerCount() == 2) {
-            aceptado = true;
             if (ev.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN && t_ds == -1) { // Se clava el segundo dedo
                 //Log.i("Doble Swipe", "Se clava");
                 x1 = ev.getX(0);
@@ -119,6 +119,8 @@ public class GestosPantalla implements View.OnTouchListener{
                 x2 = ev.getX(1);
                 y2 = ev.getY(1);
                 t_ds = ev.getEventTime();
+
+                aceptado = true;
             }
 
             if (ev.getActionMasked() == MotionEvent.ACTION_POINTER_UP && t_ds != -1) { // Se levanta el segundo dedo
@@ -131,7 +133,9 @@ public class GestosPantalla implements View.OnTouchListener{
                         ev.getEventTime() - t_ds);
                 doubleSwipeCallback(dir);
                 t_ds = -1;
+                t = -1; // Para reiniciar el swipe normal
                 last_t = ev.getEventTime();
+                aceptado = true;
             }
         }
         return aceptado;
@@ -155,14 +159,14 @@ public class GestosPantalla implements View.OnTouchListener{
         if(ev.getPointerCount() == 1) {
             if(ev.getActionMasked() == MotionEvent.ACTION_DOWN && t == -1){
                 aceptado = true;
-                x = ev.getX();
-                y = ev.getY();
+                x = ev.getX(0);
+                y = ev.getY(0);
                 t = ev.getEventTime();
             }
             if(ev.getActionMasked() == MotionEvent.ACTION_UP && t != -1){
                 aceptado = true;
-                float xDiff = ev.getX() - x;
-                float YDiff = ev.getY() - y;
+                float xDiff = ev.getX(0) - x;
+                float YDiff = ev.getY(0) - y;
                 float dt = (ev.getEventTime() - t) / 100;
                 float velocityX = xDiff / dt;
                 float velocityY = YDiff / dt;
@@ -199,63 +203,3 @@ public class GestosPantalla implements View.OnTouchListener{
     //endregion
 
 }
-
-//Clases //
-    /*private class SwipeListener implements View.OnTouchListener{
-        GestureDetector gestureDetector;
-
-        SwipeListener(View view){
-            int threshold = 100;
-            int velocity_threshold=100;
-
-            GestureDetector.SimpleOnGestureListener listener=
-                    new GestureDetector.SimpleOnGestureListener(){
-                        @Override
-                        public boolean onDown(MotionEvent e){
-                            return true;
-                        }
-
-                        @Override
-                        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                            float xDiff= e2.getX()- e1.getX();
-                            float YDiff = e2.getY() - e1.getY();
-                            try {
-                                if(Math.abs(xDiff)> Math.abs(YDiff)){
-                                    if(Math.abs(xDiff)> threshold && Math.abs(velocityX ) > velocity_threshold){
-                                        if(xDiff>0){
-                                            textView.setText("Swipe a la derecha");
-                                        }else{
-                                            textView.setText("Swipe a la izquierda");
-                                        }
-                                        return true;
-                                    }
-                                }else{
-                                    if(Math.abs(YDiff)> threshold && Math.abs(velocityY)>velocity_threshold) {
-                                        if (YDiff > 0) {
-                                            textView.setText("Swipe hacia abajo");
-                                        }
-                                        else {
-                                            textView.setText("Swipe hacia arriba");
-                                        }
-                                        return true;
-                                    }
-                                }
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-                            return false;
-                        }
-                    };
-            gestureDetector =new GestureDetector(listener);
-            view.setOnTouchListener(this);
-        }
-
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            return gestureDetector.onTouchEvent(motionEvent);
-        }
-    }*/
-
-
-
-
