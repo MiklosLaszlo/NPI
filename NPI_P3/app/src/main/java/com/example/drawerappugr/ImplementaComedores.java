@@ -149,12 +149,10 @@ public class ImplementaComedores {
             public void giroManoIzquierdaCallback() {prevDayMenu();}
             @Override
             public void giroManoDerechaCallback() {nextDayMenu();}
-
             @Override
             public void gestoArribaCallback() {
                 menuSelecionado(1);
             }
-
             @Override
             public void gestoAbajoCallback() {
                 menuSelecionado(2);

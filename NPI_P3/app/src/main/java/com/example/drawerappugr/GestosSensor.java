@@ -271,8 +271,8 @@ public class GestosSensor implements SensorEventListener {
 
     private boolean anterior = false;
 
-    private static final float U_ACEPTAR_X_INF = 150;
-    private static final float U_ACEPTAR_X_SUP = 250;
+    private static final float U_ACEPTAR_X_INF = 250;
+    private static final float U_ACEPTAR_X_SUP = 450;
     private static final float U_ACEPTAR_Y = 70;
     private static final float U_ACEPTAR_Z = 70;
 
@@ -322,8 +322,8 @@ public class GestosSensor implements SensorEventListener {
 
     private boolean anterior_r = false;
 
-    private static final float U_RECHAZAR_X_INF = 150;
-    private static final float U_RECHAZAR_X_SUP = 250;
+    private static final float U_RECHAZAR_X_INF = 250;
+    private static final float U_RECHAZAR_X_SUP = 450;
     private static final float U_RECHAZAR_Y = 70;
     private static final float U_RECHAZAR_Z = 70;
 
