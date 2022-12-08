@@ -31,7 +31,7 @@ public class Cursor{
     private float rx_antiguo = 0;   // En grados
     private float ry_antiguo = 0;   // En grados
 
-
+    float heading = 0f;
 
     @SuppressLint("ClickableViewAccessibility")
     public Cursor(Activity activity) {
@@ -43,7 +43,6 @@ public class Cursor{
         gestoSensor = new GestosSensor(activity, false, false, true, false, false) {
             @Override
             public void rotationCallback(float rotx, float roty, float rotz) {
-                float heading = 0;
 
                 float rx = (float) Math.toDegrees(2*Math.asin(roty));
                 float ry = (float) Math.toDegrees(2*Math.asin(rotz));
@@ -53,13 +52,15 @@ public class Cursor{
 
                 Quaternion rotacion_x, rotacion_y, rotacion;
                 rotacion_x = Quaternion.axisAngle(new Vector3(1f,0f,0f), (rx + 90) );
-                rotacion_y = Quaternion.axisAngle(new Vector3(0f,1f,0f), -1*ry );
+                rotacion_y = Quaternion.axisAngle(new Vector3(0f,1f,0f), -1*ry + heading );
                 rotacion = Quaternion.multiply(rotacion_x, rotacion_y);
 
                 nodoCursor.setLocalRotation(rotacion);
             }
         };
     }
+
+    public void headTo(float degrees){ heading = degrees; }
 
     public void onResume() {
         Log.e("Flecha", "Que esta pasando");
