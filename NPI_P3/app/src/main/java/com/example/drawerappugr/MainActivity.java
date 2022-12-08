@@ -32,9 +32,6 @@ public class MainActivity extends AppCompatActivity {
     ViewFlipper viewFlipper;
     ConstraintLayout constraintLayout;
 
-    private Spinner spinnerOrigen;
-    private Spinner spinnerDestino;
-
     // Sistema Horarios
     public static final Integer RecordAudioRequestCode = 1;
 

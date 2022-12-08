@@ -40,7 +40,7 @@ public class Cursor{
 
         loadModels(activity);
 
-        gestoSensor = new GestosSensor(activity, false, false, true, false) {
+        gestoSensor = new GestosSensor(activity, false, false, true, false, false) {
             @Override
             public void rotationCallback(float rotx, float roty, float rotz) {
                 float heading = 0;
