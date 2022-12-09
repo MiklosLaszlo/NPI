@@ -3,11 +3,12 @@ main{
 		int ve ;
 		double vf ;
 		char vc ;
-		bool vl ;
+		bool  vl ;
 		list of int le, le2 ;
 		list of double lf, lf2 ;
 		list of char lc, lc2 ;
 		list of bool ll ;
+		
 	close
 	int funcionA (int a1, double a2, char a3) {
 		open
@@ -42,7 +43,8 @@ main{
 				char dato ;
 				int valor ;
 				list of char frase2;
-			close
+				
+			close	
 			char funcionE (char e1, char e2) {
 				open
 					list of char frase1;
@@ -60,7 +62,7 @@ main{
 						return ' ';
 					}
 				}
-			};
+			}; 	
 			frase2=['i','n','t','r','o','d','u','z','c','a',' ','u','n',' ','v','a','l','o','r',' ','e','n','t','e','r','o',':',' '];
 			write (frase2);
 			read ( valor );
@@ -78,6 +80,7 @@ main{
 			return d1 ;
 		};
 	
+	$vf ;
 	le = le++4@0;
 	lf = lf++10.0@0;
 	lc = lc++'c'@0;
@@ -92,5 +95,6 @@ main{
 	
 	return ve;
 	};
+
 ;
 };
