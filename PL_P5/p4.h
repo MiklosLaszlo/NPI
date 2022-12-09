@@ -104,6 +104,7 @@ void push2(struct entradaTS e, TipoEntrada ent){
         TS[TOPE].n_parametros=e.n_parametros;
         TOPE++;
     }
+    printTS();
     //if(debug)
         //printf("Tamaño actual de la pila %i\n",TOPE);
 }
@@ -664,6 +665,26 @@ bool search_parametro(char * nom){
     }
     return false;
 }
+
+bool search_parametros_funcion_declardo(char *param_nom){
+    struct entradaTS dev;
+    int j=TOPE-1;
+    while(TS[j].entrada!=funcion && j>0){
+        j--;
+        
+    }
+    j--;
+    if(j!=0){
+        
+        while(TS[j].entrada==parametro_formal){
+            
+            if(strcmp(TS[j].nombre,param_nom)==0)
+                return true;
+            j--;
+        }
+    }
+    return false;
+} 
 
 //Funcion para buscar si un identificador existe dentro de su bloque, 
 //si la encuentra devuelve la posicion util, si no devuelve -1

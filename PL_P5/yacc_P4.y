@@ -129,8 +129,14 @@ cuerpo_declar_variables : tipo_basico lista_identificadores
 		  | tipo_basico error { yyerrok; explicacion_error_sintactico("Error, después del tipo básico va una lista de identificadores"); }
 lista_identificadores : lista_identificadores
 		 COMA 			
-		 IDENTIFICADOR  {if(search_identificador_marca($3.nombre).entrada == marca) push2($3,variable); else ErrorDeclaradaEnBLoque($3);} 
-        | IDENTIFICADOR {if(search_identificador_marca($1.nombre).entrada == marca) push2($1,variable); else ErrorDeclaradaEnBLoque($1);} 
+		 IDENTIFICADOR  { if(search_parametros_funcion_declardo($3.nombre)) explicacion_error_semantico("Redeclarando un parámetro de la función");
+			else if(search_identificador_marca($3.nombre).entrada == marca) push2($3,variable); else ErrorDeclaradaEnBLoque($3);
+						if(search_parametros_funcion_declardo($3.nombre)) explicacion_error_semantico("Redeclarando un parámetro de la función");
+						} 
+        | IDENTIFICADOR {if(search_parametros_funcion_declardo($1.nombre)) explicacion_error_semantico("Redeclarando un parámetro de la función");
+		else
+			if(search_identificador_marca($1.nombre).entrada == marca) push2($1,variable); else ErrorDeclaradaEnBLoque($1);
+		} 
 		  // El error de esto lo englobo en el de arriba
 declar_de_subprogs : declar_de_subprogs declarar_funcion
         | ;
