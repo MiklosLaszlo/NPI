@@ -80,7 +80,7 @@ main{
 			return d1 ;
 		};
 	
-	$vf ;
+	$le;
 	le = le++4@0;
 	lf = lf++10.0@0;
 	lc = lc++'c'@0;

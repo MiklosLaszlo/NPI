@@ -200,8 +200,19 @@ sentencia_for_pascal : FOR IDENTIFICADOR IGUAL expresion TO expresion DO bloque 
 		  | FOR sentencia_asignacion TO error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
 		  | FOR sentencia_asignacion TO expresion error { yyerrok; explicacion_error_sintactico("Error, se esperaba la palabra \"do\""); }
 		  | FOR sentencia_asignacion TO expresion DO error { yyerrok; explicacion_error_sintactico("Error, se esperaba un bloque"); }
-sentencia_lista : IDENTIFICADOR MOVLISTA PYC
-        | PRINCIPIOLISTA IDENTIFICADOR PYC
+sentencia_lista : IDENTIFICADOR MOVLISTA PYC {
+				copiaStruct(&$$,search_identificador_pila($1.nombre)); 
+				if($$.entrada!=variable && $$.entrada!=parametro_formal)
+				 	ErrorNoDeclarada($1);
+				else if($$.dato_referencia!=lista)
+					explicacion_error_semantico("El tipo de dato deberia ser una lista"); 
+					}
+        | PRINCIPIOLISTA IDENTIFICADOR PYC {
+			copiaStruct(&$$,search_identificador_pila($2.nombre)); 
+			if($$.entrada!=variable && $$.entrada!=parametro_formal) 
+				ErrorNoDeclarada($2);
+			else if($$.dato_referencia!=lista) 
+			explicacion_error_semantico("El tipo de dato deberia ser una lista"); }
 		  //| IDENTIFICADOR error { yyerrok; explicacion_error_sintactico("Error, se esperaba \"<<\""); }
 		  /* | IDENTIFICADOR MOVLISTA error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); }
 		  | PRINCIPIOLISTA error { yyerrok; explicacion_error_sintactico("Error, se esperaba un identificador"); }
