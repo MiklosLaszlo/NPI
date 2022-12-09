@@ -31,6 +31,7 @@ main{
 					}
 					return x1;
 				};
+			
 			xf=funcionC(true, 10);
 			x2= xf*(funcionC(false,1)-funcionC(true,23))/10.0;
 			while ( (x2*funcionC(false,1)-xf) less 10.0){
