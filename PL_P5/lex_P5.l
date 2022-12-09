@@ -99,6 +99,8 @@ otros .
 
 "not" {
     strcpy(atributo, "");
+    yylval.entrada = operador;
+    yylval.tipo_operador = negacion;
     return (NOT);
 }
 
@@ -108,6 +110,8 @@ otros .
 }
 "#" {
     strcpy(atributo, "");
+    yylval.entrada = operador;
+    yylval.tipo_operador = sostenido;
     return (SOSTENIDO);
 }
 
@@ -382,7 +386,15 @@ otros .
 
 
 
-("'"({letra}|{numero}|[ ]|\:)"'") {
+("'"({letra}|{numero}|[ ]|\:|\=|\^|\+|\*)"'") {
+    strcpy(yylval.nombre, yytext);
+    yylval.entrada = indefinido;
+	yylval.dato_referencia = caracter;
+    strcpy(atributo, "0");
+    return (LITERAL);
+}
+
+("'"\\n"'") {
     strcpy(yylval.nombre, yytext);
     yylval.entrada = indefinido;
 	yylval.dato_referencia = caracter;

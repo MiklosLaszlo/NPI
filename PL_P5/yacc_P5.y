@@ -239,8 +239,8 @@ sentencia_lista : IDENTIFICADOR MOVLISTA PYC {
 lista_entrada : lista_entrada COMA IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($3.nombre)); if($$.entrada!=variable && $$.entrada!=parametro_formal) {ErrorNoDeclarada($3);}}
         | IDENTIFICADOR  {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable && $$.entrada!=parametro_formal) {ErrorNoDeclarada($1);}}
 
-lista_salida : lista_salida COMA expresion {copiaStruct(&$$,search_identificador_pila($3.nombre)); if($$.entrada!=variable) {ErrorNoDeclarada($$); $$.entrada=indefinido;} }
-		| expresion {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable) {ErrorNoDeclarada($$); $$.entrada=indefinido;}}
+lista_salida : lista_salida COMA expresion 
+		| expresion
 
 expresion : PARIZQ expresion PARDCH { copiaStruct(&$$, $2); }
 		| OPUNI expresion %prec NOT { copiaStruct(&$$, operador_unario($2,$1) ); }

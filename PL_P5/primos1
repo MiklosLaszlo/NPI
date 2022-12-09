@@ -1,0 +1,44 @@
+main{
+    open
+        int n, curr;
+    close
+    int divide(int a,int b){
+        open
+            int c;
+        close
+        int noHaceNada(int c){
+            open
+                bool h;
+            close
+            h = (c equal c);
+            if (h or (not h)) then {
+                return c;
+            }
+            else {
+                return c;
+            }
+        };
+        c = a/b;
+        return noHaceNada(c);
+    };
+
+    write ('i','n','t','r','o','d','u','c','e',' ','n','u','m','e','r','o',' ',':',' ');
+    read (n);
+    write (' ',n,' ','=','=',' ');
+    curr=2;
+    while (curr less_eq n){
+        open
+            int d;
+        close
+        d = n/curr;
+
+        if ( (d*curr) equal n) then {
+            write ('*',' ',curr,' ');
+            n = divide(n,curr);
+        }
+        else{
+            curr = curr+1;
+        }
+    }
+    write ('\n');
+};
