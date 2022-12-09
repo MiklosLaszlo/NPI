@@ -32,7 +32,9 @@
    
    TipoOperador tipo_operador; // En caso de ser operador, qué operador es  
 };
-#endif 
+
+	const struct entradaTS initialize = {.entrada = indefinido, .dato_referencia=desconocido, .dato_lista=desconocido, .n_parametros=0, .puntero_lista=0};
+#endif
 
 #include "y.tab.h"
 
