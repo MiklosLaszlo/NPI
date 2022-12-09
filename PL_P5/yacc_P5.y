@@ -32,6 +32,8 @@
    
    TipoOperador tipo_operador; // En caso de ser operador, qué operador es  
 };
+
+	const struct entradaTS initialize = {.entrada = indefinido, .dato_referencia=desconocido, .dato_lista=desconocido, .n_parametros=0, .puntero_lista=0};
 #endif
 
 void yyerror( char *msg ){
@@ -106,22 +108,22 @@ char funcion_usandose[20][100];
 %%
 // Producciones
 // ######################
-programa : MAIN bloque PYC 
-		  | MAIN error { yyerrok; explicacion_error_sintactico("Debe incluir un bloque tras el main"); } 
-		  | MAIN bloque error { yyerrok; explicacion_error_sintactico("El programa debe acabar con \';\'"); }
-bloque : LLAVEIZQ	{InsertarMarca();}
+programa : MAIN {generaFich();} bloque PYC {closeFich();}
+		  | MAIN {generaFich();} error { yyerrok; explicacion_error_sintactico("Debe incluir un bloque tras el main"); } 
+		  | MAIN {generaFich();} bloque error { yyerrok; explicacion_error_sintactico("El programa debe acabar con \';\'"); }
+bloque : LLAVEIZQ	{writeStarBlock(funcion_actual);InsertarMarca();} 
         declar_de_variables_locales
         declar_de_subprogs
         sentencias
-        LLAVEDCH {EliminarBloque();}
-		| LLAVEIZQ {InsertarMarca();}
+        LLAVEDCH {writeEndBlock(funcion_actual);EliminarBloque();}
+		| LLAVEIZQ {writeStarBlock(funcion_actual);InsertarMarca();}
 		declar_de_variables_locales 
 		declar_de_subprogs 
-		LLAVEDCH {EliminarBloque();}
+		LLAVEDCH {writeEndBlock(funcion_actual);EliminarBloque();}
 		//  | LLAVEIZQ error { yyerrok; explicacion_error_sintactico('Error en el orden del bloque'); } 
 		//  | LLAVEIZQ declar_de_variables_locales error { yyerrok; explicacion_error_sintactico("Error en el orden del bloque"); } 
 		//  | LLAVEIZQ declar_de_variables_locales declar_de_subprogs error { yyerrok; explicacion_error_sintactico('Error en el orden del bloque'); } 
-		  | LLAVEIZQ {InsertarMarca();} declar_de_variables_locales declar_de_subprogs error { yyerrok; explicacion_error_sintactico("El bloque debe acabar con }"); } 
+		  | LLAVEIZQ {writeStarBlock(funcion_actual);InsertarMarca();} declar_de_variables_locales declar_de_subprogs error { yyerrok; explicacion_error_sintactico("El bloque debe acabar con }"); } 
 declar_de_variables_locales : INIVARIABLES variables_locales FINVARIABLES 
         | 
 		| INIVARIABLES error { yyerrok; explicacion_error_sintactico("Error en el bloque de declaración de variables"); } 
@@ -134,19 +136,24 @@ cuerpo_declar_variables : tipo_basico lista_identificadores
 lista_identificadores : lista_identificadores
 		 COMA 			
 		 IDENTIFICADOR  { if(search_parametros_funcion_declardo($3.nombre)) explicacion_error_semantico("Redeclarando un parámetro de la función");
-			else if(search_identificador_marca($3.nombre).entrada == marca) push2($3,variable); else ErrorDeclaradaEnBLoque($3);
+			else if(search_identificador_marca($3.nombre).entrada == marca) 
+			{strcpy($3.nombre_traductor,creaNombreTraduccion(variable)); push2($3,variable);writeVarFile(funcion_actual);} 
+			else ErrorDeclaradaEnBLoque($3);
 						if(search_parametros_funcion_declardo($3.nombre)) explicacion_error_semantico("Redeclarando un parámetro de la función");
 						} 
         | IDENTIFICADOR {if(search_parametros_funcion_declardo($1.nombre)) explicacion_error_semantico("Redeclarando un parámetro de la función");
-		else
-			if(search_identificador_marca($1.nombre).entrada == marca) push2($1,variable); else ErrorDeclaradaEnBLoque($1);
+			else if(search_identificador_marca($1.nombre).entrada == marca) {
+				strcpy($1.nombre_traductor,creaNombreTraduccion(variable));  push2($1,variable);writeVarFile(funcion_actual);} 
+			else ErrorDeclaradaEnBLoque($1);
 		} 
 		  // El error de esto lo englobo en el de arriba
 declar_de_subprogs : declar_de_subprogs declarar_funcion
         | ;
 declarar_funcion : tipo_basico 
 				  IDENTIFICADOR {funcion_actual++;strcpy(funcion_declarandose[funcion_actual],$2.nombre);} 
-				  parametros {$2.n_parametros=n_parametros;if(search_identificador_marca($2.nombre).entrada == marca) push2($2,funcion); else ErrorDeclaradaEnBLoque($2); n_parametros=0;}
+				  parametros {$2.n_parametros=n_parametros;if(search_identificador_marca($2.nombre).entrada == marca) 
+				  {strcpy($2.nombre_traductor,$2.nombre);push2($2,funcion);writeFunctionFile();} 
+				  else ErrorDeclaradaEnBLoque($2); n_parametros=0;}
 				  bloque 
 				  PYC {if(strcmp(funcion_declarandose[funcion_actual],"")!=0) explicacion_error_semantico("No se ha realizado un return de la función");funcion_actual--;}
 		  | tipo_basico error { yyerrok; explicacion_error_sintactico("Error, al declarar una función tras el tipo básico va el identificador"); }
@@ -157,8 +164,10 @@ parametros : PARIZQ PARDCH
         | PARIZQ lista_parametros PARDCH 
 		  //| PARIZQ error { yyerrok; explicacion_error_sintactico("Error, debe introducir una lista de parámetros separados por comas"); }
 		| PARIZQ lista_parametros error { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el paréntesis"); }
-lista_parametros : tipo_basico IDENTIFICADOR {n_parametros+=1;if(!search_parametro($2.nombre))push2($2,parametro_formal);}
-        | lista_parametros COMA tipo_basico IDENTIFICADOR {n_parametros+=1;push2($4,parametro_formal);}
+lista_parametros : tipo_basico IDENTIFICADOR {n_parametros+=1;if(!search_parametro($2.nombre))
+		{strcpy($2.nombre_traductor,$2.nombre);push2($2,parametro_formal);}}
+        | lista_parametros COMA tipo_basico IDENTIFICADOR {n_parametros+=1;if(!search_parametro($4.nombre))
+		{strcpy($4.nombre_traductor,$4.nombre);push2($4,parametro_formal);}}
 		| tipo_basico error { yyerrok; explicacion_error_sintactico("Error, tras el tipo básico debe introducir un identificador"); }
 tipo_basico : TYPE { $$.entrada = $1.entrada; }
 		// Ya no hay que comparar atributos. Las cosas finales las tenemos

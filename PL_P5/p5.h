@@ -3,28 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 #define BG_COLOR_PURPLE     "\x1B[45m"
 #define RESET_COLOR    "\x1b[0m"
 
 #define MAX_TS 1000
-
-//Si debug es 1 obtendremos informacion sobre lo que estamos haciendo
-int debug=0;
-
-// Variables para la traduccion
-int contadorVar = 0; // Para las variables de nuestro lenguaje
-int contadorTem = 0; // Para las expresiones de nuestro lenguaje
-int contadorFun = 0; // Para las funciones de nuestro lenguaje
-int contadorPar = 0; // Para los parametros de las funciones de nuestro lenguaje
-int contadorEtiqueta = 0; // Contador de las etiquetas para los goto
-const int tamInt2Char = 11; // Con cuantos caracteres puede representar un entero incluyendo el caracter '/0'
-char nombreVar[4] = "var\0"; // Para las variables traducidas
-char nombreTem[4] = "tem\0"; // Para las expresiones traducidas
-char nombreFun[4] = "fun\0"; // Para las funciones traducidas
-char nombrePar[4] = "par\0"; // Para los parametros de las funciones traducidas
-char nombreEtiqueta[10] = "etiqueta\0"; // Indica nombre de ka  etiqueta
-
-char nombreDev[200] = "\0"; // Variable temporal para guardar los nombres a devolver
 
 #define true 1
 #define false 0
@@ -57,7 +40,28 @@ char nombreDev[200] = "\0"; // Variable temporal para guardar los nombres a devo
    TipoOperador tipo_operador; // En caso de ser operador, qué operador es  
 };
 
+	const struct entradaTS initialize = {.entrada = indefinido, .dato_referencia=desconocido, .dato_lista=desconocido, .n_parametros=0, .puntero_lista=0};
 #endif
+
+//Si debug es 1 obtendremos informacion sobre lo que estamos haciendo
+int debug=0;
+
+// Variables para la traduccion
+int contadorVar = 0; // Para las variables de nuestro lenguaje
+int contadorTem = 0; // Para las expresiones de nuestro lenguaje
+int contadorEtiqueta = 0; // Contador de las etiquetas para los goto
+const int tamInt2Char = 11; // Con cuantos caracteres puede representar un entero incluyendo el caracter '/0'
+char nombreVar[4] = "var\0"; // Para las variables traducidas
+char nombreTem[4] = "tem\0"; // Para las expresiones traducidas
+char nombreEtiqueta[10] = "etiqueta\0"; // Indica nombre de ka  etiqueta
+
+char nombreDev[200] = "\0"; // Variable temporal para guardar los nombres a devolver
+
+
+// Ficheros a usar
+FILE *fmain;
+FILE *fvariables;
+FILE *ffunciones;
 
 //Definimos la TS como un array multidimensional de entradas
 struct entradaTS  TS[MAX_TS];
@@ -99,11 +103,7 @@ void push(struct entradaTS e){
         exit(-1);
     }   
     else{
-        TS[TOPE].entrada=e.entrada;
-        strcpy(TS[TOPE].nombre,e.nombre);
-        TS[TOPE].dato_referencia=e.dato_referencia;
-        TS[TOPE].dato_lista=e.dato_lista;
-        TS[TOPE].n_parametros=e.n_parametros;
+        copiaStruct(&TS[TOPE],e);
         TOPE++;
     }
     //if(debug)
@@ -119,15 +119,13 @@ void push2(struct entradaTS e, TipoEntrada ent){
         exit(-1);
     }   
     else{
+        copiaStruct(&TS[TOPE],e);
         TS[TOPE].entrada=ent;
-        strcpy(TS[TOPE].nombre,e.nombre);
-        TS[TOPE].dato_referencia=e.dato_referencia;
-        TS[TOPE].dato_lista=e.dato_lista;
-        TS[TOPE].n_parametros=e.n_parametros;
         TOPE++;
     }
     //if(debug)
         //printf("Tamaño actual de la pila %i\n",TOPE);
+    printTS();
 }
 
 //Metodo para saber si la pila esta vacia
@@ -310,7 +308,7 @@ void printTS(){
     
     printf("------------------------------------\n");
     for(int i = 0; i <= TOPE-1;i++){
-        printf("Posicion %i,%s, %s, %s, %s, %i.\n", i,toStringEntrada(TS[i].entrada), TS[i].nombre, toStringTipoDato(TS[i].dato_referencia), toStringTipoDato(TS[i].dato_lista),TS[i].n_parametros);
+        printf("Posicion %i,%s, %s, %s, %s, %i, %s.\n", i,toStringEntrada(TS[i].entrada), TS[i].nombre, toStringTipoDato(TS[i].dato_referencia), toStringTipoDato(TS[i].dato_lista),TS[i].n_parametros, TS[i].nombre_traductor);
     }
     printf("------------------------------------\n");
 }
@@ -688,6 +686,7 @@ bool search_parametro(char * nom){
             printf(BG_COLOR_PURPLE "Error semantico :" RESET_COLOR"En línea %i. Dos parametros con el mismo nombre \n",yylineno);
             return true;
         }
+        i--;
     }
     return false;
 }
@@ -748,16 +747,6 @@ char* creaNombreTraduccion(TipoEntrada e){
             auxNum = contadorVar;
             strcpy(auxChar,nombreVar);
             break;
-        case funcion:
-            contadorFun++;
-            auxNum = contadorFun;
-            strcpy(auxChar,nombreFun);
-            break;
-        case parametro_formal:
-            contadorPar++;
-            auxNum = contadorPar;
-            strcpy(auxChar,nombrePar);
-            break;
         default:
             contadorTem++;
             auxNum = contadorTem;
@@ -780,3 +769,161 @@ char* creaEtiquetaDevolver(){
     return nombreDev;
 }
 
+// Abre los ficheros correspondientes
+void generaFich(){
+
+    // Creo los ficheros a usar
+    fmain = fopen("generated.c","w");
+    fvariables = fopen("dec_var","w");
+    ffunciones = fopen("dec_fun","w");
+
+    // Añado que se puedan usar booleanos en todos
+    fputs("#include <stdbool.h>\n",fmain);
+    fputs("#include <stdbool.h>\n",fvariables);
+    fputs("#include <stdbool.h>\n",ffunciones);
+
+    // Añado al archivo c lo que va a necesitar, que seria los printf, scanf, archivo de variables y de funciones
+	fputs("#include <stdio.h>\n#include \"dec_var\"\n#include \"dec_fun\"\n\nint main()",fmain);
+    // Añado al archivo de funciones printf, scanf y las variables
+    fputs("#include <stdio.h>\n#include \"dec_var\"\n",ffunciones);
+    
+
+}
+
+// Cierra los ficheros
+void closeFich(){
+    fclose(fmain);
+    fclose(fvariables);
+    fclose(ffunciones);
+}
+
+// Escribe en el fichero de variables la variable de tipo dato_referencia y si es preciso dato_lista con nombre s
+// Tambien escribe el nombre de los parametros (por nested funcions)
+// si el parametro i es menor o igual a -1 significa que estoy en main, así que declaro las variables como globales (en su archivo)
+// en otro caso entoy en las funciones y se declaran de forma estandar
+void writeVarFile(int funcion_actual){
+    FILE *file;
+    if(funcion_actual<0){
+        file = fvariables;
+    }
+    else{
+        file = ffunciones;
+    }
+    char auxDatoReferencia[20] = "\0";
+    //char auxDatoLista[20] = "\0";
+    switch(TS[TOPE-1].dato_referencia){
+        case entero:
+            strcpy(auxDatoReferencia,"int \0");
+            break;
+        case real:
+            strcpy(auxDatoReferencia,"double \0");
+            break;
+        case booleano:
+            strcpy(auxDatoReferencia,"bool \0");
+            break;
+        case caracter:
+            strcpy(auxDatoReferencia,"char \0");
+            break;
+        case lista:
+            // Meter algo por aqui???
+            break;
+    }
+    
+    // Supongo que el tipo de dato siempre es correcto
+    if(TS[TOPE-1].dato_referencia!=lista){
+        fputs(auxDatoReferencia,file);
+        fputs(TS[TOPE-1].nombre_traductor,file);
+        fputs(";\n",file);
+    }
+    else {
+        ;
+    }
+
+}
+
+// Escribe en el fichero de funciones la declaracion de la funcion (recien insertada)
+void writeFunctionFile(){
+    char auxDatoReferencia[20] = "\0";
+    //char auxDatoLista[20] = "\0";
+    switch(TS[TOPE-1].dato_referencia){
+        case entero:
+            strcpy(auxDatoReferencia,"int \0");
+            break;
+        case real:
+            strcpy(auxDatoReferencia,"double \0");
+            break;
+        case booleano:
+            strcpy(auxDatoReferencia,"bool \0");
+            break;
+        case caracter:
+            strcpy(auxDatoReferencia,"char \0");
+            break;
+        case lista:
+            // Meter algo por aqui???
+            break;
+    }
+
+    if(TS[TOPE-1].dato_referencia!=lista){
+        fputs(auxDatoReferencia,ffunciones);
+        fputs(TS[TOPE-1].nombre_traductor,ffunciones);
+        fputs("(",ffunciones);
+        int i = TOPE-1-TS[TOPE-1].n_parametros;
+        while(i!=(TOPE-1)){
+            switch(TS[i].dato_referencia){
+            case entero:
+                strcpy(auxDatoReferencia,"int \0");
+                break;
+            case real:
+                strcpy(auxDatoReferencia,"double \0");
+                break;
+            case booleano:
+                strcpy(auxDatoReferencia,"bool \0");
+                break;
+            case caracter:
+                strcpy(auxDatoReferencia,"char \0");
+                break;
+            case lista:
+                // Meter algo por aqui???
+                break;
+            }
+            if(TS[i].dato_referencia!=lista){
+                fputs(auxDatoReferencia,ffunciones);
+                fputs(" ",ffunciones);
+                fputs(TS[i].nombre,ffunciones);
+            }
+            else{
+                ;// COSAS CON LISTAS
+            }
+            i++;
+
+            if(i!=(TOPE-1))
+                fputs(", ",ffunciones);
+            else
+                fputs(")",ffunciones);
+        }
+    }
+    else {
+        ;
+    }
+}
+
+// Escribe el inicio de un bloque, si el parametro i es menor o igual a -1 significa que estoy en main
+// si es mayor estoy en el bloque de la funcion con nombre en la pila i
+void writeStarBlock(int funcion_actual){
+    
+    if(funcion_actual<0)
+        fputs("{\n",fmain);
+    else{
+        fputs("{\n",ffunciones);
+    }
+    
+}
+
+void writeEndBlock(int funcion_actual){
+    
+    if(funcion_actual<0)
+        fputs("}\n",fmain);
+    else
+        fputs("}\n",ffunciones);
+
+}
