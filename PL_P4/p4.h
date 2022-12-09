@@ -104,6 +104,7 @@ void push2(struct entradaTS e, TipoEntrada ent){
         TS[TOPE].n_parametros=e.n_parametros;
         TOPE++;
     }
+    printTS();
     //if(debug)
         //printf("Tamaño actual de la pila %i\n",TOPE);
 }

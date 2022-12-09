@@ -48,6 +48,7 @@ main{
 			close	
 			char funcionE (char e1, char e2) {
 				open
+					int lc;
 					list of char frase1;
 				close
 				frase1=['i','n','t','r','o','d','u','z','c','a',' ','d','o','s',' ','c','a','r','a','c','t','e','r','e','s',':',' '];
