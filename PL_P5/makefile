@@ -14,13 +14,13 @@ test_lex: salida_lex.out prueba
 test_yacc: yacc
 	./salida_yacc Ejemplo_cuaderno
 
-lex.yy.c : lex_P4.l y.tab.h
+lex.yy.c : lex_P5.l y.tab.h
 	flex $<
 
-y.tab.c: yacc_P4.y clean lex.yy.c 
+y.tab.c: yacc_P5.y clean lex.yy.c 
 	yacc -v -d $<
 
-y.tab.h: yacc_P4.y clean lex.yy.c
+y.tab.h: yacc_P5.y clean lex.yy.c
 	yacc -v -d $<
 	
 

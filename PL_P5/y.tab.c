@@ -66,11 +66,11 @@
 
 
 /* First part of user prologue.  */
-#line 1 "yacc_P4.y"
+#line 1 "yacc_P5.y"
 
 #define YYSTYPE struct entradaTS
 #include "lex.yy.c"
-#include "p4.h"
+#include "p5.h"
 #define RESET_COLOR    "\x1b[0m"
 #define BG_COLOR_YELLOW     "\x1B[43m"
 #define BG_COLOR_PURPLE     "\x1B[45m"
@@ -88,14 +88,18 @@
 		less, greater, less_eq, greater_eq,arroba, menosmenos, porcentaje,doblepor} TipoOperador;
 
 	typedef struct  entradaTS{
-   TipoEntrada entrada = indefinido;      // Indica el tipo de entrada
-   char nombre[100]; 
-   // char valor[50];              // Contendra los caracteres que forman el identificador
-   TipoDato dato_referencia = desconocido; // En caso de que entrada sea funcion,variable
+   TipoEntrada entrada;      // Indica el tipo de entrada
+
+   char nombre[100];                 // Contendra los caracteres que forman el identificador en nuestro lenguaje
+   char nombre_traductor[200];       // Contendra los caracteres que forman el identificador al traducirlo a C
+   
+   TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
                              // o parametro formal indica el tipo de dato al que hace referencia
-   TipoDato dato_lista= desconocido;      //tipo de datos que contiene la lista                    
-   unsigned int n_parametros=0;  //Si tipoDato  es funcion indica el numero de parametros 
-	TipoOperador tipo_operador; // En caso de ser operador, qué operador es  
+   TipoDato dato_lista;      //tipo de datos que contiene la lista                    
+   unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros o el tamaño de la lista
+   unsigned int puntero_lista; // Puntero que señala la posición en la lista
+   
+   TipoOperador tipo_operador; // En caso de ser operador, qué operador es  
 };
 #endif
 
@@ -115,7 +119,7 @@ TipoDato daton_anterior=desconocido;
 char funcion_declarandose[20][100];
 char funcion_usandose[20][100];
 
-#line 119 "y.tab.c"
+#line 123 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -627,20 +631,20 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   105,   105,   106,   107,   108,   108,   113,   113,   120,
-     120,   121,   122,   123,   124,   125,   126,   127,   128,   129,
-     130,   133,   135,   136,   138,   139,   137,   142,   143,   143,
-     144,   144,   144,   145,   145,   145,   146,   147,   149,   150,
-     151,   152,   153,   155,   156,   157,   158,   159,   160,   161,
-     162,   163,   164,   165,   166,   167,   168,   169,   170,   171,
-     172,   173,   174,   175,   177,   178,   179,   180,   181,   182,
-     183,   184,   185,   186,   187,   188,   189,   190,   191,   192,
-     193,   195,   196,   197,   198,   199,   200,   201,   202,   203,
-     204,   209,   210,   212,   213,   215,   216,   217,   218,   219,
-     220,   221,   222,   223,   225,   226,   227,   228,   230,   230,
-     236,   237,   238,   243,   248,   249,   250,   251,   253,   257,
-     262,   263,   264,   265,   266,   267,   268,   269,   270,   271,
-     272,   273,   274,   275
+       0,   109,   109,   110,   111,   112,   112,   117,   117,   124,
+     124,   125,   126,   127,   128,   129,   130,   131,   132,   133,
+     134,   140,   145,   146,   148,   149,   147,   152,   153,   153,
+     154,   154,   154,   155,   155,   155,   156,   157,   159,   160,
+     161,   162,   163,   165,   166,   167,   168,   169,   170,   171,
+     172,   173,   174,   175,   176,   177,   178,   179,   180,   181,
+     182,   183,   184,   185,   187,   188,   189,   190,   191,   192,
+     193,   194,   195,   196,   197,   198,   199,   200,   201,   202,
+     203,   205,   206,   207,   208,   209,   210,   211,   212,   213,
+     220,   230,   231,   233,   234,   236,   237,   238,   239,   240,
+     241,   242,   243,   244,   246,   247,   248,   249,   251,   251,
+     257,   258,   259,   264,   269,   270,   271,   272,   274,   278,
+     283,   284,   285,   286,   287,   288,   289,   290,   291,   292,
+     293,   294,   295,   296
 };
 #endif
 
@@ -1641,659 +1645,688 @@ yyreduce:
   switch (yyn)
     {
   case 3:
-#line 106 "yacc_P4.y"
+#line 110 "yacc_P5.y"
                                { yyerrok; explicacion_error_sintactico("Debe incluir un bloque tras el main"); }
-#line 1647 "y.tab.c"
+#line 1651 "y.tab.c"
     break;
 
   case 4:
-#line 107 "yacc_P4.y"
+#line 111 "yacc_P5.y"
                                       { yyerrok; explicacion_error_sintactico("El programa debe acabar con \';\'"); }
-#line 1653 "y.tab.c"
+#line 1657 "y.tab.c"
     break;
 
   case 5:
-#line 108 "yacc_P4.y"
+#line 112 "yacc_P5.y"
                         {InsertarMarca();}
-#line 1659 "y.tab.c"
+#line 1663 "y.tab.c"
     break;
 
   case 6:
-#line 112 "yacc_P4.y"
+#line 116 "yacc_P5.y"
                  {EliminarBloque();}
-#line 1665 "y.tab.c"
+#line 1669 "y.tab.c"
     break;
 
   case 7:
-#line 113 "yacc_P4.y"
+#line 117 "yacc_P5.y"
                            {InsertarMarca();}
-#line 1671 "y.tab.c"
+#line 1675 "y.tab.c"
     break;
 
   case 8:
-#line 116 "yacc_P4.y"
+#line 120 "yacc_P5.y"
                          {EliminarBloque();}
-#line 1677 "y.tab.c"
+#line 1681 "y.tab.c"
     break;
 
   case 9:
-#line 120 "yacc_P4.y"
+#line 124 "yacc_P5.y"
                              {InsertarMarca();}
-#line 1683 "y.tab.c"
+#line 1687 "y.tab.c"
     break;
 
   case 10:
-#line 120 "yacc_P4.y"
+#line 124 "yacc_P5.y"
                                                                                                      { yyerrok; explicacion_error_sintactico("El bloque debe acabar con }"); }
-#line 1689 "y.tab.c"
+#line 1693 "y.tab.c"
     break;
 
   case 13:
-#line 123 "yacc_P4.y"
+#line 127 "yacc_P5.y"
                                      { yyerrok; explicacion_error_sintactico("Error en el bloque de declaración de variables"); }
-#line 1695 "y.tab.c"
+#line 1699 "y.tab.c"
     break;
 
   case 14:
-#line 124 "yacc_P4.y"
+#line 128 "yacc_P5.y"
                                                        { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el bloque de declaración de variables"); }
-#line 1701 "y.tab.c"
+#line 1705 "y.tab.c"
     break;
 
   case 17:
-#line 127 "yacc_P4.y"
+#line 131 "yacc_P5.y"
                                                   { yyerrok; explicacion_error_sintactico("Error, la declaración debe acabar en \";\"");}
-#line 1707 "y.tab.c"
+#line 1711 "y.tab.c"
     break;
 
   case 19:
-#line 129 "yacc_P4.y"
+#line 133 "yacc_P5.y"
                                       { yyerrok; explicacion_error_sintactico("Error, después del tipo básico va una lista de identificadores"); }
-#line 1713 "y.tab.c"
+#line 1717 "y.tab.c"
     break;
 
   case 20:
-#line 132 "yacc_P4.y"
-                                {if(search_identificador_marca(yyvsp[0].nombre).entrada == marca) push2(yyvsp[0],variable); else ErrorDeclaradaEnBLoque(yyvsp[0]);}
-#line 1719 "y.tab.c"
+#line 136 "yacc_P5.y"
+                                { if(search_parametros_funcion_declardo(yyvsp[0].nombre)) explicacion_error_semantico("Redeclarando un parámetro de la función");
+			else if(search_identificador_marca(yyvsp[0].nombre).entrada == marca) push2(yyvsp[0],variable); else ErrorDeclaradaEnBLoque(yyvsp[0]);
+						if(search_parametros_funcion_declardo(yyvsp[0].nombre)) explicacion_error_semantico("Redeclarando un parámetro de la función");
+						}
+#line 1726 "y.tab.c"
     break;
 
   case 21:
-#line 133 "yacc_P4.y"
-                        {if(search_identificador_marca(yyvsp[0].nombre).entrada == marca) push2(yyvsp[0],variable); else ErrorDeclaradaEnBLoque(yyvsp[0]);}
-#line 1725 "y.tab.c"
+#line 140 "yacc_P5.y"
+                        {if(search_parametros_funcion_declardo(yyvsp[0].nombre)) explicacion_error_semantico("Redeclarando un parámetro de la función");
+		else
+			if(search_identificador_marca(yyvsp[0].nombre).entrada == marca) push2(yyvsp[0],variable); else ErrorDeclaradaEnBLoque(yyvsp[0]);
+		}
+#line 1735 "y.tab.c"
     break;
 
   case 24:
-#line 138 "yacc_P4.y"
+#line 148 "yacc_P5.y"
                                                 {funcion_actual++;strcpy(funcion_declarandose[funcion_actual],yyvsp[0].nombre);}
-#line 1731 "y.tab.c"
+#line 1741 "y.tab.c"
     break;
 
   case 25:
-#line 139 "yacc_P4.y"
+#line 149 "yacc_P5.y"
                                              {yyvsp[-2].n_parametros=n_parametros;if(search_identificador_marca(yyvsp[-2].nombre).entrada == marca) push2(yyvsp[-2],funcion); else ErrorDeclaradaEnBLoque(yyvsp[-2]); n_parametros=0;}
-#line 1737 "y.tab.c"
+#line 1747 "y.tab.c"
     break;
 
   case 26:
-#line 141 "yacc_P4.y"
+#line 151 "yacc_P5.y"
                                       {if(strcmp(funcion_declarandose[funcion_actual],"")!=0) explicacion_error_semantico("No se ha realizado un return de la función");funcion_actual--;}
-#line 1743 "y.tab.c"
+#line 1753 "y.tab.c"
     break;
 
   case 27:
-#line 142 "yacc_P4.y"
+#line 152 "yacc_P5.y"
                                       { yyerrok; explicacion_error_sintactico("Error, al declarar una función tras el tipo básico va el identificador"); }
-#line 1749 "y.tab.c"
+#line 1759 "y.tab.c"
     break;
 
   case 28:
-#line 143 "yacc_P4.y"
+#line 153 "yacc_P5.y"
                                               {funcion_actual++;strcpy(funcion_declarandose[funcion_actual],yyvsp[0].nombre);}
-#line 1755 "y.tab.c"
+#line 1765 "y.tab.c"
     break;
 
   case 29:
-#line 143 "yacc_P4.y"
+#line 153 "yacc_P5.y"
                                                                                                                                  { yyerrok; explicacion_error_sintactico("Error, en una función tras el identificador vienen los parámetros."); }
-#line 1761 "y.tab.c"
+#line 1771 "y.tab.c"
     break;
 
   case 30:
-#line 144 "yacc_P4.y"
+#line 154 "yacc_P5.y"
                                               {funcion_actual++;strcpy(funcion_declarandose[funcion_actual],yyvsp[0].nombre);}
-#line 1767 "y.tab.c"
+#line 1777 "y.tab.c"
     break;
 
   case 31:
-#line 144 "yacc_P4.y"
+#line 154 "yacc_P5.y"
                                                                                                                                       {yyvsp[-2].n_parametros=n_parametros;if(search_identificador_marca(yyvsp[-2].nombre).entrada == marca) push2(yyvsp[-2],funcion); else ErrorDeclaradaEnBLoque(yyvsp[-2]); n_parametros=0;}
-#line 1773 "y.tab.c"
+#line 1783 "y.tab.c"
     break;
 
   case 32:
-#line 144 "yacc_P4.y"
+#line 154 "yacc_P5.y"
                                                                                                                                                                                                                                                                                                           { yyerrok; explicacion_error_sintactico("Error, en una función tras los parámetros viene un bloque."); }
-#line 1779 "y.tab.c"
+#line 1789 "y.tab.c"
     break;
 
   case 33:
-#line 145 "yacc_P4.y"
+#line 155 "yacc_P5.y"
                                               {funcion_actual++;strcpy(funcion_declarandose[funcion_actual],yyvsp[0].nombre);}
-#line 1785 "y.tab.c"
+#line 1795 "y.tab.c"
     break;
 
   case 34:
-#line 145 "yacc_P4.y"
+#line 155 "yacc_P5.y"
                                                                                                                                       {yyvsp[-2].n_parametros=n_parametros;if(search_identificador_marca(yyvsp[-2].nombre).entrada == marca) push2(yyvsp[-2],funcion); else ErrorDeclaradaEnBLoque(yyvsp[-2]); n_parametros=0;}
-#line 1791 "y.tab.c"
+#line 1801 "y.tab.c"
     break;
 
   case 35:
-#line 145 "yacc_P4.y"
+#line 155 "yacc_P5.y"
                                                                                                                                                                                                                                                                                                                  { yyerrok; explicacion_error_sintactico("Error, la declaración de funciones acaba en \";\"."); }
-#line 1797 "y.tab.c"
+#line 1807 "y.tab.c"
     break;
 
   case 38:
-#line 149 "yacc_P4.y"
+#line 159 "yacc_P5.y"
                                                 { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el paréntesis"); }
-#line 1803 "y.tab.c"
+#line 1813 "y.tab.c"
     break;
 
   case 39:
-#line 150 "yacc_P4.y"
+#line 160 "yacc_P5.y"
                                              {n_parametros+=1;if(!search_parametro(yyvsp[0].nombre))push2(yyvsp[0],parametro_formal);}
-#line 1809 "y.tab.c"
+#line 1819 "y.tab.c"
     break;
 
   case 40:
-#line 151 "yacc_P4.y"
+#line 161 "yacc_P5.y"
                                                           {n_parametros+=1;push2(yyvsp[0],parametro_formal);}
-#line 1815 "y.tab.c"
+#line 1825 "y.tab.c"
     break;
 
   case 41:
-#line 152 "yacc_P4.y"
+#line 162 "yacc_P5.y"
                                     { yyerrok; explicacion_error_sintactico("Error, tras el tipo básico debe introducir un identificador"); }
-#line 1821 "y.tab.c"
+#line 1831 "y.tab.c"
     break;
 
   case 42:
-#line 153 "yacc_P4.y"
+#line 163 "yacc_P5.y"
                    { yyval.entrada = yyvsp[0].entrada; }
-#line 1827 "y.tab.c"
+#line 1837 "y.tab.c"
     break;
 
   case 54:
-#line 166 "yacc_P4.y"
+#line 176 "yacc_P5.y"
                                                          {comprobar_asignacion(yyvsp[-3],yyvsp[-1]);}
-#line 1833 "y.tab.c"
+#line 1843 "y.tab.c"
     break;
 
   case 55:
-#line 167 "yacc_P4.y"
+#line 177 "yacc_P5.y"
                                               { yyerrok; explicacion_error_sintactico("Error, el identificador debe estar igualada a una expresión");}
-#line 1839 "y.tab.c"
+#line 1849 "y.tab.c"
     break;
 
   case 56:
-#line 168 "yacc_P4.y"
+#line 178 "yacc_P5.y"
                                                         { yyerrok; explicacion_error_sintactico("Error, la asignación debe acabar en \";\"");}
-#line 1845 "y.tab.c"
+#line 1855 "y.tab.c"
     break;
 
   case 57:
-#line 169 "yacc_P4.y"
+#line 179 "yacc_P5.y"
                                                                   { comprueba_exp_logica(yyvsp[-5]); }
-#line 1851 "y.tab.c"
+#line 1861 "y.tab.c"
     break;
 
   case 58:
-#line 170 "yacc_P4.y"
+#line 180 "yacc_P5.y"
                                                  { comprueba_exp_logica(yyvsp[-3]); }
-#line 1857 "y.tab.c"
+#line 1867 "y.tab.c"
     break;
 
   case 59:
-#line 171 "yacc_P4.y"
+#line 181 "yacc_P5.y"
                              { yyerrok; explicacion_error_sintactico("Error, tras el if debe introducir la condición entre paréntesis"); }
-#line 1863 "y.tab.c"
+#line 1873 "y.tab.c"
     break;
 
   case 60:
-#line 172 "yacc_P4.y"
+#line 182 "yacc_P5.y"
                                     { yyerrok; explicacion_error_sintactico("Error, la condición debe ser una expresión"); }
-#line 1869 "y.tab.c"
+#line 1879 "y.tab.c"
     break;
 
   case 61:
-#line 173 "yacc_P4.y"
+#line 183 "yacc_P5.y"
                                               { yyerrok; explicacion_error_sintactico("Error, debe cerrar el paréntesis"); }
-#line 1875 "y.tab.c"
+#line 1885 "y.tab.c"
     break;
 
   case 62:
-#line 174 "yacc_P4.y"
+#line 184 "yacc_P5.y"
                                                      { yyerrok; explicacion_error_sintactico("Error, se esperaba \"then\""); }
-#line 1881 "y.tab.c"
+#line 1891 "y.tab.c"
     break;
 
   case 63:
-#line 175 "yacc_P4.y"
+#line 185 "yacc_P5.y"
                                                           { yyerrok; explicacion_error_sintactico("Error, se esperaba un bloque"); }
-#line 1887 "y.tab.c"
+#line 1897 "y.tab.c"
     break;
 
   case 64:
-#line 177 "yacc_P4.y"
+#line 187 "yacc_P5.y"
                                                                       { yyerrok; explicacion_error_sintactico("Error, se esperaba un bloque"); }
-#line 1893 "y.tab.c"
+#line 1903 "y.tab.c"
     break;
 
   case 65:
-#line 178 "yacc_P4.y"
+#line 188 "yacc_P5.y"
                                                        { comprueba_exp_logica(yyvsp[-2]); }
-#line 1899 "y.tab.c"
+#line 1909 "y.tab.c"
     break;
 
   case 66:
-#line 179 "yacc_P4.y"
+#line 189 "yacc_P5.y"
                                 { yyerrok; explicacion_error_sintactico("Error, introduzca la condición entre paréntesis"); }
-#line 1905 "y.tab.c"
+#line 1915 "y.tab.c"
     break;
 
   case 67:
-#line 180 "yacc_P4.y"
+#line 190 "yacc_P5.y"
                                        { yyerrok; explicacion_error_sintactico("Error, la condición debe ser una expresión"); }
-#line 1911 "y.tab.c"
+#line 1921 "y.tab.c"
     break;
 
   case 68:
-#line 181 "yacc_P4.y"
+#line 191 "yacc_P5.y"
                                                  { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el paréntesis"); }
-#line 1917 "y.tab.c"
+#line 1927 "y.tab.c"
     break;
 
   case 69:
-#line 182 "yacc_P4.y"
+#line 192 "yacc_P5.y"
                                                         { yyerrok; explicacion_error_sintactico("Error, se esperaba un bloque"); }
-#line 1923 "y.tab.c"
+#line 1933 "y.tab.c"
     break;
 
   case 71:
-#line 184 "yacc_P4.y"
+#line 194 "yacc_P5.y"
                        { yyerrok; explicacion_error_sintactico("Error, se esperaba un paréntesis"); }
-#line 1929 "y.tab.c"
+#line 1939 "y.tab.c"
     break;
 
   case 72:
-#line 185 "yacc_P4.y"
+#line 195 "yacc_P5.y"
                                       { yyerrok; explicacion_error_sintactico("Error, debe introducir una lista de identificadores separados por comas"); }
-#line 1935 "y.tab.c"
+#line 1945 "y.tab.c"
     break;
 
   case 73:
-#line 186 "yacc_P4.y"
+#line 196 "yacc_P5.y"
                                                     { yyerrok; explicacion_error_sintactico("Error, debe cerrar el paréntesis de la lista de identificadores"); }
-#line 1941 "y.tab.c"
+#line 1951 "y.tab.c"
     break;
 
   case 74:
-#line 187 "yacc_P4.y"
+#line 197 "yacc_P5.y"
                                                            { yyerrok; explicacion_error_sintactico("Error, se esperaba \";\""); }
-#line 1947 "y.tab.c"
+#line 1957 "y.tab.c"
     break;
 
   case 76:
-#line 189 "yacc_P4.y"
+#line 199 "yacc_P5.y"
                                 { yyerrok; explicacion_error_sintactico("Error, se esperaba un paréntesis"); }
-#line 1953 "y.tab.c"
+#line 1963 "y.tab.c"
     break;
 
   case 77:
-#line 190 "yacc_P4.y"
+#line 200 "yacc_P5.y"
                                        { yyerrok; explicacion_error_sintactico("Error, debe introducir una lista de expresiones separados por comas"); }
-#line 1959 "y.tab.c"
+#line 1969 "y.tab.c"
     break;
 
   case 78:
-#line 191 "yacc_P4.y"
+#line 201 "yacc_P5.y"
                                                     { yyerrok; explicacion_error_sintactico("Error, debe cerrar el paréntesis de la lista de expresiones"); }
-#line 1965 "y.tab.c"
+#line 1975 "y.tab.c"
     break;
 
   case 79:
-#line 192 "yacc_P4.y"
+#line 202 "yacc_P5.y"
                                                            { yyerrok; explicacion_error_sintactico("Error, se esperaba \";\""); }
-#line 1971 "y.tab.c"
+#line 1981 "y.tab.c"
     break;
 
   case 80:
-#line 193 "yacc_P4.y"
+#line 203 "yacc_P5.y"
                                         {if(funcion_actual>-1){if(strcmp(funcion_declarandose[funcion_actual],"")!=0) if(!igualdad(yyvsp[-1],search_identificador_pila(funcion_declarandose[funcion_actual]))) {explicacion_error_semantico("No se devuelve el tipo de la función");}
 			strcpy(funcion_declarandose[funcion_actual],"");}}
-#line 1978 "y.tab.c"
+#line 1988 "y.tab.c"
     break;
 
   case 81:
-#line 195 "yacc_P4.y"
+#line 205 "yacc_P5.y"
                                  { yyerrok; explicacion_error_sintactico("Error, debe devolverse una expresión"); }
-#line 1984 "y.tab.c"
+#line 1994 "y.tab.c"
     break;
 
   case 82:
-#line 196 "yacc_P4.y"
+#line 206 "yacc_P5.y"
                                            { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); }
-#line 1990 "y.tab.c"
+#line 2000 "y.tab.c"
     break;
 
   case 83:
-#line 197 "yacc_P4.y"
+#line 207 "yacc_P5.y"
                                                                                 {comprobar_for_pascal(yyvsp[-6],yyvsp[-4],yyvsp[-2]);}
-#line 1996 "y.tab.c"
+#line 2006 "y.tab.c"
     break;
 
   case 84:
-#line 198 "yacc_P4.y"
+#line 208 "yacc_P5.y"
                               { yyerrok; explicacion_error_sintactico("Error, se esperaba una sentencia de asignación"); }
-#line 2002 "y.tab.c"
+#line 2012 "y.tab.c"
     break;
 
   case 85:
-#line 199 "yacc_P4.y"
+#line 209 "yacc_P5.y"
                                                    { yyerrok; explicacion_error_sintactico("Error, se esperaba la palabra \"to\""); }
-#line 2008 "y.tab.c"
+#line 2018 "y.tab.c"
     break;
 
   case 86:
-#line 200 "yacc_P4.y"
+#line 210 "yacc_P5.y"
                                                       { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
-#line 2014 "y.tab.c"
+#line 2024 "y.tab.c"
     break;
 
   case 87:
-#line 201 "yacc_P4.y"
+#line 211 "yacc_P5.y"
                                                                 { yyerrok; explicacion_error_sintactico("Error, se esperaba la palabra \"do\""); }
-#line 2020 "y.tab.c"
+#line 2030 "y.tab.c"
     break;
 
   case 88:
-#line 202 "yacc_P4.y"
+#line 212 "yacc_P5.y"
                                                                    { yyerrok; explicacion_error_sintactico("Error, se esperaba un bloque"); }
-#line 2026 "y.tab.c"
+#line 2036 "y.tab.c"
+    break;
+
+  case 89:
+#line 213 "yacc_P5.y"
+                                             {
+				copiaStruct(&yyval,search_identificador_pila(yyvsp[-2].nombre)); 
+				if(yyval.entrada!=variable && yyval.entrada!=parametro_formal)
+				 	ErrorNoDeclarada(yyvsp[-2]);
+				else if(yyval.dato_referencia!=lista)
+					explicacion_error_semantico("El tipo de dato deberia ser una lista"); 
+					}
+#line 2048 "y.tab.c"
+    break;
+
+  case 90:
+#line 220 "yacc_P5.y"
+                                           {
+			copiaStruct(&yyval,search_identificador_pila(yyvsp[-1].nombre)); 
+			if(yyval.entrada!=variable && yyval.entrada!=parametro_formal) 
+				ErrorNoDeclarada(yyvsp[-1]);
+			else if(yyval.dato_referencia!=lista) 
+			explicacion_error_semantico("El tipo de dato deberia ser una lista"); }
+#line 2059 "y.tab.c"
     break;
 
   case 91:
-#line 209 "yacc_P4.y"
+#line 230 "yacc_P5.y"
                                                  {copiaStruct(&yyval,search_identificador_pila(yyvsp[0].nombre)); if(yyval.entrada!=variable && yyval.entrada!=parametro_formal) {ErrorNoDeclarada(yyvsp[0]);}}
-#line 2032 "y.tab.c"
+#line 2065 "y.tab.c"
     break;
 
   case 92:
-#line 210 "yacc_P4.y"
+#line 231 "yacc_P5.y"
                          {copiaStruct(&yyval,search_identificador_pila(yyvsp[0].nombre)); if(yyval.entrada!=variable && yyval.entrada!=parametro_formal) {ErrorNoDeclarada(yyvsp[0]);}}
-#line 2038 "y.tab.c"
+#line 2071 "y.tab.c"
     break;
 
   case 93:
-#line 212 "yacc_P4.y"
+#line 233 "yacc_P5.y"
                                            {copiaStruct(&yyval,search_identificador_pila(yyvsp[0].nombre)); if(yyval.entrada!=variable) {ErrorNoDeclarada(yyval); yyval.entrada=indefinido;} }
-#line 2044 "y.tab.c"
+#line 2077 "y.tab.c"
     break;
 
   case 94:
-#line 213 "yacc_P4.y"
+#line 234 "yacc_P5.y"
                             {copiaStruct(&yyval,search_identificador_pila(yyvsp[0].nombre)); if(yyval.entrada!=variable) {ErrorNoDeclarada(yyval); yyval.entrada=indefinido;}}
-#line 2050 "y.tab.c"
+#line 2083 "y.tab.c"
     break;
 
   case 95:
-#line 215 "yacc_P4.y"
+#line 236 "yacc_P5.y"
                                     { copiaStruct(&yyval, yyvsp[-1]); }
-#line 2056 "y.tab.c"
+#line 2089 "y.tab.c"
     break;
 
   case 96:
-#line 216 "yacc_P4.y"
+#line 237 "yacc_P5.y"
                                             { copiaStruct(&yyval, operador_unario(yyvsp[0],yyvsp[-1]) ); }
-#line 2062 "y.tab.c"
+#line 2095 "y.tab.c"
     break;
 
   case 97:
-#line 217 "yacc_P4.y"
+#line 238 "yacc_P5.y"
                                                           {copiaStruct(&yyval,operador_binario(yyvsp[-1], yyvsp[-2], yyvsp[0]));  }
-#line 2068 "y.tab.c"
+#line 2101 "y.tab.c"
     break;
 
   case 98:
-#line 218 "yacc_P4.y"
+#line 239 "yacc_P5.y"
                                                             { copiaStruct(&yyval,operador_ternario(yyvsp[-4],yyvsp[-2],yyvsp[0])); }
-#line 2074 "y.tab.c"
+#line 2107 "y.tab.c"
     break;
 
   case 99:
-#line 219 "yacc_P4.y"
+#line 240 "yacc_P5.y"
                                 {copiaStruct(&yyval,search_identificador_pila(yyvsp[0].nombre)); if(yyval.entrada!=variable && yyval.entrada!=parametro_formal) ErrorNoDeclarada(yyvsp[0]);else yyval.entrada =indefinido;}
-#line 2080 "y.tab.c"
+#line 2113 "y.tab.c"
     break;
 
   case 100:
-#line 220 "yacc_P4.y"
+#line 241 "yacc_P5.y"
                                  {copiaStruct(&yyval,yyvsp[0]); yyval.entrada=variable;}
-#line 2086 "y.tab.c"
+#line 2119 "y.tab.c"
     break;
 
   case 101:
-#line 221 "yacc_P4.y"
+#line 242 "yacc_P5.y"
                            {yyval.dato_referencia=lista;yyval.dato_lista=yyvsp[0].dato_referencia;yyval.entrada=variable;}
-#line 2092 "y.tab.c"
+#line 2125 "y.tab.c"
     break;
 
   case 102:
-#line 222 "yacc_P4.y"
+#line 243 "yacc_P5.y"
                           {copiaStruct(&yyval,yyvsp[0]);}
-#line 2098 "y.tab.c"
+#line 2131 "y.tab.c"
     break;
 
   case 103:
-#line 223 "yacc_P4.y"
+#line 244 "yacc_P5.y"
                                { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
-#line 2104 "y.tab.c"
+#line 2137 "y.tab.c"
     break;
 
   case 104:
-#line 225 "yacc_P4.y"
+#line 246 "yacc_P5.y"
                               { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
-#line 2110 "y.tab.c"
+#line 2143 "y.tab.c"
     break;
 
   case 105:
-#line 226 "yacc_P4.y"
+#line 247 "yacc_P5.y"
                                         { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
-#line 2116 "y.tab.c"
+#line 2149 "y.tab.c"
     break;
 
   case 106:
-#line 227 "yacc_P4.y"
+#line 248 "yacc_P5.y"
                                        { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
-#line 2122 "y.tab.c"
+#line 2155 "y.tab.c"
     break;
 
   case 107:
-#line 228 "yacc_P4.y"
+#line 249 "yacc_P5.y"
                                                  { yyerrok; explicacion_error_sintactico("Error, se esperaba \"@\""); }
-#line 2128 "y.tab.c"
+#line 2161 "y.tab.c"
     break;
 
   case 108:
-#line 230 "yacc_P4.y"
+#line 251 "yacc_P5.y"
                                {funcion_analizando++;strcpy(funcion_usandose[funcion_analizando],yyvsp[0].nombre);}
-#line 2134 "y.tab.c"
+#line 2167 "y.tab.c"
     break;
 
   case 109:
-#line 232 "yacc_P4.y"
+#line 253 "yacc_P5.y"
                 {copiaStruct(&yyval,search_identificador_pila(yyvsp[-2].nombre));
 		if(yyval.entrada!=funcion) {ErrorNoDeclarada(yyvsp[-2]);yyval.entrada =indefinido;} 
 		if(n_parametros!=yyval.n_parametros) explicacion_error_semantico("Numero de argumentos incorrecto"); n_parametros=0;}
-#line 2142 "y.tab.c"
+#line 2175 "y.tab.c"
     break;
 
   case 110:
-#line 236 "yacc_P4.y"
+#line 257 "yacc_P5.y"
                                             {funcion_analizando--;}
-#line 2148 "y.tab.c"
+#line 2181 "y.tab.c"
     break;
 
   case 111:
-#line 237 "yacc_P4.y"
+#line 258 "yacc_P5.y"
                                                 { yyerrok; explicacion_error_sintactico("Error, la lista de argumentos debe acabar con paréntesis"); }
-#line 2154 "y.tab.c"
+#line 2187 "y.tab.c"
     break;
 
   case 112:
-#line 238 "yacc_P4.y"
+#line 259 "yacc_P5.y"
                              {n_parametros+=1; struct entradaTS s2;
 		copiaStruct(&s2,getArg(funcion_usandose[funcion_analizando],n_parametros));
 		if(!igualdad(yyvsp[0],s2)) explicacion_error_semantico("No coinciden los tipos");
 		}
-#line 2163 "y.tab.c"
+#line 2196 "y.tab.c"
     break;
 
   case 113:
-#line 243 "yacc_P4.y"
+#line 264 "yacc_P5.y"
                                           {n_parametros+=1; struct entradaTS s2; 	
 		
 		copiaStruct(&s2,getArg(funcion_usandose[funcion_analizando],n_parametros));
 		if(!igualdad(yyvsp[0],s2)) explicacion_error_semantico("No coinciden los tipos");
 		}
-#line 2173 "y.tab.c"
+#line 2206 "y.tab.c"
     break;
 
   case 115:
-#line 249 "yacc_P4.y"
+#line 270 "yacc_P5.y"
                                            {yyval.dato_referencia=lista;yyval.dato_lista=daton_anterior;daton_anterior=desconocido;}
-#line 2179 "y.tab.c"
+#line 2212 "y.tab.c"
     break;
 
   case 116:
-#line 250 "yacc_P4.y"
+#line 271 "yacc_P5.y"
                                  {yyerrok; explicacion_error_sintactico("Error, debe proporcionar una lista de expresiones separadas por comas");}
-#line 2185 "y.tab.c"
+#line 2218 "y.tab.c"
     break;
 
   case 117:
-#line 251 "yacc_P4.y"
+#line 272 "yacc_P5.y"
                                                    { yyerrok; explicacion_error_sintactico("Error, debe cerrar el corchete"); }
-#line 2191 "y.tab.c"
+#line 2224 "y.tab.c"
     break;
 
   case 118:
-#line 253 "yacc_P4.y"
+#line 274 "yacc_P5.y"
                                                      {if (daton_anterior==desconocido) daton_anterior=yyvsp[0].dato_referencia;
 		if(daton_anterior!=yyvsp[0].dato_referencia) explicacion_error_semantico("Todos los elementos de una lista deben de ser del mismo tipo");
 		if(daton_anterior==lista) explicacion_error_semantico("No se puede hacer listas de listas"); 
 		yyval.dato_referencia=daton_anterior;}
-#line 2200 "y.tab.c"
+#line 2233 "y.tab.c"
     break;
 
   case 119:
-#line 257 "yacc_P4.y"
+#line 278 "yacc_P5.y"
                     {if (daton_anterior==desconocido) daton_anterior=yyvsp[0].dato_referencia;
 		if(daton_anterior!=yyvsp[0].dato_referencia) explicacion_error_semantico("Todos los elementos de una lista deben de ser del mismo tipo");
 		if(daton_anterior==lista) explicacion_error_semantico("No se puede hacer listas de listas");
 		yyval.dato_referencia=daton_anterior;}
-#line 2209 "y.tab.c"
+#line 2242 "y.tab.c"
     break;
 
   case 120:
-#line 262 "yacc_P4.y"
+#line 283 "yacc_P5.y"
             { copiaStruct(&yyval,yyvsp[0]);}
-#line 2215 "y.tab.c"
+#line 2248 "y.tab.c"
     break;
 
   case 121:
-#line 263 "yacc_P4.y"
+#line 284 "yacc_P5.y"
                     { copiaStruct(&yyval,yyvsp[0]);}
-#line 2221 "y.tab.c"
+#line 2254 "y.tab.c"
     break;
 
   case 122:
-#line 264 "yacc_P4.y"
+#line 285 "yacc_P5.y"
                         { copiaStruct(&yyval,yyvsp[0]);}
-#line 2227 "y.tab.c"
+#line 2260 "y.tab.c"
     break;
 
   case 123:
-#line 265 "yacc_P4.y"
+#line 286 "yacc_P5.y"
                 { copiaStruct(&yyval,yyvsp[0]);}
-#line 2233 "y.tab.c"
+#line 2266 "y.tab.c"
     break;
 
   case 124:
-#line 266 "yacc_P4.y"
+#line 287 "yacc_P5.y"
                  { copiaStruct(&yyval,yyvsp[0]);}
-#line 2239 "y.tab.c"
+#line 2272 "y.tab.c"
     break;
 
   case 125:
-#line 267 "yacc_P4.y"
+#line 288 "yacc_P5.y"
                 { copiaStruct(&yyval,yyvsp[0]);}
-#line 2245 "y.tab.c"
+#line 2278 "y.tab.c"
     break;
 
   case 126:
-#line 268 "yacc_P4.y"
+#line 289 "yacc_P5.y"
                   { copiaStruct(&yyval,yyvsp[0]);}
-#line 2251 "y.tab.c"
+#line 2284 "y.tab.c"
     break;
 
   case 127:
-#line 269 "yacc_P4.y"
+#line 290 "yacc_P5.y"
               { copiaStruct(&yyval,yyvsp[0]);}
-#line 2257 "y.tab.c"
+#line 2290 "y.tab.c"
     break;
 
   case 128:
-#line 270 "yacc_P4.y"
+#line 291 "yacc_P5.y"
                          { copiaStruct(&yyval,yyvsp[0]);}
-#line 2263 "y.tab.c"
+#line 2296 "y.tab.c"
     break;
 
   case 129:
-#line 271 "yacc_P4.y"
+#line 292 "yacc_P5.y"
                       { copiaStruct(&yyval,yyvsp[0]);}
-#line 2269 "y.tab.c"
+#line 2302 "y.tab.c"
     break;
 
   case 130:
-#line 272 "yacc_P4.y"
+#line 293 "yacc_P5.y"
                  { copiaStruct(&yyval,yyvsp[0]);}
-#line 2275 "y.tab.c"
+#line 2308 "y.tab.c"
     break;
 
   case 131:
-#line 273 "yacc_P4.y"
+#line 294 "yacc_P5.y"
                      { copiaStruct(&yyval,yyvsp[0]);}
-#line 2281 "y.tab.c"
+#line 2314 "y.tab.c"
     break;
 
   case 132:
-#line 274 "yacc_P4.y"
+#line 295 "yacc_P5.y"
                      { copiaStruct(&yyval,yyvsp[0]);}
-#line 2287 "y.tab.c"
+#line 2320 "y.tab.c"
     break;
 
   case 133:
-#line 275 "yacc_P4.y"
+#line 296 "yacc_P5.y"
                    { copiaStruct(&yyval,yyvsp[0]);}
-#line 2293 "y.tab.c"
+#line 2326 "y.tab.c"
     break;
 
 
-#line 2297 "y.tab.c"
+#line 2330 "y.tab.c"
 
       default: break;
     }
@@ -2525,7 +2558,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 276 "yacc_P4.y"
+#line 297 "yacc_P5.y"
  
 
 

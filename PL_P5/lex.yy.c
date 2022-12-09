@@ -570,12 +570,13 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "lex_P4.l"
-#line 2 "lex_P4.l"
+#line 1 "lex_P5.l"
+#line 2 "lex_P5.l"
 //Declaraciones
 
 #include <stdlib.h>
 #include <string.h>
+
 
 #ifndef ENUM
 #define ENUM
@@ -592,15 +593,19 @@ char *yytext;
 
 	typedef struct  entradaTS{
    TipoEntrada entrada;      // Indica el tipo de entrada
-   char nombre[100]; 
-   // char valor[50];              // Contendra los caracteres que forman el identificador
+
+   char nombre[100];                 // Contendra los caracteres que forman el identificador en nuestro lenguaje
+   char nombre_traductor[200];       // Contendra los caracteres que forman el identificador al traducirlo a C
+   
    TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
                              // o parametro formal indica el tipo de dato al que hace referencia
    TipoDato dato_lista;      //tipo de datos que contiene la lista                    
-   unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros 
-	TipoOperador tipo_operador; // En caso de ser operador, qué operador es  
+   unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros o el tamaño de la lista
+   unsigned int puntero_lista; // Puntero que señala la posición en la lista
+   
+   TipoOperador tipo_operador; // En caso de ser operador, qué operador es  
 };
-#endif
+#endif 
 
 #include "y.tab.h"
 
@@ -609,8 +614,8 @@ char *yytext;
 
 int nlinea = 1;
 char atributo[100];
-#line 613 "lex.yy.c"
-#line 614 "lex.yy.c"
+#line 618 "lex.yy.c"
+#line 619 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -827,11 +832,11 @@ YY_DECL
 		}
 
 	{
-#line 52 "lex_P4.l"
+#line 57 "lex_P5.l"
 
 
 
-#line 835 "lex.yy.c"
+#line 840 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -900,7 +905,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 55 "lex_P4.l"
+#line 60 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (MAIN);
@@ -908,7 +913,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 60 "lex_P4.l"
+#line 65 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (LLAVEIZQ);
@@ -916,7 +921,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 66 "lex_P4.l"
+#line 71 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (LLAVEDCH);
@@ -924,7 +929,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 72 "lex_P4.l"
+#line 77 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (CORIZQ);
@@ -932,7 +937,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 77 "lex_P4.l"
+#line 82 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (CORDCH);
@@ -940,7 +945,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 82 "lex_P4.l"
+#line 87 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (PARIZQ);
@@ -948,7 +953,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 87 "lex_P4.l"
+#line 92 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (PARDCH);
@@ -956,7 +961,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 93 "lex_P4.l"
+#line 98 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (NOT);
@@ -964,7 +969,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 98 "lex_P4.l"
+#line 103 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (IGUAL);
@@ -972,7 +977,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 102 "lex_P4.l"
+#line 107 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (SOSTENIDO);
@@ -980,7 +985,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 107 "lex_P4.l"
+#line 112 "lex_P5.l"
 {
 	yylval.dato_referencia = entero;
    strcpy(atributo, "0");
@@ -989,7 +994,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 113 "lex_P4.l"
+#line 118 "lex_P5.l"
 {
 	yylval.dato_referencia = real;
    strcpy(atributo, "1");
@@ -998,7 +1003,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 119 "lex_P4.l"
+#line 124 "lex_P5.l"
 {
 	yylval.dato_referencia = caracter;
     strcpy(atributo, "2");
@@ -1007,7 +1012,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 125 "lex_P4.l"
+#line 130 "lex_P5.l"
 {
 	yylval.dato_referencia = booleano;
     strcpy(atributo, "3");
@@ -1016,7 +1021,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 131 "lex_P4.l"
+#line 136 "lex_P5.l"
 {
 	yylval.dato_referencia = lista;
 	yylval.dato_lista = entero;
@@ -1026,7 +1031,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 138 "lex_P4.l"
+#line 143 "lex_P5.l"
 {
 	yylval.dato_referencia = lista;
 	yylval.dato_lista = real;
@@ -1036,7 +1041,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 145 "lex_P4.l"
+#line 150 "lex_P5.l"
 {
 	yylval.dato_referencia = lista;
 	yylval.dato_lista = caracter;
@@ -1046,7 +1051,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 152 "lex_P4.l"
+#line 157 "lex_P5.l"
 {
 	yylval.dato_referencia = lista;
 	yylval.dato_lista = booleano;
@@ -1056,7 +1061,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 159 "lex_P4.l"
+#line 164 "lex_P5.l"
 {
     strcpy(atributo, "0");
 	 yylval.entrada = operador;
@@ -1066,7 +1071,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 166 "lex_P4.l"
+#line 171 "lex_P5.l"
 {
     strcpy(atributo, "1");
 	 yylval.entrada = operador;
@@ -1076,7 +1081,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 173 "lex_P4.l"
+#line 178 "lex_P5.l"
 {
     strcpy(atributo, "2");
 	 yylval.entrada = operador;
@@ -1086,7 +1091,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 180 "lex_P4.l"
+#line 185 "lex_P5.l"
 {
     strcpy(atributo, "3");
 	 yylval.entrada = operador;
@@ -1096,7 +1101,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 187 "lex_P4.l"
+#line 192 "lex_P5.l"
 {
     strcpy(atributo, "1");
 	 yylval.entrada = operador;
@@ -1106,7 +1111,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 194 "lex_P4.l"
+#line 199 "lex_P5.l"
 {
     strcpy(atributo, "0");
 	 yylval.entrada = operador;
@@ -1116,7 +1121,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 200 "lex_P4.l"
+#line 205 "lex_P5.l"
 {
     strcpy(atributo, "0");
 	 yylval.entrada = operador;
@@ -1126,7 +1131,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 207 "lex_P4.l"
+#line 212 "lex_P5.l"
 {
     strcpy(atributo, "1");
 	 yylval.entrada = operador;
@@ -1136,7 +1141,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 213 "lex_P4.l"
+#line 218 "lex_P5.l"
 {
     strcpy(atributo, "2");
 	 yylval.entrada = operador;
@@ -1146,7 +1151,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 220 "lex_P4.l"
+#line 225 "lex_P5.l"
 {
     strcpy(atributo, "");
 	 yylval.entrada = operador;
@@ -1156,7 +1161,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 227 "lex_P4.l"
+#line 232 "lex_P5.l"
 {
     strcpy(atributo, "");
 	 yylval.entrada = operador;
@@ -1166,7 +1171,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 234 "lex_P4.l"
+#line 239 "lex_P5.l"
 {
     strcpy(atributo, "");
 	 yylval.entrada = operador;
@@ -1176,7 +1181,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 242 "lex_P4.l"
+#line 247 "lex_P5.l"
 {
     strcpy(atributo, "1");
 	 yylval.entrada = operador;
@@ -1186,7 +1191,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 249 "lex_P4.l"
+#line 254 "lex_P5.l"
 {
     strcpy(atributo, "");
 	 yylval.entrada = operador;
@@ -1196,7 +1201,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 256 "lex_P4.l"
+#line 261 "lex_P5.l"
 {
     strcpy(atributo, "");
 	 yylval.entrada = operador;
@@ -1206,7 +1211,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 262 "lex_P4.l"
+#line 267 "lex_P5.l"
 {
     strcpy(atributo, "");
 	 yylval.entrada = operador;
@@ -1216,7 +1221,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 269 "lex_P4.l"
+#line 274 "lex_P5.l"
 {
     strcpy(atributo, "");
 	 yylval.entrada = operador;
@@ -1226,7 +1231,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 275 "lex_P4.l"
+#line 280 "lex_P5.l"
 {
     strcpy(atributo, "0");
 	 yylval.entrada = operador;
@@ -1236,7 +1241,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 282 "lex_P4.l"
+#line 287 "lex_P5.l"
 {
     strcpy(atributo, "");
 	 yylval.entrada = operador;
@@ -1246,7 +1251,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 290 "lex_P4.l"
+#line 295 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (IF);
@@ -1254,7 +1259,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 295 "lex_P4.l"
+#line 300 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (THEN);
@@ -1263,7 +1268,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 301 "lex_P4.l"
+#line 306 "lex_P5.l"
 {
     strcpy(atributo, "");
     return(ELSE);
@@ -1271,7 +1276,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 306 "lex_P4.l"
+#line 311 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (FOR);
@@ -1279,7 +1284,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 311 "lex_P4.l"
+#line 316 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (TO);
@@ -1287,7 +1292,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 315 "lex_P4.l"
+#line 320 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (DO);
@@ -1295,7 +1300,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 320 "lex_P4.l"
+#line 325 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (WRITE);
@@ -1303,7 +1308,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 324 "lex_P4.l"
+#line 329 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (READ);
@@ -1311,7 +1316,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 328 "lex_P4.l"
+#line 333 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (COMA);
@@ -1319,7 +1324,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 333 "lex_P4.l"
+#line 338 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (PYC);
@@ -1327,7 +1332,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 337 "lex_P4.l"
+#line 342 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (RETURN);
@@ -1335,7 +1340,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 341 "lex_P4.l"
+#line 346 "lex_P5.l"
 {
     strcpy(atributo, "");
     return(WHILE);
@@ -1343,7 +1348,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 347 "lex_P4.l"
+#line 352 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (PRINCIPIOLISTA);
@@ -1351,7 +1356,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 355 "lex_P4.l"
+#line 360 "lex_P5.l"
 {
     strcpy(atributo, "0");
     return (MOVLISTA);
@@ -1359,7 +1364,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 360 "lex_P4.l"
+#line 365 "lex_P5.l"
 {
     strcpy(atributo, "1");
     return (MOVLISTA);
@@ -1367,7 +1372,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 365 "lex_P4.l"
+#line 370 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (INIVARIABLES);
@@ -1375,7 +1380,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 370 "lex_P4.l"
+#line 375 "lex_P5.l"
 {
     strcpy(atributo, "");
     return (FINVARIABLES);
@@ -1383,7 +1388,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 378 "lex_P4.l"
+#line 383 "lex_P5.l"
 {
     strcpy(yylval.nombre, yytext);
     yylval.entrada = indefinido;
@@ -1394,7 +1399,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 386 "lex_P4.l"
+#line 391 "lex_P5.l"
 {
     strcpy(yylval.nombre, yytext);
     yylval.entrada = indefinido;
@@ -1405,7 +1410,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 394 "lex_P4.l"
+#line 399 "lex_P5.l"
 {
     strcpy(yylval.nombre, yytext);
     yylval.entrada = indefinido;
@@ -1416,7 +1421,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 402 "lex_P4.l"
+#line 407 "lex_P5.l"
 {
     strcpy(yylval.nombre, yytext);
     yylval.entrada = indefinido;
@@ -1427,7 +1432,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 410 "lex_P4.l"
+#line 415 "lex_P5.l"
 {
     yylval.entrada = indefinido;
 	strcpy(yylval.nombre, yytext);
@@ -1437,28 +1442,28 @@ YY_RULE_SETUP
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 417 "lex_P4.l"
+#line 422 "lex_P5.l"
 ;
 	YY_BREAK
 case 61:
 /* rule 61 can match eol */
 YY_RULE_SETUP
-#line 419 "lex_P4.l"
+#line 424 "lex_P5.l"
 {
     nlinea = nlinea + 1;
 }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 423 "lex_P4.l"
+#line 428 "lex_P5.l"
 printf(BG_COLOR_RED "Error lexico"  RESET_COLOR " linea: %d, No se reconoce la palabra '%s'.\n",nlinea,yytext);
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 425 "lex_P4.l"
+#line 430 "lex_P5.l"
 ECHO;
 	YY_BREAK
-#line 1462 "lex.yy.c"
+#line 1467 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2475,7 +2480,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 425 "lex_P4.l"
+#line 430 "lex_P5.l"
 
 
 /* Procedimientos de usuario 
