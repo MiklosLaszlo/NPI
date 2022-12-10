@@ -6,16 +6,16 @@ main{
         open
             int c;
         close
-        int noHaceNada(int c){
+        int noHaceNada(int t){
             open
                 bool h;
             close
-            h = (c equal c);
+            h = (t equal t);
             if (h or (not h)) then {
-                return c;
+                return t;
             }
             else {
-                return c;
+                return t;
             }
         };
         c = a/b;

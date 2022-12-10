@@ -1052,3 +1052,120 @@ void writeExpresionUnaria(struct entradaTS pasoExpresion, TipoOperador operador,
     fputs(operando.nombre_traductor,file);
     fputs(";\n",file);
 }
+
+void writeExpresionBinaria(struct entradaTS pasoExpresion, struct entradaTS operando1, TipoOperador operador, struct entradaTS operando2, int funcion_actual){
+    FILE *file = dondeEscriboExpresiones(funcion_actual);
+    char auxDatoReferencia[20] = "\0";
+    //char auxDatoLista[20] = "\0";w
+    normalizoTipoDato(&auxDatoReferencia,pasoExpresion.dato_referencia);
+    fputs(auxDatoReferencia,file);
+    fputs(pasoExpresion.nombre_traductor,file);
+    fputs(" = ",file);
+    switch(operador){
+        // Operadores booleanos
+        case and:
+            fputs(operando1.nombre_traductor,file);
+            fputs(" && ",file);
+            fputs(operando2.nombre_traductor,file);
+        break;
+        case or:
+            // Rellenar para lista
+        break;
+            fputs(operando1.nombre_traductor,file);
+            fputs(" || ",file);
+            fputs(operando2.nombre_traductor,file);
+        case xor:
+            // Esto es a nivel de bits, que sea lógico no tiene sentido
+            // Rellenar para lista
+        break;
+        
+        // Operadores de igualdad
+        case equal:
+            fputs(operando1.nombre_traductor,file);
+            fputs(" == ",file);
+            fputs(operando2.nombre_traductor,file);
+        break;
+
+        case not_equal:
+            fputs(operando1.nombre_traductor,file);
+            fputs(" != ",file);
+            fputs(operando2.nombre_traductor,file);
+        break;
+
+        // Operadores de comparación
+        case less:
+            fputs(operando1.nombre_traductor,file);
+            fputs(" < ",file);
+            fputs(operando2.nombre_traductor,file);
+            break;
+        case greater:
+            fputs(operando1.nombre_traductor,file);
+            fputs(" > ",file);
+            fputs(operando2.nombre_traductor,file);
+            break;
+        case less_eq:
+            fputs(operando1.nombre_traductor,file);
+            fputs(" <= ",file);
+            fputs(operando2.nombre_traductor,file);
+            break;
+        case greater_eq:
+            fputs(operando1.nombre_traductor,file);
+            fputs(" >= ",file);
+            fputs(operando2.nombre_traductor,file);
+            break;
+
+        // Operadores aritmeticos
+        case mas:
+            if(operando1.dato_referencia == operando2.dato_referencia){
+                fputs(operando1.nombre_traductor,file);
+                fputs(" + ",file);
+                fputs(operando2.nombre_traductor,file);
+            }
+            else{
+                ; // Seria el caso de una lista y un número si no hay errores semánticos
+            }
+            break;
+        case entre:
+            if(operando1.dato_referencia == operando2.dato_referencia){
+                fputs(operando1.nombre_traductor,file);
+                fputs(" / ",file);
+                fputs(operando2.nombre_traductor,file);
+            }
+            else{
+                ; // Seria el caso de una lista y un número si no hay errores semánticos
+            }
+            break;
+        case por:
+            if(operando1.dato_referencia == operando2.dato_referencia){
+                fputs(operando1.nombre_traductor,file);
+                fputs(" * ",file);
+                fputs(operando2.nombre_traductor,file);
+            }
+            else{
+                ; // Seria el caso de una lista y un número si no hay errores semánticos
+            }
+            break;
+        case menos:
+            if(operando1.dato_referencia == operando2.dato_referencia){
+                fputs(operando1.nombre_traductor,file);
+                fputs(" - ",file);
+                fputs(operando2.nombre_traductor,file);
+            }
+            else{
+                ; // Seria el caso de una lista y un número si no hay errores semánticos
+            }
+            break;
+
+        // Operadores propiamente de listas
+        case arroba:
+            break;
+        case menosmenos:
+            break;
+        case porcentaje:
+            break;
+        case doblepor:
+            break;
+
+    };
+    fputs(";\n",file);
+}

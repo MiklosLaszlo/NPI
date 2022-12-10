@@ -246,7 +246,8 @@ lista_salida : lista_salida COMA expresion
 expresion : PARIZQ expresion PARDCH { copiaStruct(&$$, $2);}
 		| OPUNI expresion %prec NOT { copiaStruct(&$$, operador_unario($2,$1) ); strcpy($$.nombre_traductor,creaNombreTraduccion(indefinido));  
 					writeExpresionUnaria($$,$1.tipo_operador,$2,funcion_actual);}
-		| expresion OPBIN expresion %prec LOGICOS {copiaStruct(&$$,operador_binario($2, $1, $3));  }
+		| expresion OPBIN expresion %prec LOGICOS {copiaStruct(&$$,operador_binario($2, $1, $3)); strcpy($$.nombre_traductor,creaNombreTraduccion(indefinido));
+					writeExpresionBinaria($$,$1,$2.tipo_operador,$3,funcion_actual);  }
 		| expresion TER1 expresion ARROBA expresion { copiaStruct(&$$,operador_ternario($1,$3,$5)); }
 		| IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($1.nombre)); 
 			if($$.entrada!=variable && $$.entrada!=parametro_formal) ErrorNoDeclarada($1);
