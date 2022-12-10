@@ -183,7 +183,8 @@ sentencia : sentencia_asignacion
         | sentencia_for_pascal
         | sentencia_lista
         | PYC ;
-sentencia_asignacion : IDENTIFICADOR IGUAL expresion PYC {comprobar_asignacion($1,$3);}
+sentencia_asignacion : IDENTIFICADOR IGUAL expresion PYC {if(comprobar_asignacion(search_identificador_pila($1.nombre),$3)) 
+						writeSentenciaAsignacion(search_identificador_pila($1.nombre),$3,funcion_actual); }
 		  | IDENTIFICADOR IGUAL error { yyerrok; explicacion_error_sintactico("Error, el identificador debe estar igualada a una expresión");};
 		  | IDENTIFICADOR IGUAL expresion error { yyerrok; explicacion_error_sintactico("Error, la asignación debe acabar en \";\"");}
 sentencia_if : IF PARIZQ expresion PARDCH THEN bloque ELSE bloque { comprueba_exp_logica($3); }
@@ -210,8 +211,10 @@ sentencia_salida : WRITE PARIZQ lista_salida PARDCH PYC
 		  | WRITE PARIZQ error { yyerrok; explicacion_error_sintactico("Error, debe introducir una lista de expresiones separados por comas"); }
 		  | WRITE PARIZQ lista_salida error { yyerrok; explicacion_error_sintactico("Error, debe cerrar el paréntesis de la lista de expresiones"); }
 		  | WRITE PARIZQ lista_salida PARDCH error { yyerrok; explicacion_error_sintactico("Error, se esperaba \";\""); }
-sentencia_return : RETURN expresion PYC {if(funcion_actual>-1){if(strcmp(funcion_declarandose[funcion_actual],"")!=0) if(!igualdad($2,search_identificador_pila(funcion_declarandose[funcion_actual]))) {explicacion_error_semantico("No se devuelve el tipo de la función");}
-			strcpy(funcion_declarandose[funcion_actual],"");}} 
+sentencia_return : RETURN expresion PYC {if(funcion_actual>-1){if(strcmp(funcion_declarandose[funcion_actual],"")!=0) 
+			if(!igualdad($2,search_identificador_pila(funcion_declarandose[funcion_actual]))) 
+				{explicacion_error_semantico("No se devuelve el tipo de la función");}
+			strcpy(funcion_declarandose[funcion_actual],"");writeSentenciaReturn($2,funcion_actual);}} 
 		  | RETURN error { yyerrok; explicacion_error_sintactico("Error, debe devolverse una expresión"); }
 		  | RETURN expresion error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); }
 sentencia_for_pascal : FOR IDENTIFICADOR IGUAL expresion TO expresion DO bloque {comprobar_for_pascal($2,$4,$6);} 
@@ -238,10 +241,11 @@ sentencia_lista : IDENTIFICADOR MOVLISTA PYC {
 		  | PRINCIPIOLISTA error { yyerrok; explicacion_error_sintactico("Error, se esperaba un identificador"); }
 		  | PRINCIPIOLISTA IDENTIFICADOR error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); } */
 lista_entrada : lista_entrada COMA IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($3.nombre)); if($$.entrada!=variable && $$.entrada!=parametro_formal) {ErrorNoDeclarada($3);}}
-        | IDENTIFICADOR  {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable && $$.entrada!=parametro_formal) {ErrorNoDeclarada($1);}}
+        | IDENTIFICADOR  {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable && $$.entrada!=parametro_formal) {ErrorNoDeclarada($1);}
+						else {writeSentenciaEntrada($$,funcion_actual);}}
 
-lista_salida : lista_salida COMA expresion 
-		| expresion
+lista_salida : lista_salida COMA expresion {writeSentenciaSalida($3,funcion_actual);}
+		| expresion {writeSentenciaSalida($1,funcion_actual);}
 
 expresion : PARIZQ expresion PARDCH { copiaStruct(&$$, $2);}
 		| OPUNI expresion %prec NOT { copiaStruct(&$$, operador_unario($2,$1) ); strcpy($$.nombre_traductor,creaNombreTraduccion(indefinido));  

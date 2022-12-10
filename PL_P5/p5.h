@@ -816,7 +816,7 @@ void normalizoTipoDato(char* tipoNormalizado, TipoDato dato_referencia){
             strcpy(tipoNormalizado,"int \0");
             break;
         case real:
-            strcpy(tipoNormalizado,"double \0");
+            strcpy(tipoNormalizado,"float \0");
             break;
         case booleano:
             strcpy(tipoNormalizado,"bool \0");
@@ -878,7 +878,7 @@ void writeFunctionFile(){
                 strcpy(auxDatoReferencia,"int \0");
                 break;
             case real:
-                strcpy(auxDatoReferencia,"double \0");
+                strcpy(auxDatoReferencia,"float \0");
                 break;
             case booleano:
                 strcpy(auxDatoReferencia,"bool \0");
@@ -1056,7 +1056,7 @@ void writeExpresionUnaria(struct entradaTS pasoExpresion, TipoOperador operador,
 void writeExpresionBinaria(struct entradaTS pasoExpresion, struct entradaTS operando1, TipoOperador operador, struct entradaTS operando2, int funcion_actual){
     FILE *file = dondeEscriboExpresiones(funcion_actual);
     char auxDatoReferencia[20] = "\0";
-    //char auxDatoLista[20] = "\0";w
+    //char auxDatoLista[20] = "\0";
     normalizoTipoDato(&auxDatoReferencia,pasoExpresion.dato_referencia);
     fputs(auxDatoReferencia,file);
     fputs(pasoExpresion.nombre_traductor,file);
@@ -1069,11 +1069,11 @@ void writeExpresionBinaria(struct entradaTS pasoExpresion, struct entradaTS oper
             fputs(operando2.nombre_traductor,file);
         break;
         case or:
-            // Rellenar para lista
-        break;
             fputs(operando1.nombre_traductor,file);
             fputs(" || ",file);
             fputs(operando2.nombre_traductor,file);
+        break;
+            
         case xor:
             // Esto es a nivel de bits, que sea lógico no tiene sentido
             // Rellenar para lista
@@ -1169,3 +1169,113 @@ void writeExpresionBinaria(struct entradaTS pasoExpresion, struct entradaTS oper
     };
     fputs(";\n",file);
 }
+
+void getTypeforI_O(char* copiado, TipoDato dato_referencia){
+    switch(dato_referencia){
+        case entero:
+            strcpy(copiado,"%i");
+            break;
+        case real:
+            strcpy(copiado,"%f");
+            break;
+        case booleano:
+            // No tiene sentido el leer un booleano, pero se puede ver como un entero a la hora de mostrar por pantallas
+            strcpy(copiado,"%i");
+            break;
+        case caracter:
+            strcpy(copiado,"%c");
+            break;
+        case lista:
+            // Cosas para las listas
+            break;
+    }
+}
+
+void writeSentenciaEntrada(struct entradaTS expresionSalida, int funcion_actual){
+    FILE *file = dondeEscriboExpresiones(funcion_actual);
+    char auxDatoReferencia[20] = "\0";
+    //char auxDatoLista[20] = "\0";
+    getTypeforI_O(&auxDatoReferencia,expresionSalida.dato_referencia);
+    switch(expresionSalida.dato_referencia){
+        case entero:
+        case real:
+        case caracter:
+            fputs("scanf(\"",file);
+            fputs(auxDatoReferencia,file);
+            fputs("\", &",file);
+            fputs(expresionSalida.nombre_traductor,file);
+            fputs(");\n",file);
+            break;
+        case booleano:
+            fputs("int ",file);
+            char auxNombre[100];
+            strcpy(auxNombre,creaNombreTraduccion(indefinido));
+            fputs(auxNombre,file);
+            fputs(";\n",file);
+            dondeEscriboExpresiones(funcion_actual); // Meto esto porque mete un tabulado de forma automatico y eso esta nice
+            fputs("scanf(\"%d\", &",file);
+            fputs(auxNombre,file);
+            fputs(");\n",file);
+            dondeEscriboExpresiones(funcion_actual); // Meto esto porque mete un tabulado de forma automatico y eso esta nice
+            fputs(expresionSalida.nombre_traductor,file);
+            fputs(" = ",file);
+            fputs(auxNombre,file);
+            fputs(";\n",file);
+            // No tiene mucho sentido leer un booleano pero bueno, leo con un entero y luego igualo a ver que pasa
+            break;
+        case lista:
+            // Hacer algo con la lista
+            break;
+    }
+
+}
+
+void writeSentenciaSalida(struct entradaTS expresionSalida, int funcion_actual){
+    FILE *file = dondeEscriboExpresiones(funcion_actual);
+    char auxDatoReferencia[20] = "\0";
+    //char auxDatoLista[20] = "\0";
+    getTypeforI_O(&auxDatoReferencia,expresionSalida.dato_referencia);
+    switch(expresionSalida.dato_referencia){
+        case entero:
+        case real:
+        case caracter:
+        case booleano:
+            fputs("printf(\"",file);
+            fputs(auxDatoReferencia,file);
+            fputs("\", ",file);
+            fputs(expresionSalida.nombre_traductor,file);
+            fputs(");\n",file);
+            break;
+        case lista:
+            // Hacer algo con la lista
+            break;
+    }
+}
+
+// Hacer
+void writeSentenciaReturn(struct entradaTS expresionReturn, int funcion_actual){
+    FILE *file = dondeEscriboExpresiones(funcion_actual);
+    char auxDatoReferencia[20] = "\0";
+    if(expresionReturn.dato_referencia != lista){
+        fputs("return ",file);
+        fputs(expresionReturn.nombre_traductor, file);
+        fputs(";\n",file);
+    }
+    else{
+        // Hacer listas
+    }
+}
+
+// Hacer
+void writeSentenciaAsignacion(struct entradaTS expresion1, struct entradaTS expresion2, int funcion_actual){
+    FILE *file = dondeEscriboExpresiones(funcion_actual);
+    char auxDatoReferencia[20] = "\0";
+    if(expresion1.dato_referencia != lista){
+        fputs(expresion1.nombre_traductor,file);
+        fputs(" = ", file);
+        fputs(expresion2.nombre_traductor,file);
+        fputs(";\n",file);
+    }
+}
+
+// Hacer for, while e if
