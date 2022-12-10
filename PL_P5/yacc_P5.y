@@ -22,7 +22,7 @@
    TipoEntrada entrada;      // Indica el tipo de entrada
 
    char nombre[100];                 // Contendra los caracteres que forman el identificador en nuestro lenguaje
-   char nombre_traductor[200];       // Contendra los caracteres que forman el identificador al traducirlo a C
+   char nombre_traductor[100];       // Contendra los caracteres que forman el identificador al traducirlo a C
    
    TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
                              // o parametro formal indica el tipo de dato al que hace referencia
@@ -51,6 +51,7 @@ int funcion_analizando=-1;
 TipoDato daton_anterior=desconocido;
 char funcion_declarandose[20][100];
 char funcion_usandose[20][100];
+char parametros_funcion_usandose[20][20][100];
 %}
 // TOKENS
 //********************
@@ -242,14 +243,19 @@ lista_entrada : lista_entrada COMA IDENTIFICADOR {copiaStruct(&$$,search_identif
 lista_salida : lista_salida COMA expresion 
 		| expresion
 
-expresion : PARIZQ expresion PARDCH { copiaStruct(&$$, $2); }
-		| OPUNI expresion %prec NOT { copiaStruct(&$$, operador_unario($2,$1) ); }
+expresion : PARIZQ expresion PARDCH { copiaStruct(&$$, $2);}
+		| OPUNI expresion %prec NOT { copiaStruct(&$$, operador_unario($2,$1) ); strcpy($$.nombre_traductor,creaNombreTraduccion(indefinido));  
+					writeExpresionUnaria($$,$1.tipo_operador,$2,funcion_actual);}
 		| expresion OPBIN expresion %prec LOGICOS {copiaStruct(&$$,operador_binario($2, $1, $3));  }
 		| expresion TER1 expresion ARROBA expresion { copiaStruct(&$$,operador_ternario($1,$3,$5)); }
-		| IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($1.nombre)); if($$.entrada!=variable && $$.entrada!=parametro_formal) ErrorNoDeclarada($1);else $$.entrada =indefinido;}
+		| IDENTIFICADOR {copiaStruct(&$$,search_identificador_pila($1.nombre)); 
+			if($$.entrada!=variable && $$.entrada!=parametro_formal) ErrorNoDeclarada($1);
+			else {$$.entrada =indefinido; 
+				strcpy($$.nombre_traductor,creaNombreTraduccion(indefinido));
+				writeExpresionIdentificador($$,search_identificador_pila($1.nombre),funcion_actual); }}
 		| llamar_funcion {copiaStruct(&$$,$1); $$.entrada=variable;}
 		| agregado {$$.dato_referencia=lista;$$.dato_lista=$1.dato_referencia;$$.entrada=variable;}
-		| LITERAL {copiaStruct(&$$,$1);}
+		| LITERAL {copiaStruct(&$$,$1);strcpy($$.nombre_traductor,creaNombreTraduccion(indefinido));writeExpresionLiteral($$,funcion_actual);}
 		| PARIZQ error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
 		//  | PARIZQ expresion error { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el paréntesis"); }
 		| OPUNI error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
@@ -260,18 +266,22 @@ expresion : PARIZQ expresion PARDCH { copiaStruct(&$$, $2); }
 llamar_funcion : IDENTIFICADOR {funcion_analizando++;strcpy(funcion_usandose[funcion_analizando],$1.nombre);}
 		argumentos
 		{copiaStruct(&$$,search_identificador_pila($1.nombre));
+		strcpy($$.nombre_traductor,creaNombreTraduccion(indefinido));
 		if($$.entrada!=funcion) {ErrorNoDeclarada($1);$$.entrada =indefinido;} 
-		if(n_parametros!=$$.n_parametros) explicacion_error_semantico("Numero de argumentos incorrecto"); n_parametros=0;} //{/*Hace falta algo como push funccion*/}
+		else if(n_parametros!=$$.n_parametros) explicacion_error_semantico("Numero de argumentos incorrecto");
+		else writeExpresionFuncion($$,search_identificador_pila($1.nombre),parametros_funcion_usandose[funcion_analizando],funcion_actual); 
+		funcion_analizando--;n_parametros=0;} //{/*Hace falta algo como push funccion*/}
         
-argumentos : PARIZQ lista_argumentos PARDCH {funcion_analizando--;}
+argumentos : PARIZQ lista_argumentos PARDCH
 		| PARIZQ lista_argumentos error { yyerrok; explicacion_error_sintactico("Error, la lista de argumentos debe acabar con paréntesis"); }
 lista_argumentos : expresion {n_parametros+=1; struct entradaTS s2;
+		strcpy(parametros_funcion_usandose[funcion_analizando][n_parametros-1],$1.nombre_traductor);
 		copiaStruct(&s2,getArg(funcion_usandose[funcion_analizando],n_parametros));
 		if(!igualdad($1,s2)) explicacion_error_semantico("No coinciden los tipos");
 		}
 
         | lista_argumentos COMA expresion {n_parametros+=1; struct entradaTS s2; 	
-		
+		strcpy(parametros_funcion_usandose[funcion_analizando][n_parametros-1],$3.nombre_traductor);
 		copiaStruct(&s2,getArg(funcion_usandose[funcion_analizando],n_parametros));
 		if(!igualdad($3,s2)) explicacion_error_semantico("No coinciden los tipos");
 		}
@@ -289,10 +299,10 @@ lista_expresiones : lista_expresiones COMA expresion {if (daton_anterior==descon
 		if(daton_anterior==lista) explicacion_error_semantico("No se puede hacer listas de listas");
 		$$.dato_referencia=daton_anterior;}
 
-OPUNI : NOT { copiaStruct(&$$,$1);}
-        | SOSTENIDO { copiaStruct(&$$,$1);}
-        | INTERROGACION { copiaStruct(&$$,$1);}
-        | MENOS { copiaStruct(&$$,$1);}
+OPUNI : NOT { copiaStruct(&$$,$1);} // Para boolenos
+        | SOSTENIDO { copiaStruct(&$$,$1);} // Listas
+        | INTERROGACION { copiaStruct(&$$,$1);} // Listas
+        | MENOS { copiaStruct(&$$,$1);} // Para enteros y reales
 OPBIN : IGUALDAD { copiaStruct(&$$,$1);}
         | MENOS { copiaStruct(&$$,$1);}
         | LOGICOS { copiaStruct(&$$,$1);}

@@ -29,7 +29,7 @@
    TipoEntrada entrada;      // Indica el tipo de entrada
 
    char nombre[100];                 // Contendra los caracteres que forman el identificador en nuestro lenguaje
-   char nombre_traductor[200];       // Contendra los caracteres que forman el identificador al traducirlo a C
+   char nombre_traductor[100];       // Contendra los caracteres que forman el identificador al traducirlo a C
    
    TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
                              // o parametro formal indica el tipo de dato al que hace referencia
@@ -125,7 +125,7 @@ void push2(struct entradaTS e, TipoEntrada ent){
     }
     //if(debug)
         //printf("Tamaño actual de la pila %i\n",TOPE);
-    printTS();
+    //printTS();
 }
 
 //Metodo para saber si la pila esta vacia
@@ -244,7 +244,7 @@ struct entradaTS  search_identificador_marca(char * nom){
 
         if(strcmp(TS[i].nombre,nom)==0 && ((TS[i].entrada==variable) || (TS[i].entrada==funcion)  || (TS[i].entrada==parametro_formal)) ){
             if(debug)
-                printf("Uso %s, %s, %s, %s, %i.\n", toStringEntrada(TS[i].entrada), TS[i].nombre, toStringTipoDato(TS[i].dato_referencia), toStringTipoDato(TS[i].dato_lista),TS[i].n_parametros);
+                printf("Uso %s, %s, %s, %s, %i,%s.\n", toStringEntrada(TS[i].entrada), TS[i].nombre, toStringTipoDato(TS[i].dato_referencia), toStringTipoDato(TS[i].dato_lista),TS[i].n_parametros,TS[i].nombre_traductor);
             return TS[i];
         }   
         i--;    
@@ -266,7 +266,7 @@ struct entradaTS  search_identificador_pila(char * nom){
 
         if(strcmp(TS[i].nombre,nom)==0 && ((TS[i].entrada==variable) || (TS[i].entrada==funcion) || (TS[i].entrada==parametro_formal)) ){
             if(debug)
-                printf("Uso %s, %s, %s, %s, %i.\n", toStringEntrada(TS[i].entrada), TS[i].nombre, toStringTipoDato(TS[i].dato_referencia), toStringTipoDato(TS[i].dato_lista),TS[i].n_parametros);
+                printf("Uso %s, %s, %s, %s, %i, %s.\n", toStringEntrada(TS[i].entrada), TS[i].nombre, toStringTipoDato(TS[i].dato_referencia), toStringTipoDato(TS[i].dato_lista),TS[i].n_parametros,TS[i].nombre_traductor);
             return TS[i];
         }
         aux.entrada=TS[i].entrada;    
@@ -797,6 +797,39 @@ void closeFich(){
     fclose(ffunciones);
 }
 
+FILE* dondeEscriboExpresiones(int funcion_actual){
+    if(funcion_actual<0){
+        fputs("\t",fmain);
+        return fmain;
+    }
+    else{
+        for(int i=-1; i<funcion_actual;i++){
+            fputs("\t",ffunciones);
+        }
+        return ffunciones;
+    }
+}
+
+void normalizoTipoDato(char* tipoNormalizado, TipoDato dato_referencia){
+    switch(dato_referencia){
+        case entero:
+            strcpy(tipoNormalizado,"int \0");
+            break;
+        case real:
+            strcpy(tipoNormalizado,"double \0");
+            break;
+        case booleano:
+            strcpy(tipoNormalizado,"bool \0");
+            break;
+        case caracter:
+            strcpy(tipoNormalizado,"char \0");
+            break;
+        case lista:
+            // Meter algo por aqui???
+            break;
+    }
+}
+
 // Escribe en el fichero de variables la variable de tipo dato_referencia y si es preciso dato_lista con nombre s
 // Tambien escribe el nombre de los parametros (por nested funcions)
 // si el parametro i es menor o igual a -1 significa que estoy en main, así que declaro las variables como globales (en su archivo)
@@ -809,25 +842,12 @@ void writeVarFile(int funcion_actual){
     else{
         file = ffunciones;
     }
+    for(int i=-1; i<funcion_actual;i++){
+        fputs("\t",file);
+    }
     char auxDatoReferencia[20] = "\0";
     //char auxDatoLista[20] = "\0";
-    switch(TS[TOPE-1].dato_referencia){
-        case entero:
-            strcpy(auxDatoReferencia,"int \0");
-            break;
-        case real:
-            strcpy(auxDatoReferencia,"double \0");
-            break;
-        case booleano:
-            strcpy(auxDatoReferencia,"bool \0");
-            break;
-        case caracter:
-            strcpy(auxDatoReferencia,"char \0");
-            break;
-        case lista:
-            // Meter algo por aqui???
-            break;
-    }
+    normalizoTipoDato(&auxDatoReferencia,TS[TOPE-1].dato_referencia);
     
     // Supongo que el tipo de dato siempre es correcto
     if(TS[TOPE-1].dato_referencia!=lista){
@@ -845,23 +865,7 @@ void writeVarFile(int funcion_actual){
 void writeFunctionFile(){
     char auxDatoReferencia[20] = "\0";
     //char auxDatoLista[20] = "\0";
-    switch(TS[TOPE-1].dato_referencia){
-        case entero:
-            strcpy(auxDatoReferencia,"int \0");
-            break;
-        case real:
-            strcpy(auxDatoReferencia,"double \0");
-            break;
-        case booleano:
-            strcpy(auxDatoReferencia,"bool \0");
-            break;
-        case caracter:
-            strcpy(auxDatoReferencia,"char \0");
-            break;
-        case lista:
-            // Meter algo por aqui???
-            break;
-    }
+    normalizoTipoDato(&auxDatoReferencia,TS[TOPE-1].dato_referencia);
 
     if(TS[TOPE-1].dato_referencia!=lista){
         fputs(auxDatoReferencia,ffunciones);
@@ -907,8 +911,8 @@ void writeFunctionFile(){
     }
 }
 
-// Escribe el inicio de un bloque, si el parametro i es menor o igual a -1 significa que estoy en main
-// si es mayor estoy en el bloque de la funcion con nombre en la pila i
+// Escribe el inicio de un bloque, si el parametro funcion_actual es menor o igual a -1 significa que estoy en main
+// si es mayor estoy en el bloque de la funcion con nombre en la pila funcion_actual
 void writeStarBlock(int funcion_actual){
     
     if(funcion_actual<0)
@@ -919,6 +923,8 @@ void writeStarBlock(int funcion_actual){
     
 }
 
+// Escribe el final de un bloque, igual que los anteriores si el parametro es menor o igual a -1 estoy en el main
+// en otro caso escribo en una función
 void writeEndBlock(int funcion_actual){
     
     if(funcion_actual<0)
@@ -926,4 +932,123 @@ void writeEndBlock(int funcion_actual){
     else
         fputs("}\n",ffunciones);
 
+}
+
+// Escribe el resultado de una expresion cuando es un identificador
+void writeExpresionIdentificador(struct entradaTS pasoExpresion,  struct entradaTS identificador,int funcion_actual){
+    FILE *file = dondeEscriboExpresiones(funcion_actual);
+    char auxDatoReferencia[20] = "\0";
+    //char auxDatoLista[20] = "\0";
+    normalizoTipoDato(&auxDatoReferencia,pasoExpresion.dato_referencia);
+    if(pasoExpresion.dato_referencia != lista){
+        fputs(auxDatoReferencia,file);
+        fputs(pasoExpresion.nombre_traductor,file);
+        fputs(" = ",file);
+        fputs(identificador.nombre_traductor,file);
+        fputs(";\n",file);
+    }
+    else{
+        ;
+    }
+}
+
+// Escrive el resultado de una expresion cuando es un literal
+void writeExpresionLiteral(struct entradaTS pasoLiteral ,int funcion_actual){
+    FILE *file = dondeEscriboExpresiones(funcion_actual);
+    char auxDatoReferencia[20] = "\0";
+    //char auxDatoLista[20] = "\0";
+    normalizoTipoDato(&auxDatoReferencia,pasoLiteral.dato_referencia);
+    if(pasoLiteral.dato_referencia != lista){
+        fputs(auxDatoReferencia,file);
+        fputs(pasoLiteral.nombre_traductor,file);
+        fputs(" = ",file);
+        fputs(pasoLiteral.nombre,file);
+        fputs(";\n",file);
+    }
+    else{
+        ;
+    }
+
+}
+
+// Escribe el resultado de una expresion cuando es una funcion
+// Se ha optado por usar una array de char tri dimensional que por cada función anidada (maximo 20) recuerda el nombre de su parametro
+// cuando se se calcula la expresion de este (permito hasta 20 parametros en una funcion, sino peta).
+// Finalmente el nombre es menos de tamaño 100 maximo.
+void writeExpresionFuncion(struct entradaTS pasoExpresion, struct entradaTS funcion,char nombre_parametros[20][100],int funcion_actual){
+    FILE *file = dondeEscriboExpresiones(funcion_actual);
+    char auxDatoReferencia[20] = "\0";
+    //char auxDatoLista[20] = "\0";w
+    normalizoTipoDato(&auxDatoReferencia,pasoExpresion.dato_referencia);
+    if(pasoExpresion.dato_referencia != lista){
+        fputs(auxDatoReferencia,file);
+        fputs(pasoExpresion.nombre_traductor,file);
+        fputs(" = ",file);
+        fputs(funcion.nombre_traductor,file);
+        fputs("(",file);
+        int i=0;
+        
+        while (i < funcion.n_parametros){
+            fputs(nombre_parametros[i],file);
+            i++;
+            if(i!=funcion.n_parametros)
+                fputs(",",file);
+        }
+        fputs(");\n",file);
+    }
+    // Si es lista, probablemente se pueda copiar uno a uno
+    else{
+        ;
+    }
+}
+
+/* No es necesaria, copiaStruct copia el nombre del traductor tambien
+// Escribe el resultado de una expresion evaluada entre parentesis (va a ser una igualdad rapida...)
+void writeExpresionParentesis(struct entradaTS pasoExpresion, struct entradaTS expresionPartentesis){
+    FILE *file = dondeEscriboExpresiones(funcion_actual);
+    char auxDatoReferencia[20] = "\0";
+    //char auxDatoLista[20] = "\0";w
+    normalizoTipoDato(&auxDatoReferencia,pasoExpresion.dato_referencia);
+    if(pasoExpresion.dato_referencia != lista){
+        fputs(auxDatoReferencia,file);
+        fputs(pasoExpresion.nombre_traductor,file);
+        fputs(" = ",file);
+        fputs(expresionPartentesis.nombre_traductor,file);
+        fputs(";\n",file);
+    }
+    // Si es lista, probablemente se pueda copiar uno a uno
+    else{
+        ;
+    }
+}
+*/
+
+// Escribe el resultado de una expresion unaria
+// Faltan las listas
+void writeExpresionUnaria(struct entradaTS pasoExpresion, TipoOperador operador, struct entradaTS operando, int funcion_actual){
+    FILE *file = dondeEscriboExpresiones(funcion_actual);
+    char auxDatoReferencia[20] = "\0";
+    //char auxDatoLista[20] = "\0";w
+    normalizoTipoDato(&auxDatoReferencia,pasoExpresion.dato_referencia);
+    fputs(auxDatoReferencia,file);
+    fputs(pasoExpresion.nombre_traductor,file);
+    fputs(" = ",file);
+    switch(operador){
+        case negacion:
+            fputs("!",file);
+        break;
+        case sostenido:
+            // Rellenar para lista
+        break;
+        
+        case interrogacion:
+            // Rellenar para lista
+        break;
+        
+        case menos:
+            fputs("-",file);
+        break;
+    };
+    fputs(operando.nombre_traductor,file);
+    fputs(";\n",file);
 }

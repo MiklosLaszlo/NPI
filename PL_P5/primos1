@@ -19,7 +19,7 @@ main{
             }
         };
         c = a/b;
-        return noHaceNada(c);
+        return noHaceNada(noHaceNada(noHaceNada(noHaceNada(c))));
     };
 
     write ('i','n','t','r','o','d','u','c','e',' ','n','u','m','e','r','o',' ',':',' ');

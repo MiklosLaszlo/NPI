@@ -22,7 +22,7 @@
    TipoEntrada entrada;      // Indica el tipo de entrada
 
    char nombre[100];                 // Contendra los caracteres que forman el identificador en nuestro lenguaje
-   char nombre_traductor[200];       // Contendra los caracteres que forman el identificador al traducirlo a C
+   char nombre_traductor[100];       // Contendra los caracteres que forman el identificador al traducirlo a C
    
    TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
                              // o parametro formal indica el tipo de dato al que hace referencia
