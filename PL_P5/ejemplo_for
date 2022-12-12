@@ -1,0 +1,16 @@
+main{
+	open
+		int n, curr;
+	close
+
+	curr = 2;
+	for n = 2 to 2*4 do {
+		open
+			int d;
+		close
+		d = n/curr;
+	}
+	n = 0;
+	curr=0;
+	write ('\n');
+};

@@ -1,0 +1,49 @@
+main{
+	open
+		int n, curr, ultim, cuenta, primero;
+	close
+	curr = 2;
+	ultim = 0;
+	cuenta = 0;
+	primero = 1;
+
+	write('i', 'n', 't', 'r', 'o', 'd', 'u', 'c', 'e', ' ', 'n', 'u', 'm', 'e', 'r', 'o', ' ', ':', ' ');
+	read (n);
+	write(n, ' ', '=', '=', ' ');
+	curr = 2;
+	while ( curr less_eq n ) {
+		open
+			int d;
+		close
+		d = n / curr;
+		if ( (d * curr) equal n ) then {
+			if ( curr not_equal ultim ) then {
+				ultim = curr;
+				cuenta = 1;
+			}
+			else {
+				cuenta = cuenta + 1;
+			}
+			n = n / curr;
+		}
+		else {
+			if (cuenta greater 0) then {
+				if ( primero equal 0 ) then {
+					 write(' ', '*'); 
+				} 
+				primero = 0;
+				write(' ', curr);
+				if ( cuenta greater 1) then { write('^', cuenta); }
+			}
+			curr = curr + 1;
+			cuenta = 0;
+		}
+	}
+	if(cuenta greater 0) then {
+		if( primero equal 0) then { write(' ', '*'); }
+		primero = 0;
+		write(' ', curr);
+		if(cuenta greater 1) then { write('^', cuenta); }
+	}
+
+};

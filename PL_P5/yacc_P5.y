@@ -1,43 +1,13 @@
 %{
-#define YYSTYPE struct entradaTS
+#include "p5_TS.h"
 #include "lex.yy.c"
 #include "p5.h"
 #define RESET_COLOR    "\x1b[0m"
 #define BG_COLOR_YELLOW     "\x1B[43m"
 #define BG_COLOR_PURPLE     "\x1B[45m"
-#ifndef ENUM
-#define ENUM
-	typedef enum {marca,funcion,variable,parametro_formal,indefinido,operador} TipoEntrada;
-	typedef enum {booleano,entero,real,caracter,lista,desconocido} TipoDato;
-	typedef enum {
-		negacion,sostenido,interrogacion,menos,
-		equal, not_equal,
-		and, or, xor,
-		masmas,
-		mas,
-		entre, por,
-		less, greater, less_eq, greater_eq,arroba, menosmenos, porcentaje,doblepor} TipoOperador;
-
-	typedef struct  entradaTS{
-   TipoEntrada entrada;      // Indica el tipo de entrada
-
-   char nombre[100];                 // Contendra los caracteres que forman el identificador en nuestro lenguaje
-   char nombre_traductor[100];       // Contendra los caracteres que forman el identificador al traducirlo a C
-   
-   TipoDato dato_referencia; // En caso de que entrada sea funcion,variable
-                             // o parametro formal indica el tipo de dato al que hace referencia
-   TipoDato dato_lista;      //tipo de datos que contiene la lista                    
-   unsigned int n_parametros;  //Si tipoDato  es funcion indica el numero de parametros o el tamaño de la lista
-   unsigned int puntero_lista; // Puntero que señala la posición en la lista
-   
-   TipoOperador tipo_operador; // En caso de ser operador, qué operador es  
-};
-
-	const struct entradaTS initialize = {.entrada = indefinido, .dato_referencia=desconocido, .dato_lista=desconocido, .n_parametros=0, .puntero_lista=0};
-#endif
 
 void yyerror( char *msg ){
-	//fprintf(stderr, BG_COLOR_YELLOW "YY Error sintáctico"  RESET_COLOR " Línea %d, No se esperaba el lexema \'%s\'\n" ,yylineno, yytext);
+	fprintf(stderr, BG_COLOR_YELLOW "YY Error sintáctico"  RESET_COLOR " Línea %d, No se esperaba el lexema \'%s\'\n" ,yylineno, yytext);
 }
 void explicacion_error_sintactico( char * msg ) {
 	fprintf(stderr, BG_COLOR_YELLOW "Error sintáctico"  RESET_COLOR " Línea %d, No se esperaba \'%s\'. %s\n" ,yylineno, yytext, msg);
@@ -112,19 +82,19 @@ char parametros_funcion_usandose[20][20][100];
 programa : MAIN {generaFich();} bloque PYC {closeFich();}
 		  | MAIN {generaFich();} error { yyerrok; explicacion_error_sintactico("Debe incluir un bloque tras el main"); } 
 		  | MAIN {generaFich();} bloque error { yyerrok; explicacion_error_sintactico("El programa debe acabar con \';\'"); }
-bloque : LLAVEIZQ	{writeStarBlock(funcion_actual);InsertarMarca();} 
+bloque : LLAVEIZQ	{writeStartBlock(funcion_actual);InsertarMarca();} 
         declar_de_variables_locales
         declar_de_subprogs
         sentencias
         LLAVEDCH {writeEndBlock(funcion_actual);EliminarBloque();}
-		| LLAVEIZQ {writeStarBlock(funcion_actual);InsertarMarca();}
+		| LLAVEIZQ {writeStartBlock(funcion_actual);InsertarMarca();}
 		declar_de_variables_locales 
 		declar_de_subprogs 
 		LLAVEDCH {writeEndBlock(funcion_actual);EliminarBloque();}
 		//  | LLAVEIZQ error { yyerrok; explicacion_error_sintactico('Error en el orden del bloque'); } 
 		//  | LLAVEIZQ declar_de_variables_locales error { yyerrok; explicacion_error_sintactico("Error en el orden del bloque"); } 
 		//  | LLAVEIZQ declar_de_variables_locales declar_de_subprogs error { yyerrok; explicacion_error_sintactico('Error en el orden del bloque'); } 
-		  | LLAVEIZQ {writeStarBlock(funcion_actual);InsertarMarca();} declar_de_variables_locales declar_de_subprogs error { yyerrok; explicacion_error_sintactico("El bloque debe acabar con }"); } 
+		  | LLAVEIZQ {writeStartBlock(funcion_actual);InsertarMarca();} declar_de_variables_locales declar_de_subprogs error { yyerrok; explicacion_error_sintactico("El bloque debe acabar con }"); } 
 declar_de_variables_locales : INIVARIABLES variables_locales FINVARIABLES 
         | 
 		| INIVARIABLES error { yyerrok; explicacion_error_sintactico("Error en el bloque de declaración de variables"); } 
@@ -187,20 +157,29 @@ sentencia_asignacion : IDENTIFICADOR IGUAL expresion PYC {if(comprobar_asignacio
 						writeSentenciaAsignacion(search_identificador_pila($1.nombre),$3,funcion_actual); }
 		  | IDENTIFICADOR IGUAL error { yyerrok; explicacion_error_sintactico("Error, el identificador debe estar igualada a una expresión");};
 		  | IDENTIFICADOR IGUAL expresion error { yyerrok; explicacion_error_sintactico("Error, la asignación debe acabar en \";\"");}
-sentencia_if : IF PARIZQ expresion PARDCH THEN bloque ELSE bloque { comprueba_exp_logica($3); }
-        | IF PARIZQ expresion PARDCH THEN bloque { comprueba_exp_logica($3); }
-		  | IF error { yyerrok; explicacion_error_sintactico("Error, tras el if debe introducir la condición entre paréntesis"); }
-		  | IF PARIZQ error { yyerrok; explicacion_error_sintactico("Error, la condición debe ser una expresión"); }
-		  | IF PARIZQ expresion error { yyerrok; explicacion_error_sintactico("Error, debe cerrar el paréntesis"); }
-		  | IF PARIZQ expresion PARDCH error { yyerrok; explicacion_error_sintactico("Error, se esperaba \"then\""); }
-		  | IF PARIZQ expresion PARDCH THEN error { yyerrok; explicacion_error_sintactico("Error, se esperaba un bloque"); }
-	//	  | IF PARIZQ expresion PARDCH THEN bloque error { yyerrok; explicacion_error_sintactico("Error, "); }
-		  | IF PARIZQ expresion PARDCH THEN bloque ELSE error { yyerrok; explicacion_error_sintactico("Error, se esperaba un bloque"); }
-sentencia_while : WHILE PARIZQ expresion PARDCH bloque { comprueba_exp_logica($3); }
-		  | WHILE error { yyerrok; explicacion_error_sintactico("Error, introduzca la condición entre paréntesis"); }
+sentencia_if : 
+			{empiezaSentenciaIf(funcion_actual);} IF PARIZQ expresion PARDCH 
+			THEN {writeCondicion($4.nombre_traductor, funcion_actual);} 
+			bloque {writeSaltoSalida(funcion_actual); writeEtiquetaElse(funcion_actual);} AUX_else { comprueba_exp_logica($4); } {writeEtiquetaSalida(funcion_actual);}
+
+		  | {empiezaSentenciaIf(funcion_actual);} IF error { yyerrok; explicacion_error_sintactico("Error, tras el if debe introducir la condición entre paréntesis"); }
+		  | {empiezaSentenciaIf(funcion_actual);} IF PARIZQ error { yyerrok; explicacion_error_sintactico("Error, la condición debe ser una expresión"); }
+		  | {empiezaSentenciaIf(funcion_actual);} IF PARIZQ expresion error { yyerrok; explicacion_error_sintactico("Error, debe cerrar el paréntesis"); }
+		  | {empiezaSentenciaIf(funcion_actual);} IF PARIZQ expresion PARDCH error { yyerrok; explicacion_error_sintactico("Error, se esperaba \"then\""); }
+		  | {empiezaSentenciaIf(funcion_actual);} IF PARIZQ expresion PARDCH THEN {writeCondicion($4.nombre_traductor, funcion_actual);} error { yyerrok; explicacion_error_sintactico("Error, se esperaba un bloque"); }
+		  | {empiezaSentenciaIf(funcion_actual);} IF PARIZQ expresion PARDCH THEN {writeCondicion($4.nombre_traductor, funcion_actual);} bloque error { yyerrok; explicacion_error_sintactico("Error, "); }
+
+// En primos2 si no uso aux else me empieza a petar por todos lados
+AUX_else : ELSE bloque |  | ELSE error { yyerrok; explicacion_error_sintactico("Error, se esperaba un bloque después de else"); } ;
+
+sentencia_while : 
+			{empiezaSentenciaWhile(funcion_actual); } 
+			WHILE PARIZQ expresion {writeCondicionSalida($4.nombre_traductor, funcion_actual);}
+			PARDCH bloque { comprueba_exp_logica($4); } {writeCierreWhile(funcion_actual);}
+		  /*| WHILE error { yyerrok; explicacion_error_sintactico("Error, introduzca la condición entre paréntesis"); }
 		  | WHILE PARIZQ error { yyerrok; explicacion_error_sintactico("Error, la condición debe ser una expresión"); }
 		  | WHILE PARIZQ expresion error { yyerrok; explicacion_error_sintactico("Error, debe cerrarse el paréntesis"); }
-		  | WHILE PARIZQ expresion PARDCH error { yyerrok; explicacion_error_sintactico("Error, se esperaba un bloque"); }
+		  | WHILE PARIZQ expresion PARDCH error { yyerrok; explicacion_error_sintactico("Error, se esperaba un bloque"); } */
 sentencia_entrada : READ PARIZQ lista_entrada PARDCH PYC 
     	  | READ error { yyerrok; explicacion_error_sintactico("Error, se esperaba un paréntesis"); }
 		  | READ PARIZQ error { yyerrok; explicacion_error_sintactico("Error, debe introducir una lista de identificadores separados por comas"); }
@@ -217,12 +196,15 @@ sentencia_return : RETURN expresion PYC {if(funcion_actual>-1){if(strcmp(funcion
 			strcpy(funcion_declarandose[funcion_actual],"");writeSentenciaReturn($2,funcion_actual);}} 
 		  | RETURN error { yyerrok; explicacion_error_sintactico("Error, debe devolverse una expresión"); }
 		  | RETURN expresion error { yyerrok; explicacion_error_sintactico("Error, debe acabar en \";\""); }
-sentencia_for_pascal : FOR IDENTIFICADOR IGUAL expresion TO expresion DO bloque {comprobar_for_pascal($2,$4,$6);} 
-		  | FOR error { yyerrok; explicacion_error_sintactico("Error, se esperaba una sentencia de asignación"); }
-		  | FOR sentencia_asignacion error { yyerrok; explicacion_error_sintactico("Error, se esperaba la palabra \"to\""); }
-		  | FOR sentencia_asignacion TO error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
-		  | FOR sentencia_asignacion TO expresion error { yyerrok; explicacion_error_sintactico("Error, se esperaba la palabra \"do\""); }
-		  | FOR sentencia_asignacion TO expresion DO error { yyerrok; explicacion_error_sintactico("Error, se esperaba un bloque"); }
+sentencia_for_pascal : 
+			{empiezaSentenciaFor(funcion_actual);} FOR IDENTIFICADOR IGUAL expresion {writeAsignacionInicial($3.nombre,$5,funcion_actual);} 
+			TO expresion {writeCondicionalFor($8.nombre_traductor, funcion_actual);}
+			DO bloque {comprobar_for_pascal($3,$5,$7);} {writeCierreFor(funcion_actual);}
+		  | {empiezaSentenciaFor(funcion_actual);} FOR error { yyerrok; explicacion_error_sintactico("Error, se esperaba una sentencia de asignación"); }
+		  | {empiezaSentenciaFor(funcion_actual);} FOR IDENTIFICADOR IGUAL expresion error { yyerrok; explicacion_error_sintactico("Error, se esperaba la palabra \"to\""); }
+		  | {empiezaSentenciaFor(funcion_actual);} FOR IDENTIFICADOR IGUAL expresion {writeAsignacionInicial($3.nombre,$5,funcion_actual);} TO error { yyerrok; explicacion_error_sintactico("Error, se esperaba una expresión"); }
+		  | {empiezaSentenciaFor(funcion_actual);} FOR IDENTIFICADOR IGUAL expresion {writeAsignacionInicial($3.nombre,$5,funcion_actual);} TO expresion {writeCondicionalFor($8.nombre_traductor, funcion_actual);} error { yyerrok; explicacion_error_sintactico("Error, se esperaba la palabra \"do\""); }
+		  | {empiezaSentenciaFor(funcion_actual);} FOR IDENTIFICADOR IGUAL expresion {writeAsignacionInicial($3.nombre,$5,funcion_actual);} TO expresion {writeCondicionalFor($8.nombre_traductor, funcion_actual);} DO error { yyerrok; explicacion_error_sintactico("Error, se esperaba un bloque"); }
 sentencia_lista : IDENTIFICADOR MOVLISTA PYC {
 				copiaStruct(&$$,search_identificador_pila($1.nombre)); 
 				if($$.entrada!=variable && $$.entrada!=parametro_formal)
