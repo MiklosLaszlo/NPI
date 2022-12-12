@@ -897,9 +897,8 @@ void writeFunctionFile(){
 
          if(i!=(TOPE-1))
             fputs(", ",ffunciones);
-         else
-            fputs(")",ffunciones);
       }
+      fputs(")",ffunciones);
    }
    else {
       ;
