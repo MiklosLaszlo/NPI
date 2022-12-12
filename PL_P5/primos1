@@ -10,6 +10,7 @@ main{
             open
                 bool h;
             close
+            h = true xor false;
             h = (t equal t);
             if (h or (not h)) then {
                 return t;

@@ -1049,37 +1049,43 @@ void writeExpresionUnaria(struct entradaTS pasoExpresion, TipoOperador operador,
 }
 
 void writeExpresionBinaria(struct entradaTS pasoExpresion, struct entradaTS operando1, TipoOperador operador, struct entradaTS operando2, int funcion_actual){
-   FILE *file = dondeEscriboExpresiones(funcion_actual);
-   char auxDatoReferencia[20] = "\0";
-   //char auxDatoLista[20] = "\0";
-   normalizoTipoDato(&auxDatoReferencia,pasoExpresion.dato_referencia);
-   fputs(auxDatoReferencia,file);
-   fputs(pasoExpresion.nombre_traductor,file);
-   fputs(" = ",file);
-   switch(operador){
-      // Operadores booleanos
-      case and:
-         fputs(operando1.nombre_traductor,file);
-         fputs(" && ",file);
-         fputs(operando2.nombre_traductor,file);
-      break;
-      case or:
-         fputs(operando1.nombre_traductor,file);
-         fputs(" || ",file);
-         fputs(operando2.nombre_traductor,file);
-      break;
-         
-      case xor:
-         // Esto es a nivel de bits, que sea lógico no tiene sentido
-         // Rellenar para lista
-      break;
-      
-      // Operadores de igualdad
-      case equal:
-         fputs(operando1.nombre_traductor,file);
-         fputs(" == ",file);
-         fputs(operando2.nombre_traductor,file);
-      break;
+    FILE *file = dondeEscriboExpresiones(funcion_actual);
+    char auxDatoReferencia[20] = "\0";
+    //char auxDatoLista[20] = "\0";
+    normalizoTipoDato(&auxDatoReferencia,pasoExpresion.dato_referencia);
+    // El operador xor va algo más a su rollo
+    fputs(auxDatoReferencia,file);
+    fputs(pasoExpresion.nombre_traductor,file);
+    fputs(" = ",file);
+    switch(operador){
+        // Operadores booleanos
+        case and:
+            fputs(operando1.nombre_traductor,file);
+            fputs(" && ",file);
+            fputs(operando2.nombre_traductor,file);
+        break;
+        case or:
+            fputs(operando1.nombre_traductor,file);
+            fputs(" || ",file);
+            fputs(operando2.nombre_traductor,file);
+        break;
+            
+        case xor:
+            // Esto es a nivel de bits, que sea lógico no tiene sentido
+            // Vale si trato los booleanos como bits, en fin, matenme
+            fputs(operando1.nombre_traductor,file);
+            fputs(" ^ ",file);
+            fputs(operando2.nombre_traductor,file);
+            
+
+        break;
+        
+        // Operadores de igualdad
+        case equal:
+            fputs(operando1.nombre_traductor,file);
+            fputs(" == ",file);
+            fputs(operando2.nombre_traductor,file);
+        break;
 
       case not_equal:
          fputs(operando1.nombre_traductor,file);
