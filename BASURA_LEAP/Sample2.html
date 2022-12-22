@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<!--
+/------------------------------------------------------------------------------\
+| Copyright (C) 2012-2013 Leap Motion, Inc. All rights reserved.               |
+| Leap Motion proprietary and confidential. Not for distribution.              |
+| Use subject to the terms of the Leap Motion SDK Agreement available at       |
+| https://developer.leapmotion.com/sdk_agreement, or another agreement         |
+| between Leap Motion and you, your company or other organization.             |
+\------------------------------------------------------------------------------/
+-->
+
+<!--
+
+See additional libraries, guides, and examples at:
+
+ - https://developer.leapmotion.com/downloads/javascript
+ - https://developer.leapmotion.com/getting-started/javascript
+ - https://developer.leapmotion.com/gallery/tags/javascript
+
+-->
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Leap Motion JavaScript Sample</title>
+<link rel="stylesheet" href="style.css">
+<script src="http://js.leapmotion.com/leap-0.6.3.min.js"></script>
+<script type="text/javascript">
+// Store frame for motion functions
+var previousFrame = null;
+var paused = false;
+var pauseOnGesture = false;
+var screenWidth;
+var screenHeight;
+var interactionWidth;
+var interactionHeight;
+var cursor ;
+
+var comedores;
+
+// Setup Leap loop with frame callback function
+var controllerOptions = {enableGestures: true};
+
+// to use HMD mode:
+// controllerOptions.optimizeHMD = true;
+
+
+// Funcion para realizar gestos, la variable gestoRealizado indica el ultimo gesto detectado.
+
+var gestoRealizado = "unknown"
+var interactionSize
+var interactionCenter
+
+setInterval( function() {
+    switch(gestoRealizado){
+      case "circle":
+        comedoresHtml.style.background = "rgba(80, 228, 21, 0.15)";
+        break;
+      case "screenTapArriba":
+        break;
+      case "screenTapAbajo":
+        break;
+      case "swipeIzquierda":
+        break;
+      case "swipeDerecha":
+        break;
+      case "rotateIzquierda":
+        break;
+      case "rotateDerecha":
+        break;
+      default:
+        break;
+    }
+
+    gestoRealizado = "unknown"
+  }
+, 500);
+
+function inInteractionBox(pos){
+  if(pos[0] < interactionCenter[0] - interactionSize[0]/2)
+    return false;
+  if(pos[0] > interactionCenter[0] + interactionSize[0]/2)
+    return false;
+  if(pos[1] < interactionCenter[1] - interactionSize[1]/2)
+    return false;
+  if(pos[1] > interactionCenter[1] + interactionSize[1]/2)
+    return false;
+  if(pos[2] < interactionCenter[2] - interactionSize[2]/2)
+    return false;
+  if(pos[2] > interactionCenter[2] + interactionSize[2]/2)
+    return false;
+  
+  return true;
+}
+
+Leap.loop(controllerOptions, function(frame) {
+  if (paused) {
+    return; // Skip this update
+  }
+  var frameOutput = document.getElementById("frameData");
+  
+  interactionSize = frame.interactionBox.size;
+  interactionCenter = frame.interactionBox.center;
+  auxiliar2.innerHTML = "Centro: " + interactionCenter[0] + "," + interactionCenter[1] + ", " + interactionCenter[2] + "<br/> " + "size: " + interactionSize[0] + "," + interactionSize[1] + ", " + interactionSize[2] + "<br/> ";
+
+  // Frame motion factors
+  if (previousFrame && previousFrame.valid) {
+    var translation = frame.translation(previousFrame);
+
+    var rotationAxis = frame.rotationAxis(previousFrame);
+    var rotationAngle = frame.rotationAngle(previousFrame);
+
+    var scaleFactor = frame.scaleFactor(previousFrame);
+  }
+
+  if (frame.hands.length > 0) {
+    for (var i = 0; i < frame.hands.length; i++) {
+      var hand = frame.hands[i];
+
+      // Hand motion factors
+      if (previousFrame && previousFrame.valid) {
+        var translation = hand.translation(previousFrame);
+
+        var rotationAxis = hand.rotationAxis(previousFrame, 2);
+        var rotationAngle = hand.rotationAngle(previousFrame);
+
+        var scaleFactor = hand.scaleFactor(previousFrame);
+      }
+
+      // IDs of pointables associated with this hand
+      if (hand.pointables.length > 0) {
+        var fingerIds = [];
+        for (var j = 0; j < hand.pointables.length; j++) {
+          var pointable = hand.pointables[j];
+            fingerIds.push(pointable.id);
+        }
+        if (fingerIds.length > 0) {
+        }
+      }
+    }
+  }
+  else {
+  }
+
+  var pointableString = "";
+  if (frame.pointables.length > 0) {
+    var fingerTypeMap = ["Thumb", "Index finger", "Middle finger", "Ring finger", "Pinky finger"];
+    var boneTypeMap = ["Metacarpal", "Proximal phalanx", "Intermediate phalanx", "Distal phalanx"];
+    for (var i = 0; i < frame.pointables.length; i++) {
+      var pointable = frame.pointables[i];
+
+      pointableString += "<div>";
+
+      if (pointable.tool) {
+        pointableString += "Pointable ID: " + pointable.id + "<br />";
+        pointableString += "Classified as a tool <br />";
+        pointableString += "Length: " + pointable.length.toFixed(1) + " mm<br />";
+        pointableString += "Width: "  + pointable.width.toFixed(1) + " mm<br />";
+        pointableString += "Direction: " + vectorToString(pointable.direction, 2) + "<br />";
+        pointableString += "Tip position: " + vectorToString(pointable.tipPosition) + " mm<br />"
+        pointableString += "</div>";
+      }
+      else {
+        pointableString += fingerTypeMap[pointable.type] + "<br/>";
+        pointableString += "Tip position: " + vectorToString(pointable.tipPosition) + " mm<br />";
+        pointableString += "</div>";
+        if(fingerTypeMap[pointable.type] == "Index finger" && pointable.extended){
+          var posDedo = pointable.tipPosition;
+          
+          if(inInteractionBox(posDedo) ){
+            var x = ((interactionSize[0]/2)* screenWidth/ (interactionSize[0]))+(screenWidth/ (interactionSize[0]))*posDedo[0];
+            var y = (-(interactionCenter[1] + interactionSize[1]/2)* screenHeight/ (-interactionSize[1]))+(screenHeight/ (-interactionSize[1]))*posDedo[1] ;
+            auxiliar.innerHTML = "Dedo width: " + x + ", height: " + y + ".";
+            cursor.style.left = x + "px";
+            cursor.style.top = y + "px";
+          }
+        }
+      }
+    }
+  }
+  else {
+    pointableString += "<div>No pointables</div>";
+  }
+  frameOutput.innerHTML = pointableString;
+  
+  /*pointableOutput.innerHTML = pointableString;*/
+  
+  // Display Gesture object data
+  var gestureString = "";
+  if (frame.gestures.length > 0) {
+    if (pauseOnGesture) {
+      togglePause();
+    }
+    for (var i = 0; i < frame.gestures.length; i++) {
+      var gesture = frame.gestures[i];
+      gestureString += "Gesture ID: " + gesture.id + ", "
+                    + "type: " + gesture.type + ", "
+                    + "state: " + gesture.state + ", "
+                    + "hand IDs: " + gesture.handIds.join(", ") + ", "
+                    + "pointable IDs: " + gesture.pointableIds.join(", ") + ", "
+                    + "duration: " + gesture.duration + " &micro;s, ";
+
+      switch (gesture.type) {
+        case "circle":
+          if (gesture.progress > 0.7 && gesture.duration < 1000000 && gesture.duration > 500 && gesture.radius > 10 && gesture.radius < 50){
+            gestoRealizado = "circle";
+          }
+
+            
+          break;
+        case "swipe":
+          gestureString += "start position: " + vectorToString(gesture.startPosition) + " mm, "
+                        + "current position: " + vectorToString(gesture.position) + " mm, "
+                        + "direction: " + vectorToString(gesture.direction, 1) + ", "
+                        + "speed: " + gesture.speed.toFixed(1) + " mm/s";
+          break;
+        case "screenTap":
+        case "keyTap":
+          gestureString += "position: " + vectorToString(gesture.position) + " mm";
+          break;
+        default:
+          gestoRealizado = "unknown";
+          gestureString += "unkown gesture type";
+      }
+      gestureString += "<br />";
+    }
+  }
+  else {
+    gestureString += "No gestures";
+  }
+
+  // Store frame for motion functions
+  previousFrame = frame;
+})
+
+function vectorToString(vector, digits) {
+  if (typeof digits === "undefined") {
+    digits = 1;
+  }
+  return "(" + vector[0].toFixed(digits) + ", "
+             + vector[1].toFixed(digits) + ", "
+             + vector[2].toFixed(digits) + ")";
+}
+
+function togglePause() {
+  paused = !paused;
+
+  if (paused) {
+    document.getElementById("pause").innerText = "Resume";
+  } else {
+    document.getElementById("pause").innerText = "Pause";
+  }
+}
+
+function pauseForGestures() {
+  if (document.getElementById("pauseOnGesture").checked) {
+    pauseOnGesture = true;
+  } else {
+    pauseOnGesture = false;
+  }
+}
+
+
+document.addEventListener('mousemove', function(e){
+    var x = e.clientX;
+    var y = e.clientY;
+    cursor.style.left = x + "px";
+    cursor.style.top = y + "px";
+    beta.innerHTML = "Actual width: " + x + ", height: " + y + ".";
+});
+
+</script>
+</head>
+<body>
+<h1>Leap Motion JavaScript Sample</h1>
+<div id="frameData"></div>
+<div id="cursor"></div>
+<div id="comedores">
+  <table>
+    <tr>
+        <td>Lunes</td>
+    </tr>
+    <tr>
+        <td>Menú 1</td>
+    </tr>
+    <tr>
+        <td>Primero:</td>
+        <td>LENTEJAS</td>
+    </tr>
+    <tr>
+        <td>Segundo:</td>
+        <td>PATATAS</td>
+    </tr>
+    <tr>
+        <td>Postre:</td>
+        <td>RABANO</td>
+    </tr>
+    <tr>
+        <td>Menu 2</td>
+    </tr>
+    <tr>
+        <td>Primero:</td>
+        <td>RABANO</td>
+    </tr>
+    <tr>
+        <td>Segundo:</td>
+        <td>HABICHUELAS</td>
+    </tr>
+    <tr>
+        <td>Postre:</td>
+        <td>Cielo de Tocino</td>
+    </tr>
+</table>
+
+</div>
+<p id="demo"></p>
+<p id="demo2"></p>
+<p id="demo3"></p>
+<p id ="demo4"></p>
+<div id="horarios"></div>
+<div id="navegacion"></div>
+<script>
+  cursor = document.getElementById("cursor");
+</script>
+<script>
+
+  screenWidth = window.innerWidth;
+  screenHeight = window.innerHeight;
+  
+  var beta = document.getElementById("demo2");
+  var ultra = document.getElementById("demo");
+  var auxiliar = document.getElementById("demo3");
+  var auxiliar2 = document.getElementById("demo4");
+  var comedoresHtml = document.getElementById("comedores");
+  wcomedores = comedoresHtml.clientWidth;
+  hcomedores = comedoresHtml.clientHeight;
+  tcomedores = comedoresHtml.getBoundingClientRect().top;
+  lcomedores = comedoresHtml.getBoundingClientRect().left;
+  ultra.innerHTML = "Browser width: " + screenWidth + ", height: " + screenHeight + ".<br/>"
+                    + "Tamaño primer div, width:" + wcomedores + ", height: " + hcomedores + ".<br/>" // Con esto pillo un rectangulo donde esta el div y de alli se hacen cositas
+                    + "Origen primer div, left:" + lcomedores + ", top: " + tcomedores + ".<br/>";
+
+</script>
+</body>
+</html>
