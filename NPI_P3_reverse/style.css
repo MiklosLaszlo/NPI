@@ -5,18 +5,39 @@ body {
     align-content: center;
     text-align: center;
     height: 100vh;
+    font-size: 3pc;
     font-family: 'Times New Roman', Times, serif;
     overflow: hidden;
+    background-color: #229fbe; 
 }
 
 table {
-    margin: 0;
-    padding: 0;
+    
     align-items: center;
+    margin: auto;
+    width: 90%;
     align-content: center;
     text-align: center;
     font-family: 'Times New Roman', Times, serif;
     overflow: hidden;
+    background-color: rgba(0, 255, 255, 0.452);
+}
+
+th {
+    background-color: #009879;
+    height: 60px;
+    color: #ffffff;
+}
+
+td {
+    border: 1px solid;
+    height: 60px;
+    text-align: center;
+    background-color: rgba(0, 255, 255, 0.562);
+}
+
+tr {
+    border-bottom: 1px solid #dddddd;
 }
 
 #cursor {
@@ -33,34 +54,20 @@ table {
 #comedores {
     border: 5px solid;
     margin: auto;
-    width: 50%;
     padding: 10px;
 }
 
 #horarios{
-    width: 100px;
-    height: 100px;
-    background: #bf7130;
-    display: none;
+    border: 5px solid;
+    margin: auto;
     padding: 10px;
-    margin: 0 15px 0 0;
-    font-size: 14px;
-    font-weight: bold;
-    float: left;
-    text-align: center;
-    background: rgba(80, 228, 21, 0.15);
 }
 
 #navegacion{
-    width: 100px;
-    height: 100px;
-    background: #bf7130;
-    display: none;
+    border: 5px solid;
+    margin: auto;
     padding: 10px;
-    margin: 0 15px 0 0;
-    font-size: 14px;
-    font-weight: bold;
-    float: left;
+    align-items: center;
+    align-content: center;
     text-align: center;
-    background: rgba(0, 0, 0, .15);
 }
