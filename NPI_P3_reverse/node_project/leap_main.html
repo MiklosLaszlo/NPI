@@ -303,6 +303,9 @@ function inInteractionBox(pos){
 }
 
 Leap.loop(controllerOptions, async function(frame) {
+  //console.log(frame.hands[0].sphereRadius)
+  // console.log(frame.hands[0].palmNormal[1])
+
   if (paused) {
     return; // Skip this update
   }
@@ -348,8 +351,8 @@ Leap.loop(controllerOptions, async function(frame) {
         var dir = (gesture.direction[0] > 0) ? 'derecha' : 'izquierda';
         //console.log(gesture.handIds);
         //swipe.innerHTML = contarDedos(frame.hands[0]) <= 2;
-
-        if((contarDedos(frame.hands[0]) >= 3) && (gesture.speed > 150) && frame.hands[0].sphereRadius > 150)
+        // console.log("Duracion" + gesture.duration)
+        if((contarDedos(frame.hands[0]) >= 3) && (gesture.speed > 150) && frame.hands[0].sphereRadius > 100 && gesture.duration < 7000 && frame.hands[0].palmNormal[1] < -0.6)
           await ejecutaGesto.ejecutaSwipe(dir, ()=>{}, ()=>{});
         break;
       case "circle":
@@ -365,13 +368,17 @@ Leap.loop(controllerOptions, async function(frame) {
           //Si la posicion del eje Y
           // console.log("Real " + pointable.tipVelocity[0] + ", "+pointable.tipVelocity[1] + ", "+pointable.tipVelocity[2]);
         var dedo_ind = buscaDedo(frame.hands[0].fingers, 1);
-        if(dedo_ind){
+        console.log(dedo_ind.tipVelocity[2])
+        if(dedo_ind.tipVelocity[2] > 80 && dedo_ind){
           if(dedo_ind.tipPosition[1]>interactionCenter[1]){
-            await ejecutaGesto.ejecutaPoint(() => {console.log("ARRIBA");pointableString += "Selecciono menú de arriba";});
+            await ejecutaGesto.ejecutaPoint(() => {console.log("Arriba");pointableString += "Selecciono menú de arriba";});
           }
           else{
-            await ejecutaGesto.ejecutaPoint(() => {console.log("aBAJO");pointableString += "Selecciono menú de abajo";});
+            await ejecutaGesto.ejecutaPoint(() => {console.log("Abajo");pointableString += "Selecciono menú de abajo";});
           }
+        }
+        else{
+          if(dedo_ind) console.log("Insuficiente velocidad");
         }
       
           // }
@@ -398,7 +405,7 @@ Leap.loop(controllerOptions, async function(frame) {
           var axis = hand.direction;
           var radius = hand.sphereRadius;
             axis = axis[0];
-            if(50 < radius && radius < 150){
+            if(30 < radius && radius < 80){
               if(0.3 < axis && axis < 0.9 && !dedosExtendidos(frame)  ){
                 ejecutaGesto.ejectutaRotation("left", ()=> {siguienteFoto()})
                 //handRotation = "left";
