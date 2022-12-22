@@ -224,6 +224,17 @@ class EjecutadorGesto{
 }
 var ejecutaGesto = new EjecutadorGesto();
 
+function buscaDedo(dedos, tipo){
+  var dedo = null;
+  var salir = false;
+  for(var i = 0; i < dedos.length && !salir; i++){
+    salir = dedos[i].type == tipo;
+    if(salir) 
+      dedo = dedos[i]
+  }
+  return dedo;
+}
+
 // Store frame for motion functions
 var previousFrame = null;
 var paused = false;
@@ -350,6 +361,20 @@ Leap.loop(controllerOptions, async function(frame) {
       case "screenTap":
       case "keyTap":
         gestureString += "position: " + vectorToString(gesture.position) + " mm";
+        // if(fingerTypeMap[pointable.type]=="Index finger"){
+          //Si la posicion del eje Y
+          // console.log("Real " + pointable.tipVelocity[0] + ", "+pointable.tipVelocity[1] + ", "+pointable.tipVelocity[2]);
+        var dedo_ind = buscaDedo(frame.hands[0].fingers, 1);
+        if(dedo_ind){
+          if(dedo_ind.tipPosition[1]>interactionCenter[1]){
+            await ejecutaGesto.ejecutaPoint(() => {console.log("ARRIBA");pointableString += "Selecciono menú de arriba";});
+          }
+          else{
+            await ejecutaGesto.ejecutaPoint(() => {console.log("aBAJO");pointableString += "Selecciono menú de abajo";});
+          }
+        }
+      
+          // }
         break;
       default:
         gestoRealizado = "unknown";
@@ -438,17 +463,18 @@ Leap.loop(controllerOptions, async function(frame) {
 
           // Gesto victor
 
-          if(fingerTypeMap[pointable.type]=="Index finger"){
-          //Si la posicion del eje Y
-          if(pointable.tipPosition[2]<-75.0 ){
-            if(pointable.tipPosition[1]>75.0){
-              await ejecutaGesto.ejecutaPoint(() => {pointableString += "Selecciono menú de arriba";});
-            }
-            else{
-              await ejecutaGesto.ejecutaPoint(() => {pointableString += "Selecciono menú de abajo";});
-            }
-          }
-          }
+          // if(fingerTypeMap[pointable.type]=="Index finger"){
+          // //Si la posicion del eje Y
+          // // console.log("Real " + pointable.tipVelocity[0] + ", "+pointable.tipVelocity[1] + ", "+pointable.tipVelocity[2]);
+          // if(pointable.tipVelocity[2]<-1000 && Math.abs(pointable.tipVelocity[0]) < 200 && Math.abs(pointable.tipVelocity[1]) < 200  ){
+          //   if(pointable.tipPosition[1]>interactionCenter[1]){
+          //     await ejecutaGesto.ejecutaPoint(() => {pointableString += "Selecciono menú de arriba";});
+          //   }
+          //   else{
+          //     await ejecutaGesto.ejecutaPoint(() => {pointableString += "Selecciono menú de abajo";});
+          //   }
+          // }
+          // }
 			 
           if(inInteractionBox(posDedo) ){
             var x = ((interactionSize[0]/2)* screenWidth/ (interactionSize[0]))+(screenWidth/ (interactionSize[0]))*posDedo[0];
