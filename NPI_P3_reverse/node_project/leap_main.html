@@ -338,13 +338,11 @@ Leap.loop(controllerOptions, async function(frame) {
         //console.log(gesture.handIds);
         //swipe.innerHTML = contarDedos(frame.hands[0]) <= 2;
 
-        if((contarDedos(frame.hands[0]) <= 2) && (gesture.speed > 200))
-          await ejecutaGesto.ejecutaSwipe(dir, ()=>{}, ()=>{});
-        else
+        if((contarDedos(frame.hands[0]) >= 3) && (gesture.speed > 150) && frame.hands[0].sphereRadius > 150)
           await ejecutaGesto.ejecutaSwipe(dir, ()=>{}, ()=>{});
         break;
       case "circle":
-        if (gesture.progress > 0.7 && gesture.duration < 1000000 && gesture.duration > 1000 && gesture.radius > 10 && gesture.radius < 50){
+        if ( frame.hands[0].sphereRadius < 50 && gesture.progress > 0.9 && gesture.duration < 1000000 && gesture.duration > 1000 && gesture.radius > 10 && gesture.radius < 50){
           await ejecutaGesto.ejecutaCircle(()=>{comedoresHtml.style.background = "rgba(80, 228, 21, 0.15)";})
           //gestoRealizado = "circle";
         }            
@@ -375,7 +373,7 @@ Leap.loop(controllerOptions, async function(frame) {
           var axis = hand.direction;
           var radius = hand.sphereRadius;
             axis = axis[0];
-            if(50 < radius && radius < 500){
+            if(50 < radius && radius < 150){
               if(0.3 < axis && axis < 0.9 && !dedosExtendidos(frame)  ){
                 ejecutaGesto.ejectutaRotation("left", ()=> {siguienteFoto()})
                 //handRotation = "left";
