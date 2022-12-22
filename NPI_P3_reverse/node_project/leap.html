@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <style>
+            body {
+                margin: auto;
+                background-color: black;
+            }
+            #image {
+                width: 800px;
+                height: 600px;
+                object-fit: contain;
+                margin: auto;
+            }
+            #title {
+                color: white;
+                position: relative;
+                bottom: 129px;
+                text-align: center;
+                font-size: 70px;
+                background-color: rgba(0, 0, 0, 0.7);
+
+            }
+        </style>
+        <div style="position: absolute; right: 50px; top: 50px;">
+            <img src="images/Entrada Principal.jpeg" id="image" />
+            <h1 id="title">Entrada Principal</h1>
+        </div>
+        <script src="http://js.leapmotion.com/leap-0.6.3.min.js"></script>
+        <script>
+            document.write("KLK");
+            var images = [{
+                "src":"images/Entrada Principal.jpeg",
+                "title":"Entrada Principal"
+            },{
+                "src":"images/Comedor.jpeg",
+                "title":"Comedor"
+            },{
+                "src":"images/1.2.jpeg",
+                "title":"1.2"
+            },{
+                "src":"images/3.3.jpeg",
+                "title":"3.3"
+            },{
+                "src":"images/3.9.jpeg",
+                "title":"3.9"
+            }];
+            var index = images.length; //fuera de rango
+            var handRotation = "";
+            var previousFrame = null;
+            /*
+            media.onplaying = function () {
+                setTimeout( function() {
+                    
+                },100);
+            };
+
+            media.onpause = function () {
+                
+            };*/
+
+            setInterval(function () {
+     
+                // if hand is rotating to right
+                if (handRotation == "right") {
+                    //document.write(handRotation);
+                    anteriorFoto();
+                    handRotation = "";
+                } else if (handRotation == "left") {
+                    //document.write(handRotation);
+                    siguienteFoto();
+                
+                    handRotation = "";
+                } else if (handRotation == "center") {
+                    //document.write(handRotation);
+                    handRotation = "";
+                }
+            }, 1500);
+
+            var controllerOptions = {};
+
+            Leap.loop(controllerOptions, function(frame){
+                var handString = "";
+                if (frame.hands.length > 0) {
+                    for (var i = 0; i < frame.hands.length; i++) {
+                        var hand = frame.hands[i];
+                        
+                        var axis = hand.direction;
+                        var radius = hand.sphereRadius;
+                       // if (previousFrame && previousFrame.valid){
+                            //var rotation = hand.rotationAxis(previousFrame,2);
+                            axis = axis[0];
+                            if(50 < radius && radius < 500){
+                                if(0.3 < axis && axis < 0.9 && !dedosExtendidos(frame)  ){
+                                    //&& rotation[0]>0.5
+                                    handRotation = "left";
+                                }
+                                /*else if (axis > -0.09 && axis < -0.01){
+                                    handRotation = "center";
+                                }*/
+                                else if ( -0.9 < axis && axis < -0.3  && !dedosExtendidos(frame)){
+                                    //-0.9 < axis && axis < -0.3
+                                    //&& rotation[0]<0.5 
+                                    handRotation = "right";
+                                }
+                            }
+                        //}
+                    }
+                }
+                //previousFrame = frame;
+            });
+            function siguienteFoto() {
+                ++index;
+                if(images.length <= index){
+                    index = index - images.length;
+                }
+                var img = images[index].src;
+                var nom = images[index].title;
+
+                document.getElementById("image").setAttribute("src",img);
+                document.getElementById("title").innerHTML = nom;
+            }
+
+
+            function anteriorFoto() {
+                --index;
+                if(index < 0){
+                    index = index + images.length;
+                }
+                var img = images[index].src;
+                var nom = images[index].title;
+
+                document.getElementById("image").setAttribute("src",img);
+                document.getElementById("title").innerHTML = nom;
+            }
+
+            function dedosExtendidos(frame){
+                var extendido = false;
+                for(var i =0;i<frame.pointable.length && !extendido; ++i){
+                    var pointable = frame.pointables[i];
+                    if(pointable.extended){
+                        extendido = true;
+                    }
+                }
+                return extendido;
+            }
+            
+        </script>
+    </body>    
+</html>

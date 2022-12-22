@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<!--
+/------------------------------------------------------------------------------\
+| Copyright (C) 2012-2013 Leap Motion, Inc. All rights reserved.               |
+| Leap Motion proprietary and confidential. Not for distribution.              |
+| Use subject to the terms of the Leap Motion SDK Agreement available at       |
+| https://developer.leapmotion.com/sdk_agreement, or another agreement         |
+| between Leap Motion and you, your company or other organization.             |
+\------------------------------------------------------------------------------/
+-->
+
+<!--
+
+See additional libraries, guides, and examples at:
+
+ - https://developer.leapmotion.com/downloads/javascript
+ - https://developer.leapmotion.com/getting-started/javascript
+ - https://developer.leapmotion.com/gallery/tags/javascript
+
+-->
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Leap Motion JavaScript Sample</title>
+<!-- <link rel="stylesheet" href="style.css"> -->
+<style>
+  body {
+      margin: auto;
+      background-color: black;
+  }
+  #image {
+      width: 800px;
+      height: 600px;
+      object-fit: contain;
+      margin: auto;
+  }
+  #title {
+      color: white;
+      position: relative;
+      bottom: 129px;
+      text-align: center;
+      font-size: 70px;
+      background-color: rgba(0, 0, 0, 0.7);
+
+  }
+</style>
+<script src="http://js.leapmotion.com/leap-0.6.3.min.js"></script>
+<script type="text/javascript">
+
+document.write("KLK");
+var images = [{
+        "src":"images/Entrada Principal.jpeg",
+        "title":"Entrada Principal"
+    },{
+        "src":"images/Comedor.jpeg",
+        "title":"Comedor"
+    },{
+        "src":"images/1.2.jpeg",
+        "title":"1.2"
+    },{
+        "src":"images/3.3.jpeg",
+        "title":"3.3"
+    },{
+        "src":"images/3.9.jpeg",
+        "title":"3.9"
+    }];
+
+    var index = images.length; //fuera de rango
+    var handRotation = "";
+    // var previousFrame = null;
+
+function contarDedos(hand){
+	var contador = 0;
+	if (hand) {
+	  for (var i = 0; i < hand.pointables.length; i++){
+		  var dedo = hand.pointables[i];
+		  if(dedo.extended) contador++;
+		}
+	}
+	//console.log("contando " + contador);
+	return contador;
+}
+
+function siguienteFoto() {
+  ++index;
+  if(images.length <= index){
+    index = index - images.length;
+  }
+  var img = images[index].src;
+  var nom = images[index].title;
+
+  document.getElementById("image").setAttribute("src",img);
+  document.getElementById("title").innerHTML = nom;
+}
+
+
+function anteriorFoto() {
+  --index;
+  if(index < 0){
+    index = index + images.length;
+  }
+  var img = images[index].src;
+  var nom = images[index].title;
+
+  document.getElementById("image").setAttribute("src",img);
+  document.getElementById("title").innerHTML = nom;
+}
+
+function dedosExtendidos(frame){
+  var extendido = false;
+  for(var i =0;i<frame.pointable.length && !extendido; ++i){
+      var pointable = frame.pointables[i];
+      if(pointable.extended){
+          extendido = true;
+      }
+  }
+  return extendido;
+}
+
+class EjecutadorGesto{
+	constructor(){
+		this.bloqueado = false;
+    this.lock_str = "gestos";
+	}
+
+	//isBloqued(){return this.bloqueado;}
+
+	/**
+	 * Cambia el booleano y espera 2 segundos antes de poder seguir ejecutando este gesto
+	*/
+  async timeout(){
+    return new Promise( (resolve) => {setTimeout(resolve, 1700); } ).then(() => {
+      console.log("\tSe desbloquea");
+    });
+  }
+	/*bloquear(){
+		this.bloqueado = true;
+    console.log("\tSe bloquea");
+		new Promise( (resolve) => {setTimeout(resolve, 2000); } ).then(() => {
+      console.log("\tSe desbloquea")
+      this.bloqueado = false});
+	}*/
+
+	/**
+	 * Para el gesto de swipe
+	 * @param {String} dir izquierda o derecha
+	 */
+	 async ejecutaSwipe(dir, func_izq, func_der){
+    await navigator.locks.request(this.lock_str, {mode: "exclusive", ifAvailable : true}, async (lock) => {
+      if (lock){
+        console.log("Swipe " + dir);
+        switch (dir) {
+          case 'izquierda':
+            //console.log("Point izquierda")  
+            func_izq();
+            break;
+            case 'derecha':
+              //console.log("Point derecha")
+              func_der();
+              break;
+            }
+            await this.timeout();
+        }
+    });
+	}
+
+	async ejecutaCircle(fun) {
+    await navigator.locks.request(this.lock_str,{mode: "exclusive",ifAvailable : true}, async (lock) => {
+      if (lock){
+        console.log("Circle")
+        fun();
+        await this.timeout();
+      }
+    });
+	}
+
+  async ejecutaPoint(fun){
+    await navigator.locks.request(this.lock_str, {mode: "exclusive",ifAvailable : true},async (lock) => {
+      if (lock){
+        console.log("Point")
+        fun();
+        await this.timeout();
+      }
+    });
+  }
+
+  async ejectutaRotation(dir, fun){
+    await navigator.locks.request(this.lock_str,{mode: "exclusive",ifAvailable : true}, async (lock) => {
+      if (lock){
+        switch (dir){
+          case "right":
+            console.log("Rotacion derecha");
+            break;
+          case "left":
+            console.log("Rotacion izquierda");
+            break;
+        }
+        fun();
+        await this.timeout();
+      }
+    });
+  }
+
+	/**
+	 * Para el gesto de swipe
+	 * @param {String} dir izquierda o derecha
+	 */
+  async ejecutaSwipe2(dir, func_izq, func_der){
+    await navigator.locks.request(this.lock_str, async (lock) => {
+      if (lock){
+        switch (dir) {
+          case 'izquierda':
+            func_izq();
+            break;
+          case 'derecha':
+            func_der();
+            break;
+        }
+        await this.timeout();
+      }
+    });
+	}
+}
+var ejecutaGesto = new EjecutadorGesto();
+
+function buscaDedo(dedos, tipo){
+  var dedo = null;
+  var salir = false;
+  for(var i = 0; i < dedos.length && !salir; i++){
+    salir = dedos[i].type == tipo;
+    if(salir) 
+      dedo = dedos[i]
+  }
+  return dedo;
+}
+
+// Store frame for motion functions
+var previousFrame = null;
+var paused = false;
+var pauseOnGesture = false;
+var screenWidth;
+var screenHeight;
+var interactionWidth;
+var interactionHeight;
+var cursor ;
+
+var comedores;
+
+// Setup Leap loop with frame callback function
+var controllerOptions = {enableGestures: true};
+
+// to use HMD mode:
+// controllerOptions.optimizeHMD = true;
+
+
+// Funcion para realizar gestos, la variable gestoRealizado indica el ultimo gesto detectado.
+
+var gestoRealizado = "unknown"
+var interactionSize
+var interactionCenter
+
+/*setInterval( function() {
+    switch(gestoRealizado){
+      case "circle":
+			ejecutaGesto.ejecutaCircle(()=>{comedoresHtml.style.background = "rgba(80, 228, 21, 0.15)";});
+        break;
+      case "screenTapArriba":
+        break;
+      case "screenTapAbajo":
+        break;
+      case "swipeIzquierda":
+        break;
+      case "swipeDerecha":
+        break;
+      case "rotateIzquierda":
+        break;
+      case "rotateDerecha":
+        break;
+      default:
+        break;
+    }
+
+    gestoRealizado = "unknown"
+  }
+, 500);*/
+
+function inInteractionBox(pos){
+  if(pos[0] < interactionCenter[0] - interactionSize[0]/2)
+    return false;
+  if(pos[0] > interactionCenter[0] + interactionSize[0]/2)
+    return false;
+  if(pos[1] < interactionCenter[1] - interactionSize[1]/2)
+    return false;
+  if(pos[1] > interactionCenter[1] + interactionSize[1]/2)
+    return false;
+  if(pos[2] < interactionCenter[2] - interactionSize[2]/2)
+    return false;
+  if(pos[2] > interactionCenter[2] + interactionSize[2]/2)
+    return false;
+  
+  return true;
+}
+
+Leap.loop(controllerOptions, async function(frame) {
+  if (paused) {
+    return; // Skip this update
+  }
+  var frameOutput = document.getElementById("frameData");
+  
+  interactionSize = frame.interactionBox.size;
+  interactionCenter = frame.interactionBox.center;
+  auxiliar2.innerHTML = "Centro: " + interactionCenter[0] + "," + interactionCenter[1] + ", " + interactionCenter[2] + "<br/> " + "size: " + interactionSize[0] + "," + interactionSize[1] + ", " + interactionSize[2] + "<br/> ";
+
+  // Frame motion factors
+  if (previousFrame && previousFrame.valid) {
+    var translation = frame.translation(previousFrame);
+
+    var rotationAxis = frame.rotationAxis(previousFrame);
+    var rotationAngle = frame.rotationAngle(previousFrame);
+
+    var scaleFactor = frame.scaleFactor(previousFrame);
+  }
+
+  // Display Gesture object data
+  var gestureString = "";
+	if (frame.gestures.length > 0) {
+   	if (pauseOnGesture) {
+      	togglePause();
+    }
+    for (var i = 0; i < frame.gestures.length; i++) {
+      var gesture = frame.gestures[i];
+      gestureString += "Gesture ID: " + gesture.id + ", "
+                  + "type: " + gesture.type + ", "
+                  + "state: " + gesture.state + ", "
+                  + "hand IDs: " + gesture.handIds.join(", ") + ", "
+                  + "pointable IDs: " + gesture.pointableIds.join(", ") + ", "
+                  + "duration: " + gesture.duration + " &micro;s, ";
+
+    // Detector de gestos
+    switch (gesture.type) {
+      case "swipe":
+        gestureString += "start position: " + vectorToString(gesture.startPosition) + " mm, "
+        + "current position: " + vectorToString(gesture.position) + " mm, "
+                + "direction: " + vectorToString(gesture.direction, 1) + ", "
+                + "speed: " + gesture.speed.toFixed(1) + " mm/s";
+
+        var dir = (gesture.direction[0] > 0) ? 'derecha' : 'izquierda';
+        //console.log(gesture.handIds);
+        //swipe.innerHTML = contarDedos(frame.hands[0]) <= 2;
+
+        if((contarDedos(frame.hands[0]) >= 3) && (gesture.speed > 150) && frame.hands[0].sphereRadius > 150)
+          await ejecutaGesto.ejecutaSwipe(dir, ()=>{}, ()=>{});
+        break;
+      case "circle":
+        if ( frame.hands[0].sphereRadius < 50 && gesture.progress > 0.9 && gesture.duration < 1000000 && gesture.duration > 1000 && gesture.radius > 10 && gesture.radius < 50){
+          await ejecutaGesto.ejecutaCircle(()=>{comedoresHtml.style.background = "rgba(80, 228, 21, 0.15)";})
+          //gestoRealizado = "circle";
+        }            
+        break;
+      case "screenTap":
+      case "keyTap":
+        gestureString += "position: " + vectorToString(gesture.position) + " mm";
+        // if(fingerTypeMap[pointable.type]=="Index finger"){
+          //Si la posicion del eje Y
+          // console.log("Real " + pointable.tipVelocity[0] + ", "+pointable.tipVelocity[1] + ", "+pointable.tipVelocity[2]);
+        var dedo_ind = buscaDedo(frame.hands[0].fingers, 1);
+        if(dedo_ind){
+          if(dedo_ind.tipPosition[1]>interactionCenter[1]){
+            await ejecutaGesto.ejecutaPoint(() => {console.log("ARRIBA");pointableString += "Selecciono menú de arriba";});
+          }
+          else{
+            await ejecutaGesto.ejecutaPoint(() => {console.log("aBAJO");pointableString += "Selecciono menú de abajo";});
+          }
+        }
+      
+          // }
+        break;
+      default:
+        gestoRealizado = "unknown";
+        gestureString += "unkown gesture type";
+      }
+      gestureString += "<br />";
+    }
+  }
+  else {
+    gestureString += "No gestures";
+  }
+
+  if (frame.hands.length > 0) {
+    for (var i = 0; i < frame.hands.length; i++) {
+      var hand = frame.hands[i];
+
+      // Gesto álvaro
+      if (frame.hands.length > 0) {
+       for (var i = 0; i < frame.hands.length; i++) {
+          var hand = frame.hands[i];
+          var axis = hand.direction;
+          var radius = hand.sphereRadius;
+            axis = axis[0];
+            if(50 < radius && radius < 150){
+              if(0.3 < axis && axis < 0.9 && !dedosExtendidos(frame)  ){
+                ejecutaGesto.ejectutaRotation("left", ()=> {siguienteFoto()})
+                //handRotation = "left";
+              }
+              else if ( -0.9 < axis && axis < -0.3  && !dedosExtendidos(frame)){
+                ejecutaGesto.ejectutaRotation("right", () => {anteriorFoto();});
+                // handRotation = "right";
+              }
+            }
+        }
+    }
+
+      // Hand motion factors
+      if (previousFrame && previousFrame.valid) {
+        var translation = hand.translation(previousFrame);
+
+        var rotationAxis = hand.rotationAxis(previousFrame, 2);
+        var rotationAngle = hand.rotationAngle(previousFrame);
+
+        var scaleFactor = hand.scaleFactor(previousFrame);
+      }
+
+      // IDs of pointables associated with this hand
+      if (hand.pointables.length > 0) {
+			var fingerIds = [];
+			for (var j = 0; j < hand.pointables.length; j++) {
+				var pointable = hand.pointables[j];
+				fingerIds.push(pointable.id);
+			}
+				if (fingerIds.length > 0) {
+			}
+      }
+    }
+  }
+  else {
+  }
+
+  var pointableString = "";
+  if (frame.pointables.length > 0) {
+    var fingerTypeMap = ["Thumb", "Index finger", "Middle finger", "Ring finger", "Pinky finger"];
+    var boneTypeMap = ["Metacarpal", "Proximal phalanx", "Intermediate phalanx", "Distal phalanx"];
+    for (var i = 0; i < frame.pointables.length; i++) {
+      var pointable = frame.pointables[i];
+
+      pointableString += "<div>";
+
+      if (pointable.tool) {
+        pointableString += "Pointable ID: " + pointable.id + "<br />";
+        pointableString += "Classified as a tool <br />";
+        pointableString += "Length: " + pointable.length.toFixed(1) + " mm<br />";
+        pointableString += "Width: "  + pointable.width.toFixed(1) + " mm<br />";
+        pointableString += "Direction: " + vectorToString(pointable.direction, 2) + "<br />";
+        pointableString += "Tip position: " + vectorToString(pointable.tipPosition) + " mm<br />"
+        pointableString += "</div>";
+      }
+      else {
+        pointableString += fingerTypeMap[pointable.type] + "<br/>";
+        pointableString += "Tip position: " + vectorToString(pointable.tipPosition) + " mm<br />";
+        pointableString += "</div>";
+        if(fingerTypeMap[pointable.type] == "Index finger" && pointable.extended){
+          var posDedo = pointable.tipPosition;
+
+          // Gesto victor
+
+          // if(fingerTypeMap[pointable.type]=="Index finger"){
+          // //Si la posicion del eje Y
+          // // console.log("Real " + pointable.tipVelocity[0] + ", "+pointable.tipVelocity[1] + ", "+pointable.tipVelocity[2]);
+          // if(pointable.tipVelocity[2]<-1000 && Math.abs(pointable.tipVelocity[0]) < 200 && Math.abs(pointable.tipVelocity[1]) < 200  ){
+          //   if(pointable.tipPosition[1]>interactionCenter[1]){
+          //     await ejecutaGesto.ejecutaPoint(() => {pointableString += "Selecciono menú de arriba";});
+          //   }
+          //   else{
+          //     await ejecutaGesto.ejecutaPoint(() => {pointableString += "Selecciono menú de abajo";});
+          //   }
+          // }
+          // }
+			 
+          if(inInteractionBox(posDedo) ){
+            var x = ((interactionSize[0]/2)* screenWidth/ (interactionSize[0]))+(screenWidth/ (interactionSize[0]))*posDedo[0];
+            var y = (-(interactionCenter[1] + interactionSize[1]/2)* screenHeight/ (-interactionSize[1]))+(screenHeight/ (-interactionSize[1]))*posDedo[1] ;
+            auxiliar.innerHTML = "Dedo width: " + x + ", height: " + y + ".";
+            cursor.style.left = x + "px";
+            cursor.style.top = y + "px";
+          }
+        }
+      }
+    }
+  }
+  else {
+    pointableString += "<div>No pointables</div>";
+  }
+  frameOutput.innerHTML = pointableString;
+  
+  // Store frame for motion functions
+  previousFrame = frame;
+})
+
+function vectorToString(vector, digits) {
+  if (typeof digits === "undefined") {
+    digits = 1;
+  }
+  return "(" + vector[0].toFixed(digits) + ", "
+             + vector[1].toFixed(digits) + ", "
+             + vector[2].toFixed(digits) + ")";
+}
+
+function togglePause() {
+  paused = !paused;
+
+  if (paused) {
+    document.getElementById("pause").innerText = "Resume";
+  } else {
+    document.getElementById("pause").innerText = "Pause";
+  }
+}
+
+function pauseForGestures() {
+  if (document.getElementById("pauseOnGesture").checked) {
+    pauseOnGesture = true;
+  } else {
+    pauseOnGesture = false;
+  }
+}
+
+
+document.addEventListener('mousemove', function(e){
+    var x = e.clientX;
+    var y = e.clientY;
+    cursor.style.left = x + "px";
+    cursor.style.top = y + "px";
+    beta.innerHTML = "Actual width: " + x + ", height: " + y + ".";
+});
+
+</script>
+</head>
+<body>
+
+<div style="position: absolute; right: 50px; top: 50px;">
+  <img src="images/Entrada Principal.jpeg" id="image" />
+  <h1 id="title">Entrada Principal</h1>
+</div>
+
+<h1>Leap Motion JavaScript Sample</h1>
+<div id="frameData"></div>
+<div id="cursor"></div>
+<div id="comedores">
+  <table>
+    <tr>
+        <td>Lunes</td>
+    </tr>
+    <tr>
+        <td>Menú 1</td>
+    </tr>
+    <tr>
+        <td>Primero:</td>
+        <td>LENTEJAS</td>
+    </tr>
+    <tr>
+        <td>Segundo:</td>
+        <td>PATATAS</td>
+    </tr>
+    <tr>
+        <td>Postre:</td>
+        <td>RABANO</td>
+    </tr>
+    <tr>
+        <td>Menu 2</td>
+    </tr>
+    <tr>
+        <td>Primero:</td>
+        <td>RABANO</td>
+    </tr>
+    <tr>
+        <td>Segundo:</td>
+        <td>HABICHUELAS</td>
+    </tr>
+    <tr>
+        <td>Postre:</td>
+        <td>Cielo de Tocino</td>
+    </tr>
+</table>
+
+</div>
+<p id="demo"></p>
+<p id="demo2"></p>
+<p id="demo3"></p>
+<p id ="demo4"></p>
+<div id="horarios"></div>
+<div id="navegacion"></div>
+<script>
+  cursor = document.getElementById("cursor");
+</script>
+<script>
+
+  screenWidth = window.innerWidth;
+  screenHeight = window.innerHeight;
+  
+  var beta = document.getElementById("demo2");
+  var ultra = document.getElementById("demo");
+  var auxiliar = document.getElementById("demo3");
+  var auxiliar2 = document.getElementById("demo4");
+  var comedoresHtml = document.getElementById("comedores");
+  wcomedores = comedoresHtml.clientWidth;
+  hcomedores = comedoresHtml.clientHeight;
+  tcomedores = comedoresHtml.getBoundingClientRect().top;
+  lcomedores = comedoresHtml.getBoundingClientRect().left;
+  ultra.innerHTML = "Browser width: " + screenWidth + ", height: " + screenHeight + ".<br/>"
+                    + "Tamaño primer div, width:" + wcomedores + ", height: " + hcomedores + ".<br/>" // Con esto pillo un rectangulo donde esta el div y de alli se hacen cositas
+                    + "Origen primer div, left:" + lcomedores + ", top: " + tcomedores + ".<br/>";
+
+</script>
+</body>
+</html>
