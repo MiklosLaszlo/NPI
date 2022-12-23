@@ -77,14 +77,6 @@ function updateTimetable() {
 	});
 }
 
-function cambiarDiaHorario(izquierda){
-	if(izquierda)
-		currentDayIndex = (currentDayIndex+ 1) % days.length;
-	else
-		currentDayIndex = (currentDayIndex+ 4) % days.length;
-	updateTimetable();
-}
-
 // Cambiar dia de comedor
 var diaActualComedor = 0;
 var comidaPrimero1 = ["Raviolis a la carbonara","Olla gitana tradicional","Arroz mar y montaña","Estofado de lentejas","Sopa minestrone"];
@@ -140,27 +132,13 @@ function selectMenu1(){
 	algunMenuSeleccionado = true;
 }
 
-function selecMenu2(){
+function selectMenu2(){
 	unselect();
 	rowMenu2.style.backgroundColor = "#982b00";
 	rowPrimero2.style.backgroundColor = "rgba(216, 82, 21,0.562)";
 	rowSegundo2.style.backgroundColor = "rgba(216, 82, 21,0.562)";
 	rowPostre2.style.backgroundColor = "rgba(216, 82, 21,0.562)";
 	algunMenuSeleccionado = true;
-}
-
-function selecMenu2(){
-	unselect();
-	rowMenu2.style.backgroundColor = "#982b00";
-	rowPrimero2.style.backgroundColor = "rgba(216, 82, 21,0.562)";
-	rowSegundo2.style.backgroundColor = "rgba(216, 82, 21,0.562)";
-	rowPostre2.style.backgroundColor = "rgba(216, 82, 21,0.562)";
-	algunMenuSeleccionado = true;
-}
-
-function mensajeAceptarReserva(){
-	if(algunMenuSeleccionado)
-		queAparezcaELSNACK();
 }
 
 function queAparezcaELSNACK() {
@@ -170,6 +148,11 @@ function queAparezcaELSNACK() {
 	// After 3 seconds, remove the show class from DIV
 	setTimeout(function(){ unselect(); snackbar.style.display = "none";algunMenuSeleccionado=false; }, 2000);
 } 
+
+function mensajeAceptarReserva(){
+	if(algunMenuSeleccionado)
+		queAparezcaELSNACK();
+}
 
 selectMenuButton.addEventListener("click", () => {
 	mensajeAceptarReserva();
@@ -196,14 +179,6 @@ function updateTimetableComedores() {
 	
 }
 
-function cambiarDiaMenu(izquierda){
-	if(izquierda)
-		diaActualComedor = (diaActualComedor+ 1) % days.length;
-	else
-		diaActualComedor = (diaActualComedor+ 4) % days.length;
-	updateTimetableComedores();
-}
-
 updateTimetableComedores();
 
 changeDayButton.addEventListener("click", () => {
@@ -212,6 +187,24 @@ changeDayButton.addEventListener("click", () => {
 	updateTimetable();
 	updateTimetableComedores();
 });
+
+function cambiaDiaHorario(anterior){
+	if(anterior)
+		currentDayIndex = (currentDayIndex + days.length - 1) % days.length;
+	else
+		currentDayIndex = (currentDayIndex + 1) % days.length;
+
+	updateTimetable();
+}
+
+function cambiaDiaComedor(anterior){
+	if(anterior)
+		diaActualComedor = (diaActualComedor + days.length - 1) % days.length;
+	else
+		diaActualComedor = (diaActualComedor + 1) % days.length;
+
+	updateTimetableComedores();
+}
 
 // -------------------- Cosas del menu de navegacion ---------------------------------------
 var images = [{
@@ -596,23 +589,33 @@ class EjecutadorGesto{
 			var espera = true;
 			switch (currentMenu){
 				case 0:
-					console.log("moviendo el dia del comedor " + dir);
-					if(dir == "left") cambiarDiaMenu(false);
-					if(dir == "right") cambiarDiaMenu(true);
+					if(dir =="right") {
+						console.log("\tSe pasa el dia de comedor rotacion derecha");
+						cambiaDiaComedor(false);
+					}
+					if(dir =="left") {
+						console.log("\tSe pasa el dia de comedor rotacion izquierda");
+						cambiaDiaComedor(true);
+					}
 					break;
 				case 1:
-					console.log("moviendo el dia de horario " + dir);
-					if(dir == "left") cambiarDiaHorario(false);
-					if(dir == "right") cambiarDiaHorario(true);
+					if(dir =="right") {
+						console.log("\tSe pasa el dia del horario rotacion derecha");
+						cambiaDiaHorario(false);
+					}
+					if(dir =="left") {
+						console.log("\tSe pasa el dia de horario rotacion izquierda");
+						cambiaDiaHorario(true);
+					}
 					break;
 				case 2:
 					if(dir =="right") {
 						console.log("\tSe pasa a la imagen rotacion derecha");
-						siguienteFoto();
+						anteriorFoto();
 					}
 					if(dir =="left") {
 						console.log("\tSe pasa a la imagen rotacion izquierda");
-						anteriorFoto();
+						siguienteFoto();
 					}
 					break;
 				default:
