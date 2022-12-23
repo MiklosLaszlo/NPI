@@ -229,7 +229,19 @@ var images = [{
 	"qr":"qr/3_9.png"
 }];
 
+// Lo pongo por defecto en 0 para poder usar la función inicaFotos cada vez que se cargue el menú de navegación
 var index = images.length; //fuera de rango
+
+// Cargo la immg
+function iniciaFotos(){
+	index = 0;
+
+	var img = images[index].src;
+	var nom = images[index].title;
+
+	document.getElementById("image").setAttribute("src",img);
+	document.getElementById("title").innerHTML = nom;
+}
 
 function siguienteFoto() {
 	++index;
@@ -268,7 +280,7 @@ function dedosExtendidos(frame){
 }
 
 function showQR(){
-	var img = images[index].src;
+	var img = images[index].qr;
 	var nom = images[index].title;
 	document.getElementById("image").setAttribute("src",img);
 	document.getElementById("title").innerHTML = nom;
@@ -309,6 +321,7 @@ function cambiarMenu(){
 		horariosHtml.style.display = "";
 		break;
 	case 2:
+		iniciaFotos();	//Reseteo sano de las fotos para que no se quede en la foto antes seleccionada
 		navegacionHtml.style.display = "";
 		break;
 	}
