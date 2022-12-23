@@ -282,8 +282,11 @@ function dedosExtendidos(frame){
 function showQR(){
 	var img = images[index].qr;
 	var nom = images[index].title;
+
 	document.getElementById("image").setAttribute("src",img);
 	document.getElementById("title").innerHTML = nom;
+	//Cambio en el mensaje de la instruccion
+	document.getElementById("instruccion").innerHTML = "Escanea el QR para iniciar la navegacion";
 }
 
 // -------------------------------Gestion de menu -------------------------------------------
@@ -321,8 +324,10 @@ function cambiarMenu(){
 		horariosHtml.style.display = "";
 		break;
 	case 2:
+		
 		iniciaFotos();	//Reseteo sano de las fotos para que no se quede en la foto antes seleccionada
 		navegacionHtml.style.display = "";
+		document.getElementById("instruccion").innerHTML = "Elija la zona a la que quiera llegar";
 		break;
 	}
 }
