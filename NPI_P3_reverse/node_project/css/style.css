@@ -19,7 +19,6 @@ table {
     text-align: center;
     font-family: 'Times New Roman', Times, serif;
     overflow: hidden;
-    background-color: rgba(0, 255, 255, 0.452);
 }
 
 .texto_inicio{
@@ -34,7 +33,6 @@ table {
 }
 
 th {
-    background-color: #009879;
     height: 60px;
     color: #ffffff;
 }
@@ -43,7 +41,6 @@ td {
     border: 1px solid;
     height: 60px;
     text-align: center;
-    background-color: rgba(0, 255, 255, 0.562);
 }
 
 tr {
@@ -106,4 +103,22 @@ title{
 	font-size: 70px;
 	background-color: rgba(0, 0, 0, 0.7);
 
+}
+
+#snackbar {
+    background-color: #333; /* Black background color */
+    color: #fff; /* White text color */
+    text-align: center; /* Centered text */
+    border-radius: 2px; /* Rounded borders */
+    padding: 16px; /* Padding */
+    position: absolute; /* Sit on top of the screen */
+    left: 41%; /* Center the snackbar */
+    bottom: 50%; /* 30px from the bottom */
+    opacity: 0.6;
+}
+
+#snackbar.show {
+    visibility: visible; /* Show the snackbar */
+     /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+     However, delay the fade out process for 2.5 seconds */
 }

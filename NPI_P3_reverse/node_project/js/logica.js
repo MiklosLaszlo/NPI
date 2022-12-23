@@ -22,55 +22,6 @@ function buscaDedo(dedos, tipo){
 	return dedo;
  }
 
-// -------------------------------Gestion de menu -------------------------------------------
-
-var inicioHtml = document.getElementById("inicio");
-var comedoresHtml = document.getElementById("comedores");
-var horariosHtml = document.getElementById("horarios");
-var navegacionHtml = document.getElementById("navegacion");
-
-var wcomedores = comedoresHtml.clientWidth;
-var hcomedores = comedoresHtml.clientHeight;
-var tcomedores = comedoresHtml.getBoundingClientRect().top;
-var lcomedores = comedoresHtml.getBoundingClientRect().left;
-
-var currentMenu = -1;
-
-function ocultarTodo(){
-	comedoresHtml.style.display = "none";
-	horariosHtml.style.display = "none";
-	navegacionHtml.style.display = "none";
-	inicioHtml.style.display = "none";
-}
-
-function cambiarMenu(){
-	ocultarTodo();
-	switch(currentMenu){
-	case -1:
-		inicioHtml.style.display = "";
-		break;
-	case 0:
-		comedoresHtml.style.display = "";
-		break;
-	case 1:
-		horariosHtml.style.display = "";
-		break;
-	case 2:
-		navegacionHtml.style.display = "";
-		break;
-	}
-}
-
-cambiarMenu();
-
-function desplazaMenu(izquierda){
-	if(izquierda)
-		currentMenu = (currentMenu + 1) % 3;
-	else
-		currentMenu = (currentMenu + 2) % 3;
-	cambiarMenu()
-}
-
 var changeMenuButton = document.querySelector("#changeMenuButton");
 
 changeMenuButton.addEventListener("click", () => {desplazaMenu(false);});
@@ -80,6 +31,17 @@ var changeDayButton = document.querySelector("#changeDayButton");
 var dayCell = document.querySelector("#Dia");
 var subjectCells = document.querySelectorAll("#subject");
 var clasesCells = document.querySelectorAll("#clas");
+var columHorasHorarios = document.querySelectorAll("#horasHorariosTabla");
+var primera1filaHorarios = document.querySelectorAll("#fila1Horarios");
+
+
+columHorasHorarios.forEach((cell, index) => {
+	cell.style.backgroundColor = "rgba(0, 255, 255, 0.562)";
+});
+
+primera1filaHorarios.forEach((cell, index) => {
+	cell.style.backgroundColor = "#009879";
+});
 
 var days = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"];
 var currentDayIndex = 0;
@@ -105,12 +67,22 @@ function updateTimetable() {
 	dayCell.textContent = days[currentDayIndex];
 	subjectCells.forEach((cell, index) => {
 	cell.textContent = subjects[currentDayIndex][index];
+	cell.style.backgroundColor = "rgba(0, 255, 255, 0.562)";
 	});
 
 	dayCell.textContent = days[currentDayIndex];
 	clasesCells.forEach((cell, index) => {
 	cell.textContent = clases[currentDayIndex][index];
+	cell.style.backgroundColor = "rgba(0, 255, 255, 0.562)";
 	});
+}
+
+function cambiarDiaHorario(izquierda){
+	if(izquierda)
+		currentDayIndex = (currentDayIndex+ 1) % days.length;
+	else
+		currentDayIndex = (currentDayIndex+ 4) % days.length;
+	updateTimetable();
 }
 
 // Cambiar dia de comedor
@@ -121,6 +93,7 @@ var comidaPostre1 = ["Naranja","Plátano","Piña","Mandarinas","Tomate asado"];
 var comidaPrimero2 = ["Macarrones Florentina (OV)",,"Olla gitana","Arroz con hortalizas al curry","Estofado de lentejas","Sopa minestrone"];
 var comidaSegundo2 = ["Tortilla de calabacín","Tofu villeroy","Milhojas de verduras gratinadas","Tajín de verduras","Huevos rotos con setas"];
 var comidaPostre2 = ["Naranja","Plátano","Piña","Mandarinas","Tomate asado"];
+var algunMenuSeleccionado = false;
 var dayComida = document.querySelector("#DiaComedor");
 var comedorprimero1 = document.querySelector("#primero1");
 var comedorsegundo1 = document.querySelector("#segundo1");
@@ -128,8 +101,84 @@ var comedorpostre1 = document.querySelector("#postre1");
 var comedorprimero2 = document.querySelector("#primero2");
 var comedorsegundo2 = document.querySelector("#segundo2");
 var comedorpostre2 = document.querySelector("#postre2");
+var snackbar = document.getElementById("snackbar");
+snackbar.style.display = "none"
+
+var selectMenuButton = document.getElementById("selecionando");
+
+var rowMenu1 = document.getElementById("menu1");
+var rowPrimero1 = document.getElementById("menuprimero1");
+var rowSegundo1 = document.getElementById("menusegundo1");
+var rowPostre1 = document.getElementById("menupostre1");
+
+var rowMenu2 = document.getElementById("menu2");
+var rowPrimero2 = document.getElementById("menuprimero2");
+var rowSegundo2 = document.getElementById("menusegundo2");
+var rowPostre2 = document.getElementById("menupostre2");
+
+function unselect(){
+
+	rowMenu1.style.backgroundColor = "#009879";
+	rowPrimero1.style.backgroundColor = "rgba(0, 255, 255, 0.562)";
+	rowSegundo1.style.backgroundColor = "rgba(0, 255, 255, 0.562)";
+	rowPostre1.style.backgroundColor = "rgba(0, 255, 255, 0.562)";
+
+	rowMenu2.style.backgroundColor = "#009879";
+	rowPrimero2.style.backgroundColor = "rgba(0, 255, 255, 0.562)";
+	rowSegundo2.style.backgroundColor = "rgba(0, 255, 255, 0.562)";
+	rowPostre2.style.backgroundColor = "rgba(0, 255, 255, 0.562)";
+
+	algunMenuSeleccionado = false;
+}
+
+function selectMenu1(){
+	unselect();
+	rowMenu1.style.backgroundColor = "#982b00";
+	rowPrimero1.style.backgroundColor = "rgba(216, 82, 21,0.562)";
+	rowSegundo1.style.backgroundColor = "rgba(216, 82, 21,0.562)";
+	rowPostre1.style.backgroundColor = "rgba(216, 82, 21,0.562)";
+	algunMenuSeleccionado = true;
+}
+
+function selecMenu2(){
+	unselect();
+	rowMenu2.style.backgroundColor = "#982b00";
+	rowPrimero2.style.backgroundColor = "rgba(216, 82, 21,0.562)";
+	rowSegundo2.style.backgroundColor = "rgba(216, 82, 21,0.562)";
+	rowPostre2.style.backgroundColor = "rgba(216, 82, 21,0.562)";
+	algunMenuSeleccionado = true;
+}
+
+function selecMenu2(){
+	unselect();
+	rowMenu2.style.backgroundColor = "#982b00";
+	rowPrimero2.style.backgroundColor = "rgba(216, 82, 21,0.562)";
+	rowSegundo2.style.backgroundColor = "rgba(216, 82, 21,0.562)";
+	rowPostre2.style.backgroundColor = "rgba(216, 82, 21,0.562)";
+	algunMenuSeleccionado = true;
+}
+
+function mensajeAceptarReserva(){
+	if(algunMenuSeleccionado)
+		queAparezcaELSNACK();
+}
+
+function queAparezcaELSNACK() {
+	// Add the "show" class to DIV
+	snackbar.style.display = "";
+
+	// After 3 seconds, remove the show class from DIV
+	setTimeout(function(){ unselect(); snackbar.style.display = "none";algunMenuSeleccionado=false; }, 2000);
+} 
+
+selectMenuButton.addEventListener("click", () => {
+	mensajeAceptarReserva();
+	selectMenu1();
+	
+});
 
 function updateTimetableComedores() {
+	unselect();
 	dayComida.textContent = days[diaActualComedor];
 	
 	comedorprimero1.textContent = comidaPrimero1[diaActualComedor];
@@ -147,6 +196,14 @@ function updateTimetableComedores() {
 	
 }
 
+function cambiarDiaMenu(izquierda){
+	if(izquierda)
+		diaActualComedor = (diaActualComedor+ 1) % days.length;
+	else
+		diaActualComedor = (diaActualComedor+ 4) % days.length;
+	updateTimetableComedores();
+}
+
 updateTimetableComedores();
 
 changeDayButton.addEventListener("click", () => {
@@ -159,19 +216,24 @@ changeDayButton.addEventListener("click", () => {
 // -------------------- Cosas del menu de navegacion ---------------------------------------
 var images = [{
 	"src":"images/Entrada Principal.jpeg",
-	"title":"Entrada Principal"
+	"title":"Entrada Principal",
+	"qr":"qr/entrada.png"
 },{
 	"src":"images/Comedor.jpeg",
-	"title":"Comedor"
+	"title":"Comedor",
+	"qr":"qr/comedor.png"
 },{
 	"src":"images/1.2.jpeg",
-	"title":"1.2"
+	"title":"1.2",
+	"qr":"qr/1_2.png"
 },{
 	"src":"images/3.3.jpeg",
-	"title":"3.3"
+	"title":"3.3",
+	"qr":"qr/3_3.png"
 },{
 	"src":"images/3.9.jpeg",
-	"title":"3.9"
+	"title":"3.9",
+	"qr":"qr/3_9.png"
 }];
 
 var index = images.length; //fuera de rango
@@ -210,6 +272,63 @@ function dedosExtendidos(frame){
 		}
 	}
 	return extendido;
+}
+
+function showQR(){
+	var img = images[index].src;
+	var nom = images[index].title;
+	document.getElementById("image").setAttribute("src",img);
+	document.getElementById("title").innerHTML = nom;
+}
+
+// -------------------------------Gestion de menu -------------------------------------------
+
+var inicioHtml = document.getElementById("inicio");
+var comedoresHtml = document.getElementById("comedores");
+var horariosHtml = document.getElementById("horarios");
+var navegacionHtml = document.getElementById("navegacion");
+
+var wcomedores = comedoresHtml.clientWidth;
+var hcomedores = comedoresHtml.clientHeight;
+var tcomedores = comedoresHtml.getBoundingClientRect().top;
+var lcomedores = comedoresHtml.getBoundingClientRect().left;
+
+var currentMenu = -1;
+
+function ocultarTodo(){
+	comedoresHtml.style.display = "none";
+	horariosHtml.style.display = "none";
+	navegacionHtml.style.display = "none";
+	inicioHtml.style.display = "none";
+}
+
+function cambiarMenu(){
+	ocultarTodo();
+	unselect();
+	switch(currentMenu){
+	case -1:
+		inicioHtml.style.display = "";
+		break;
+	case 0:
+		comedoresHtml.style.display = "";
+		break;
+	case 1:
+		horariosHtml.style.display = "";
+		break;
+	case 2:
+		navegacionHtml.style.display = "";
+		break;
+	}
+}
+
+cambiarMenu();
+
+function desplazaMenu(izquierda){
+	if(izquierda)
+		currentMenu = (currentMenu + 1) % 3;
+	else
+		currentMenu = (currentMenu + 2) % 3;
+	cambiarMenu();
 }
 
 // Store frame for motion functions
@@ -425,11 +544,11 @@ class EjecutadorGesto{
 						break;
 					case 0:
 						console.log("\tComprando menú")
-						// rellenar
+						mensajeAceptarReserva();
 						break;
 					case 2:
 						console.log("\tMostrando qr")
-						// rellenar
+						showQR();
 						break;
 					default:
 						espera = false;
@@ -451,7 +570,12 @@ class EjecutadorGesto{
 				switch(currentMenu){
 					case 0:
 						console.log("\tSeleccionar menú " + dir);
-						//rellenar
+						if(dir == "arriba"){
+							selectMenu1();
+						}
+						else{
+							selectMenu2();
+						}
 						break;
 					default:
 						espera = false
@@ -473,11 +597,13 @@ class EjecutadorGesto{
 			switch (currentMenu){
 				case 0:
 					console.log("moviendo el dia del comedor " + dir);
-					//rellenar
+					if(dir == "left") cambiarDiaMenu(false);
+					if(dir == "right") cambiarDiaMenu(true);
 					break;
 				case 1:
 					console.log("moviendo el dia de horario " + dir);
-					//rellenar
+					if(dir == "left") cambiarDiaHorario(false);
+					if(dir == "right") cambiarDiaHorario(true);
 					break;
 				case 2:
 					if(dir =="right") {

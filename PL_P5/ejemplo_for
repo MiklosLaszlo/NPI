@@ -8,6 +8,10 @@ main{
 		open
 			int d;
 		close
+		int NoHAceNada(){
+			return d;
+		};
+		d = NoHAceNada();
 		d = n/curr;
 	}
 	n = 0;

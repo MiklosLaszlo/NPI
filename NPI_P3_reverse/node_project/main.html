@@ -10,6 +10,8 @@
 <body>
   	<button id="changeDayButton">Change Day</button>
   	<button id="changeMenuButton">Change Menu</button>
+	<button id="selecionando">select Menu, no?</button>
+	<div id="snackbar">Menu reservado</div>
 	<title>Horario</title>
 
 	<div id="frameData"></div>
@@ -28,18 +30,18 @@
 		</h3>
 		<div>
 			<table id="launchTable">
-				<tr>
-				<th width="100%" colspan="2">Menú 1</th>
+				<tr id = "menu1">
+				<th width="100%" colspan="2" id="">Menú 1</th>
 				</tr>
-				<tr>
+				<tr id = "menuprimero1">
 					<td width="50%">Primero:</td>
 					<td id="primero1" width="50%">LENTEJAS</td>
 				</tr>
-				<tr>
+				<tr id = "menusegundo1">
 					<td width="50%">Segundo:</td>
 					<td id="segundo1" width="50%">PATATAS</td>
 				</tr>
-				<tr>
+				<tr id = "menupostre1">
 					<td width="50%">Postre:</td>
 					<td id="postre1" width="50%">RABANO</td>
 				</tr>
@@ -47,18 +49,18 @@
 		</div>
 		<div>
 			<table id="launchTable2">
-				<tr>
+				<tr id = "menu2">
 				<th widtth="100%" colspan="2">Menú 2</th>
 				</tr>
-				<tr>
+				<tr id = "menuprimero2">
 					<td width="50%">Primero:</td>
 					<td id="primero2" width="50%">Zanahoria</td>
 				</tr>
-				<tr>
+				<tr id = "menusegundo2">
 					<td width="50%">Segundo:</td>
 					<td id="segundo2" width="50%">PATATAS</td>
 				</tr>
-				<tr>
+				<tr id = "menupostre2">
 					<td width="50%">Postre:</td>
 					<td id="postre2" width="50%">RABANO</td>
 				</tr>
@@ -71,42 +73,42 @@
 		<h3 id="Dia" > Lunes </h3> 
 		<table id="timetable">
 			<tr>
-				<th width="33%" height="60" valign="top" style="padding: 10px;">Hora</th>
-				<th  width="33%" height="60" valign="top" id="Dia">Asignatura</th>
-				<th  width="33%" height="60" valign="top" id="clases">Clase </th>
+				<th width="33%" height="60" valign="top" style="padding: 10px;" id="fila1Horarios">Hora</th>
+				<th  width="33%" height="60" valign="top" id="fila1Horarios">Asignatura</th>
+				<th  width="33%" height="60" valign="top" id="fila1Horarios">Clase </th>
 			</tr>
 			<tr>
-				<td style="padding: 10px;" width="50" height="60" valign="top">8:30-9:30</td>
+				<td style="padding: 10px;" width="50" height="60" valign="top" id="horasHorariosTabla">8:30-9:30</td>
 				<td width="33%" height="60" valign="top" id="subject"> </td>
 				<td width="33%" height="60" valign="top" id="clas"> </td>
 			</tr>
 			<tr>
 
-				<td width="33%" height="60" valign="top" style="padding: 10px;" >9:30-10:30</td>
+				<td width="33%" height="60" valign="top" style="padding: 10px;" id="horasHorariosTabla">9:30-10:30</td>
 				<td width="33%" height="60" valign="top" id="subject">SS</td>
 				<td width="33%" height="60" valign="top" id="clas"> 1.1</td>
 			</tr>
 
 			<tr>
-				<td  width="33%" height="60" valign="top" style="padding: 10px;" >10:30-11:30</td>
+				<td  width="33%" height="60" valign="top" style="padding: 10px;" id="horasHorariosTabla">10:30-11:30</td>
 				<td  width="33%" height="60" valign="top" id="subject">SS</td>
 				<td  width="33%" height="60" valign="top" id="clas"> 1.1</td>
 			</tr>
 
 			<tr>
-				<td width="33%" height="60" valign="top" style="padding: 10px;">11:30-12:30</td>
+				<td width="33%" height="60" valign="top" style="padding: 10px;" id="horasHorariosTabla">11:30-12:30</td>
 				<td width="33%" height="60" valign="top" id="subject">PTC</td>
 				<td width="33%" height="60" valign="top" id="clas"> 2.2</td>
 			</tr>
 
 			<tr>
-				<td width="33%" height="60" valign="top" style="padding: 10px;" >12:30-13:30</td>
+				<td width="33%" height="60" valign="top" style="padding: 10px;" id="horasHorariosTabla">12:30-13:30</td>
 				<td width="33%" height="60" valign="top" id="subject">TIC</td>
 				<td width="33%" height="60" valign="top" id="clas">2.2</td>
 			</tr>
 
 			<tr>
-				<td width="33%" height="60" valign="top" style="padding: 10px;">13:30-14:30</td>
+				<td width="33%" height="60" valign="top" style="padding: 10px;" id="horasHorariosTabla">13:30-14:30</td>
 				<td width="33%" height="60" valign="top" id="subject"> </td>
 				<td width="33%" height="60" valign="top" id="clas"></td>
 			</tr>
@@ -116,7 +118,7 @@
 
 	<!-- NAVEGACIÓN -->
 	<div id="navegacion">
-		<div style="position: absolute; right: 50px; top: 50px;">
+		<div style="margin:auto">
 			<img src="images/Entrada Principal.jpeg" id="image" />
 			<h1 id="title">Entrada Principal</h1>
 		 </div>

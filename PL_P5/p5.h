@@ -1053,9 +1053,7 @@ void writeExpresionBinaria(struct entradaTS pasoExpresion, struct entradaTS oper
     //char auxDatoLista[20] = "\0";
     normalizoTipoDato(&auxDatoReferencia,pasoExpresion.dato_referencia);
     // El operador xor va algo más a su rollo
-    fputs(auxDatoReferencia,file);
-    fputs(pasoExpresion.nombre_traductor,file);
-    fputs(" = ",file);
+    
     switch(operador){
         // Operadores booleanos
         case and:
