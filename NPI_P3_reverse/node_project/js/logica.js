@@ -156,6 +156,24 @@ changeDayButton.addEventListener("click", () => {
 	updateTimetableComedores();
 });
 
+function cambiaDiaHorario(anterior){
+	if(anterior)
+		currentDayIndex = (currentDayIndex + days.length - 1) % days.length;
+	else
+		currentDayIndex = (currentDayIndex + 1) % days.length;
+
+	updateTimetable();
+}
+
+function cambiaDiaComedor(anterior){
+	if(anterior)
+		diaActualComedor = (diaActualComedor + days.length - 1) % days.length;
+	else
+		diaActualComedor = (diaActualComedor + 1) % days.length;
+
+	updateTimetableComedores();
+}
+
 // -------------------- Cosas del menu de navegacion ---------------------------------------
 var images = [{
 	"src":"images/Entrada Principal.jpeg",
@@ -472,21 +490,33 @@ class EjecutadorGesto{
 			var espera = true;
 			switch (currentMenu){
 				case 0:
-					console.log("moviendo el dia del comedor " + dir);
-					//rellenar
+					if(dir =="right") {
+						console.log("\tSe pasa el dia de comedor rotacion derecha");
+						cambiaDiaComedor(false);
+					}
+					if(dir =="left") {
+						console.log("\tSe pasa el dia de comedor rotacion izquierda");
+						cambiaDiaComedor(true);
+					}
 					break;
 				case 1:
-					console.log("moviendo el dia de horario " + dir);
-					//rellenar
+					if(dir =="right") {
+						console.log("\tSe pasa el dia del horario rotacion derecha");
+						cambiaDiaHorario(false);
+					}
+					if(dir =="left") {
+						console.log("\tSe pasa el dia de horario rotacion izquierda");
+						cambiaDiaHorario(true);
+					}
 					break;
 				case 2:
 					if(dir =="right") {
 						console.log("\tSe pasa a la imagen rotacion derecha");
-						siguienteFoto();
+						anteriorFoto();
 					}
 					if(dir =="left") {
 						console.log("\tSe pasa a la imagen rotacion izquierda");
-						anteriorFoto();
+						siguienteFoto();
 					}
 					break;
 				default:
