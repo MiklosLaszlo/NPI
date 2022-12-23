@@ -253,6 +253,7 @@ function siguienteFoto() {
 
 	document.getElementById("image").setAttribute("src",img);
 	document.getElementById("title").innerHTML = nom;
+	document.getElementById("instruccion").innerHTML = "Elija la zona a la que quiera llegar";
 }
 
 
@@ -266,6 +267,7 @@ function anteriorFoto() {
 
 	document.getElementById("image").setAttribute("src",img);
 	document.getElementById("title").innerHTML = nom;
+	document.getElementById("instruccion").innerHTML = "Elija la zona a la que quiera llegar";
 }
 
 function dedosExtendidos(frame){
