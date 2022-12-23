@@ -4,7 +4,7 @@ const createWindow = () => {
 	const win = new BrowserWindow({width: 1024,height: 720})
 	//win.setMenu(null)
 
-	win.loadFile('leap_main.html')
+	win.loadFile('main.html')
 }
 
 

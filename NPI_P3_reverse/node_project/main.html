@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Leap Motion JavaScript Sample</title>
+	<link rel="stylesheet" href="css/style.css">
+	<script src="http://js.leapmotion.com/leap-0.6.3.min.js"></script>
+</head>
+<body>
+  	<button id="changeDayButton">Change Day</button>
+  	<button id="changeMenuButton">Change Menu</button>
+	<title>Horario</title>
+
+	<div id="frameData"></div>
+	<div id="cursor"></div>
+
+	<!-- INICIO -->
+	<div id="inicio">
+		<h1>Bienvenido a la ETSIIT</h1>
+		<h2 style="width: 60%; margin:auto;">Para iniciar el asistente, realice un círculo con el dedo índice</h2>
+	</div>
+
+	<!-- COMEDORES -->
+	<div id="comedores">
+		<h3 id="DiaComedor">
+			Lunes
+		</h3>
+		<div>
+			<table id="launchTable">
+				<tr>
+				<th width="100%" colspan="2">Menú 1</th>
+				</tr>
+				<tr>
+					<td width="50%">Primero:</td>
+					<td id="primero1" width="50%">LENTEJAS</td>
+				</tr>
+				<tr>
+					<td width="50%">Segundo:</td>
+					<td id="segundo1" width="50%">PATATAS</td>
+				</tr>
+				<tr>
+					<td width="50%">Postre:</td>
+					<td id="postre1" width="50%">RABANO</td>
+				</tr>
+			</table>
+		</div>
+		<div>
+			<table id="launchTable2">
+				<tr>
+				<th widtth="100%" colspan="2">Menú 2</th>
+				</tr>
+				<tr>
+					<td width="50%">Primero:</td>
+					<td id="primero2" width="50%">Zanahoria</td>
+				</tr>
+				<tr>
+					<td width="50%">Segundo:</td>
+					<td id="segundo2" width="50%">PATATAS</td>
+				</tr>
+				<tr>
+					<td width="50%">Postre:</td>
+					<td id="postre2" width="50%">RABANO</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<!-- HORARIOS-->
+	<div id="horarios">
+		<h3 id="Dia" > Lunes </h3> 
+		<table id="timetable">
+			<tr>
+				<th width="33%" height="60" valign="top" style="padding: 10px;">Hora</th>
+				<th  width="33%" height="60" valign="top" id="Dia">Asignatura</th>
+				<th  width="33%" height="60" valign="top" id="clases">Clase </th>
+			</tr>
+			<tr>
+				<td style="padding: 10px;" width="50" height="60" valign="top">8:30-9:30</td>
+				<td width="33%" height="60" valign="top" id="subject"> </td>
+				<td width="33%" height="60" valign="top" id="clas"> </td>
+			</tr>
+			<tr>
+
+				<td width="33%" height="60" valign="top" style="padding: 10px;" >9:30-10:30</td>
+				<td width="33%" height="60" valign="top" id="subject">SS</td>
+				<td width="33%" height="60" valign="top" id="clas"> 1.1</td>
+			</tr>
+
+			<tr>
+				<td  width="33%" height="60" valign="top" style="padding: 10px;" >10:30-11:30</td>
+				<td  width="33%" height="60" valign="top" id="subject">SS</td>
+				<td  width="33%" height="60" valign="top" id="clas"> 1.1</td>
+			</tr>
+
+			<tr>
+				<td width="33%" height="60" valign="top" style="padding: 10px;">11:30-12:30</td>
+				<td width="33%" height="60" valign="top" id="subject">PTC</td>
+				<td width="33%" height="60" valign="top" id="clas"> 2.2</td>
+			</tr>
+
+			<tr>
+				<td width="33%" height="60" valign="top" style="padding: 10px;" >12:30-13:30</td>
+				<td width="33%" height="60" valign="top" id="subject">TIC</td>
+				<td width="33%" height="60" valign="top" id="clas">2.2</td>
+			</tr>
+
+			<tr>
+				<td width="33%" height="60" valign="top" style="padding: 10px;">13:30-14:30</td>
+				<td width="33%" height="60" valign="top" id="subject"> </td>
+				<td width="33%" height="60" valign="top" id="clas"></td>
+			</tr>
+
+		</table>
+	</div>
+
+	<!-- NAVEGACIÓN -->
+	<div id="navegacion">
+		<div style="position: absolute; right: 50px; top: 50px;">
+			<img src="images/Entrada Principal.jpeg" id="image" />
+			<h1 id="title">Entrada Principal</h1>
+		 </div>
+	</div>
+
+	<script src="js/logica.js"></script>
+</body>
+</html>

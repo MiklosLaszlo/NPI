@@ -1,0 +1,109 @@
+body {
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+    height: 100vh;
+    font-size: 3pc;
+    font-family: 'Times New Roman', Times, serif;
+    overflow: hidden;
+    background-color: #229fbe; 
+}
+
+table {
+    align-items: center;
+    margin: auto;
+    width: 90%;
+    align-content: center;
+    text-align: center;
+    font-family: 'Times New Roman', Times, serif;
+    overflow: hidden;
+    background-color: rgba(0, 255, 255, 0.452);
+}
+
+.texto_inicio{
+	/* align-items: center; */
+	margin: auto;
+	width: 90%;
+	align-content: center;
+	text-align: center;
+	font-family: 'Times New Roman', Times, serif;
+	overflow: hidden;
+	background-color: rgba(0, 255, 255, 0.452);
+}
+
+th {
+    background-color: #009879;
+    height: 60px;
+    color: #ffffff;
+}
+
+td {
+    border: 1px solid;
+    height: 60px;
+    text-align: center;
+    background-color: rgba(0, 255, 255, 0.562);
+}
+
+tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+#cursor {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #000;
+    transition: 0.1s;
+    transform: translate( -50%,-50%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+#comedores {
+    border: 5px solid;
+    margin: auto;
+    padding: 10px;
+}
+
+#horarios{
+	border: 5px solid;
+	margin: auto;
+	padding: 10px;
+}
+
+#inicio{
+	border: 5px solid;
+	margin: auto;
+	padding: 10px;
+}
+
+#navegacion{
+    border: 5px solid;
+    margin: auto;
+    padding: 10px;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+}
+
+title{
+	text-align: center;
+}
+
+#image {
+	width: 800px;
+	height: 600px;
+	object-fit: contain;
+	margin: auto;
+}
+#title {
+	color: white;
+	position: relative;
+	bottom: 129px;
+	text-align: center;
+	font-size: 70px;
+	background-color: rgba(0, 0, 0, 0.7);
+
+}
