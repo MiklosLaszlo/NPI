@@ -7,9 +7,6 @@ const createWindow = () => {
 	win.loadFile('main.html')
 }
 
-
-
-
 app.whenReady().then(() => {
 	createWindow()
 

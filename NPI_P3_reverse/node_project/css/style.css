@@ -59,30 +59,30 @@ tr {
 }
 
 #comedores {
-    border: 5px solid;
+    /* border: 5px solid; */
     margin: auto;
     padding: 10px;
 }
 
 #horarios{
-	border: 5px solid;
+	/* border: 5px solid; */
 	margin: auto;
 	padding: 10px;
 }
 
 #inicio{
-	border: 5px solid;
+	/* border: 5px solid; */
 	margin: auto;
 	padding: 10px;
 }
 
 #navegacion{
-    border: 5px solid;
+    /* border: 5px solid; */
     margin: auto;
     padding: 10px;
-    align-items: center;
-    align-content: center;
-    text-align: center;
+    /* align-items: center; */
+    /* align-content: center; */
+    /* text-align: center; */
 }
 
 title{
@@ -98,16 +98,16 @@ title{
 }
 
 .instruccion {
-	position: relative;
+	/* position: relative; */
 	text-align: center;
-	font-size: 70px;
-	margin-top: 0.5%;
-	margin-bottom: 0.5%;
+	/* font-size: 70px; */
+	/* margin-top: 0.5%; */
+	margin-bottom: 1%;
 }
 
 .contenedor_imagen{
 	width: 70vw;
-	height: 67vh;
+	height: 70vh;
 	object-fit: contain;
 	margin: auto;
 }
